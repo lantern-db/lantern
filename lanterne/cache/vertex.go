@@ -6,28 +6,28 @@ import (
 	"time"
 )
 
-type Item struct {
+type itemVertex struct {
 	value      model.Vertex
 	expiration int64
 }
 
 type VertexCache struct {
 	ttl   time.Duration
-	cache map[string]*Item
+	cache map[string]*itemVertex
 	mu    sync.RWMutex
 }
 
 func NewVertexCache(ttl time.Duration) VertexCache {
 	return VertexCache{
 		ttl:   ttl,
-		cache: make(map[string]*Item),
+		cache: make(map[string]*itemVertex),
 	}
 }
 
 func (c *VertexCache) Set(digest string, vertex model.Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache[digest] = &Item{
+	c.cache[digest] = &itemVertex{
 		value:      vertex,
 		expiration: time.Now().Add(c.ttl).Unix(),
 	}

@@ -5,21 +5,21 @@ import (
 	"time"
 )
 
-type Weight struct {
+type itemWeight struct {
 	value      float32
 	expiration int64
 }
 
 type EdgeCache struct {
 	ttl   time.Duration
-	cache map[string]map[string]*Weight
+	cache map[string]map[string]*itemWeight
 	mu    sync.RWMutex
 }
 
 func NewEdgeCache(ttl time.Duration) EdgeCache {
 	return EdgeCache{
 		ttl:   ttl,
-		cache: make(map[string]map[string]*Weight),
+		cache: make(map[string]map[string]*itemWeight),
 	}
 }
 
@@ -29,9 +29,9 @@ func (c *EdgeCache) Set(tail string, head string, value float32) {
 
 	_, ok := c.cache[tail]
 	if !ok {
-		c.cache[tail] = make(map[string]*Weight)
+		c.cache[tail] = make(map[string]*itemWeight)
 	}
-	c.cache[tail][head] = &Weight{
+	c.cache[tail][head] = &itemWeight{
 		value:      value,
 		expiration: time.Now().Add(c.ttl).Unix(),
 	}
