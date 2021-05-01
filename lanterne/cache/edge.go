@@ -20,22 +20,36 @@ func (c *EdgeCache) Set(tail string, head string, value float32) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	_, ok := c.cache[tail]
+	if !ok {
+		c.cache[tail] = make(map[string]*Weight)
+	}
 	c.cache[tail][head] = &Weight{
 		value:      value,
 		expiration: time.Now().Add(c.ttl).Unix(),
 	}
 }
 
-func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
+func (c *EdgeCache) Delete(tail string, head string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if _, ok := c.cache[tail]; ok {
+		if _, ok := c.cache[tail][head]; ok {
+			delete(c.cache[tail], head)
+			if len(c.cache[tail]) == 0 {
+				delete(c.cache, tail)
+			}
+		}
+	}
+}
+
+func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
 	weight := c.cache[tail][head]
 	if time.Now().Unix() > weight.expiration {
-		delete(c.cache[tail], head)
-		if len(c.cache) == 0 {
-			delete(c.cache, tail)
-		}
+		c.Delete(tail, head)
 		return 0.0, false
 	}
 	return weight.value, true
