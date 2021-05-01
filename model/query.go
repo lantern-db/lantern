@@ -1,12 +1,14 @@
 package model
 
 type NeighborQuery struct {
-	Seed      *Vertex
+	Seed      Vertex
 	Degree    int
 	MinWeight float32
 	MaxWeight float32
 }
 
 type AdjacentQuery struct {
-	Seed *Vertex
+	Seed      Vertex
+	MinWeight float32
+	MaxWeight float32
 }

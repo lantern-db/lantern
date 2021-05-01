@@ -5,12 +5,19 @@ type Vertex interface {
 }
 
 type Edge struct {
-	Tail   *Vertex
-	Head   *Vertex
+	Tail   Vertex
+	Head   Vertex
 	Weight float32
 }
 
 type Graph struct {
-	Vertices []*Vertex
+	Vertices []Vertex
 	Edges    []Edge
+}
+
+func NewGraph() Graph {
+	return Graph{
+		[]Vertex{},
+		[]Edge{},
+	}
 }
