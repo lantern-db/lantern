@@ -44,14 +44,15 @@ func (c *VertexCache) Delete(digest string) {
 
 func (c *VertexCache) Get(digest string) (model.Vertex, bool) {
 	c.mu.RLock()
-	defer c.mu.RUnlock()
 
 	item, ok := c.cache[digest]
+	c.mu.RUnlock()
+
 	if !ok {
 		return nil, false
 	}
 	if time.Now().Unix() > item.expiration {
-		c.Delete(digest)
+		defer c.Delete(digest)
 		return nil, false
 	}
 	return item.value, true

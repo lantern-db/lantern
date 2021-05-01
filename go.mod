@@ -4,5 +4,6 @@ go 1.16
 
 require (
 	github.com/go-redis/redis/v8 v8.8.2
+	github.com/golang/mock v1.5.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 )
