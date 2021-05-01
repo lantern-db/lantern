@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/piroyoung/lanterne/model"
+	"github.com/piroyoung/lanterne/lanterne/model"
 )
 
 type GraphRepository interface {
