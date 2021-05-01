@@ -17,6 +17,13 @@ type VertexCache struct {
 	mu    sync.RWMutex
 }
 
+func NewVertexCache(ttl time.Duration) VertexCache {
+	return VertexCache{
+		ttl:   ttl,
+		cache: make(map[string]*Item),
+	}
+}
+
 func (c *VertexCache) Set(digest string, vertex model.Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()

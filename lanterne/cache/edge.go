@@ -16,6 +16,13 @@ type EdgeCache struct {
 	mu    sync.RWMutex
 }
 
+func NewEdgeCache(ttl time.Duration) EdgeCache {
+	return EdgeCache{
+		ttl:   ttl,
+		cache: make(map[string]map[string]*Weight),
+	}
+}
+
 func (c *EdgeCache) Set(tail string, head string, value float32) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
