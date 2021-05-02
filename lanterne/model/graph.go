@@ -11,13 +11,13 @@ type Edge struct {
 }
 
 type Graph struct {
-	Vertices map[string]Vertex
-	Edges    map[string]map[string]float32
+	VertexMap map[string]Vertex
+	EdgeMap   map[string]map[string]float32
 }
 
 func NewGraph() Graph {
 	return Graph{
-		Vertices: make(map[string]Vertex),
-		Edges:    make(map[string]map[string]float32),
+		VertexMap: make(map[string]Vertex),
+		EdgeMap:   make(map[string]map[string]float32),
 	}
 }

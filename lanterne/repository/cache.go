@@ -5,6 +5,7 @@ import (
 	"github.com/piroyoung/lanterne/lanterne/cache"
 	"github.com/piroyoung/lanterne/lanterne/model"
 	"sync"
+	"time"
 )
 
 type CacheGraphRepository struct {
@@ -12,9 +13,16 @@ type CacheGraphRepository struct {
 	edges    cache.EdgeCache
 }
 
+func NewCacheGraphRepository(ttl time.Duration) CacheGraphRepository {
+	return CacheGraphRepository{
+		vertices: cache.NewVertexCache(ttl),
+		edges:    cache.NewEdgeCache(ttl),
+	}
+}
+
 func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.NeighborQuery) (model.Graph, error) {
 	g := model.NewGraph()
-	g.Vertices[query.Seed.Digest()] = query.Seed
+	g.VertexMap[query.Seed.Digest()] = query.Seed
 	seen := map[string]model.Vertex{}
 
 	for i := 0; i <= query.Degree; i++ {
@@ -41,7 +49,7 @@ func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail 
 	defer wg.Done()
 
 	result := model.NewGraph()
-	result.Vertices[tail.Digest()] = tail
+	result.VertexMap[tail.Digest()] = tail
 	heads, found := c.edges.GetAdjacent(tail.Digest())
 	if !found {
 		ch <- result
@@ -51,12 +59,12 @@ func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail 
 		if query.MinWeight <= weight && weight <= query.MaxWeight {
 			head, found := c.vertices.Get(headDigest)
 			if found {
-				_, ok := result.Edges[tail.Digest()]
+				_, ok := result.EdgeMap[tail.Digest()]
 				if !ok {
-					result.Edges[tail.Digest()] = make(map[string]float32)
+					result.EdgeMap[tail.Digest()] = make(map[string]float32)
 				}
-				result.Vertices[head.Digest()] = head
-				result.Edges[tail.Digest()][head.Digest()] = weight
+				result.VertexMap[head.Digest()] = head
+				result.EdgeMap[tail.Digest()][head.Digest()] = weight
 			}
 		}
 	}
@@ -73,7 +81,7 @@ func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Gra
 		nextSeen[k] = v
 	}
 
-	for digest, vertex := range graph.Vertices {
+	for digest, vertex := range graph.VertexMap {
 		_, ok := seen[digest]
 		if ok {
 			continue
@@ -99,16 +107,16 @@ func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Gra
 func union(graphArray []model.Graph) model.Graph {
 	result := model.NewGraph()
 	for _, graph := range graphArray {
-		for k, v := range graph.Vertices {
-			result.Vertices[k] = v
+		for k, v := range graph.VertexMap {
+			result.VertexMap[k] = v
 		}
-		for tail, headMap := range graph.Edges {
+		for tail, headMap := range graph.EdgeMap {
 			for head, weight := range headMap {
-				_, ok := result.Edges[tail]
+				_, ok := result.EdgeMap[tail]
 				if !ok {
-					result.Edges[tail] = make(map[string]float32)
+					result.EdgeMap[tail] = make(map[string]float32)
 				}
-				result.Edges[tail][head] = weight
+				result.EdgeMap[tail][head] = weight
 			}
 		}
 	}
