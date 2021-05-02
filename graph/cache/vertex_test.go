@@ -2,7 +2,7 @@ package cache
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/piroyoung/lanterne/lanterne/model"
+	"github.com/piroyoung/lanterne/graph/model"
 	"testing"
 	"time"
 )

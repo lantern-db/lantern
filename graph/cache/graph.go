@@ -1,51 +1,46 @@
-package repository
+package cache
 
 import (
-	"context"
-	"github.com/piroyoung/lanterne/lanterne/cache"
-	"github.com/piroyoung/lanterne/lanterne/model"
+	"github.com/piroyoung/lanterne/graph/model"
 	"sync"
 	"time"
 )
 
-type CacheGraphRepository struct {
-	vertices cache.VertexCache
-	edges    cache.EdgeCache
+type GraphCache struct {
+	vertices VertexCache
+	edges    EdgeCache
 }
 
-func NewCacheGraphRepository(ttl time.Duration) CacheGraphRepository {
-	return CacheGraphRepository{
-		vertices: cache.NewVertexCache(ttl),
-		edges:    cache.NewEdgeCache(ttl),
+func NewGraphCache(ttl time.Duration) GraphCache {
+	return GraphCache{
+		vertices: NewVertexCache(ttl),
+		edges:    NewEdgeCache(ttl),
 	}
 }
 
-func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.NeighborQuery) (model.Graph, error) {
+func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	g := model.NewGraph()
 	g.VertexMap[query.Seed.Digest()] = query.Seed
 	seen := map[string]model.Vertex{}
 
-	for i := 0; i <= query.Degree - 1; i++ {
+	for i := 0; i <= query.Degree-1; i++ {
 		g, seen = c.expand(query, g, seen)
 	}
 
-	return g, nil
+	return g
 }
 
-func (c *CacheGraphRepository) DumpVertex(ctx context.Context, vertex model.Vertex) error {
+func (c *GraphCache) DumpVertex(vertex model.Vertex) {
 	c.vertices.Set(vertex.Digest(), vertex)
-	return nil
 }
 
-func (c *CacheGraphRepository) DumpEdge(ctx context.Context, edge model.Edge) error {
+func (c *GraphCache) DumpEdge(edge model.Edge) {
 	c.vertices.Set(edge.Tail.Digest(), edge.Tail)
 	c.vertices.Set(edge.Head.Digest(), edge.Head)
 	c.edges.Set(edge.Tail.Digest(), edge.Head.Digest(), edge.Weight)
-
-	return nil
 }
 
-func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
+func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	result := model.NewGraph()
@@ -73,7 +68,7 @@ func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail 
 	return
 }
 
-func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
+func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
 	var wg sync.WaitGroup
 	ch := make(chan model.Graph)
 
@@ -82,21 +77,21 @@ func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Gra
 		nextSeen[k] = v
 	}
 
-	for digest, vertex := range graph.VertexMap {
-		_, ok := seen[digest]
-		if ok {
-			continue
-		}
-		wg.Add(1)
-		nextSeen[vertex.Digest()] = vertex
-		go c.getAdjacentGraph(query, vertex, ch, &wg)
-	}
-
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		ch <- graph
 	}()
+
+	for digest, vertex := range graph.VertexMap {
+		_, ok := seen[digest]
+		if ok {
+			continue
+		}
+		nextSeen[vertex.Digest()] = vertex
+		wg.Add(1)
+		go c.calculateAdjacent(query, vertex, ch, &wg)
+	}
 
 	go func() {
 		wg.Wait()
@@ -104,11 +99,11 @@ func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Gra
 	}()
 
 	result := model.NewGraph()
-	for graph := range ch {
-		for k, v := range graph.VertexMap {
+	for g := range ch {
+		for k, v := range g.VertexMap {
 			result.VertexMap[k] = v
 		}
-		for tail, headMap := range graph.EdgeMap {
+		for tail, headMap := range g.EdgeMap {
 			for head, weight := range headMap {
 				_, ok := result.EdgeMap[tail]
 				if !ok {
