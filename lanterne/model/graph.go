@@ -17,7 +17,7 @@ type Graph struct {
 
 func NewGraph() Graph {
 	return Graph{
-		make(map[string]Vertex),
-		make(map[string]map[string]float32),
+		Vertices: make(map[string]Vertex),
+		Edges:    make(map[string]map[string]float32),
 	}
 }
