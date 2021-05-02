@@ -21,7 +21,7 @@ func (c *CacheGraphRepository) LoadAdjacent(ctx context.Context, query model.Adj
 
 	g.Vertices[tail.Digest()] = tail
 
-	heads, found := c.edges.GetHeads(tail.Digest())
+	heads, found := c.edges.GetAdjacent(tail.Digest())
 	if found {
 		for headKey, weight := range heads {
 			if query.MinWeight <= weight && weight <= query.MaxWeight {

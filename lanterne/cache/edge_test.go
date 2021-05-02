@@ -26,12 +26,12 @@ func TestEdgeCache_Delete(t *testing.T) {
 	})
 }
 
-func TestEdgeCache_GetHeads(t *testing.T) {
+func TestEdgeCache_GetAdjacent(t *testing.T) {
 	c := NewEdgeCache(5 * time.Second)
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set("tail", "head1", 1.0)
 		c.Set("tail", "head2", 1.0)
-		if got, found := c.GetHeads("tail"); !found {
+		if got, found := c.GetAdjacent("tail"); !found {
 			t.Errorf("not found")
 		} else {
 			if len(got) != 2 {

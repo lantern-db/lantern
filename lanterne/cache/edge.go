@@ -72,7 +72,7 @@ func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
 	return weight.value, true
 }
 
-func (c *EdgeCache) GetHeads(tail string) (map[string]float32, bool) {
+func (c *EdgeCache) GetAdjacent(tail string) (map[string]float32, bool) {
 	result := make(map[string]float32)
 	var expired []string
 
