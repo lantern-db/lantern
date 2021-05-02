@@ -7,8 +7,3 @@ type NeighborQuery struct {
 	MaxWeight float32
 }
 
-type AdjacentQuery struct {
-	Seed      Vertex
-	MinWeight float32
-	MaxWeight float32
-}

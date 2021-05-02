@@ -13,7 +13,15 @@ type CacheGraphRepository struct {
 }
 
 func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.NeighborQuery) (model.Graph, error) {
-	panic("implement me")
+	g := model.NewGraph()
+	g.Vertices[query.Seed.Digest()] = query.Seed
+	seen := map[string]model.Vertex{}
+
+	for i := 0; i <= query.Degree; i++ {
+		g, seen = c.expand(query, g, seen)
+	}
+
+	return g, nil
 }
 
 func (c *CacheGraphRepository) DumpVertex(ctx context.Context, vertex model.Vertex) error {
@@ -29,7 +37,7 @@ func (c *CacheGraphRepository) DumpEdge(ctx context.Context, edge model.Edge) er
 	return nil
 }
 
-func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
+func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	result := model.NewGraph()
@@ -40,14 +48,16 @@ func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex, ch chan model
 		return
 	}
 	for headDigest, weight := range heads {
-		head, found := c.vertices.Get(headDigest)
-		if found {
-			_, ok := result.Edges[tail.Digest()]
-			if !ok {
-				result.Edges[tail.Digest()] = make(map[string]float32)
+		if query.MinWeight <= weight && weight <= query.MaxWeight {
+			head, found := c.vertices.Get(headDigest)
+			if found {
+				_, ok := result.Edges[tail.Digest()]
+				if !ok {
+					result.Edges[tail.Digest()] = make(map[string]float32)
+				}
+				result.Vertices[head.Digest()] = head
+				result.Edges[tail.Digest()][head.Digest()] = weight
 			}
-			result.Vertices[head.Digest()] = head
-			result.Edges[tail.Digest()][head.Digest()] = weight
 		}
 	}
 
@@ -55,7 +65,7 @@ func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex, ch chan model
 	return
 }
 
-func (c *CacheGraphRepository) expand(graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
+func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
 	var wg sync.WaitGroup
 	ch := make(chan model.Graph)
 	nextSeen := make(map[string]model.Vertex)
@@ -70,7 +80,7 @@ func (c *CacheGraphRepository) expand(graph model.Graph, seen map[string]model.V
 		}
 		wg.Add(1)
 		nextSeen[vertex.Digest()] = vertex
-		go c.getAdjacentGraph(vertex, ch, &wg)
+		go c.getAdjacentGraph(query, vertex, ch, &wg)
 	}
 
 	go func() {
@@ -92,7 +102,7 @@ func union(graphArray []model.Graph) model.Graph {
 		for k, v := range graph.Vertices {
 			result.Vertices[k] = v
 		}
-		for tail, headMap := range result.Edges {
+		for tail, headMap := range graph.Edges {
 			for head, weight := range headMap {
 				_, ok := result.Edges[tail]
 				if !ok {
