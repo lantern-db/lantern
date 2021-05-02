@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/piroyoung/lanterne/lanterne/cache"
 	"github.com/piroyoung/lanterne/lanterne/model"
+	"sync"
 )
 
 type CacheGraphRepository struct {
@@ -13,32 +14,6 @@ type CacheGraphRepository struct {
 
 func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.NeighborQuery) (model.Graph, error) {
 	panic("implement me")
-}
-
-func (c *CacheGraphRepository) LoadAdjacent(ctx context.Context, query model.AdjacentQuery) (model.Graph, error) {
-	g := model.NewGraph()
-	tail := query.Seed
-
-	g.Vertices[tail.Digest()] = tail
-
-	heads, found := c.edges.GetAdjacent(tail.Digest())
-	if found {
-		for headKey, weight := range heads {
-			if query.MinWeight <= weight && weight <= query.MaxWeight {
-				head, found := c.vertices.Get(headKey)
-				if found {
-					g.Vertices[headKey] = head
-					_, ok := g.Edges[tail.Digest()]
-					if !ok {
-						g.Edges[tail.Digest()] = make(map[string]float32)
-					}
-					g.Edges[tail.Digest()][head.Digest()] = weight
-				}
-			}
-		}
-	}
-
-	return g, nil
 }
 
 func (c *CacheGraphRepository) DumpVertex(ctx context.Context, vertex model.Vertex) error {
@@ -54,12 +29,15 @@ func (c *CacheGraphRepository) DumpEdge(ctx context.Context, edge model.Edge) er
 	return nil
 }
 
-func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex) model.Graph {
+func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	result := model.NewGraph()
 	result.Vertices[tail.Digest()] = tail
 	heads, found := c.edges.GetAdjacent(tail.Digest())
 	if !found {
-		return result
+		ch <- result
+		return
 	}
 	for headDigest, weight := range heads {
 		head, found := c.vertices.Get(headDigest)
@@ -73,7 +51,39 @@ func (c *CacheGraphRepository) getAdjacentGraph(tail model.Vertex) model.Graph {
 		}
 	}
 
-	return result
+	ch <- result
+	return
+}
+
+func (c *CacheGraphRepository) expand(graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
+	var wg sync.WaitGroup
+	ch := make(chan model.Graph)
+	nextSeen := make(map[string]model.Vertex)
+	for k, v := range seen {
+		nextSeen[k] = v
+	}
+
+	for digest, vertex := range graph.Vertices {
+		_, ok := seen[digest]
+		if ok {
+			continue
+		}
+		wg.Add(1)
+		nextSeen[vertex.Digest()] = vertex
+		go c.getAdjacentGraph(vertex, ch, &wg)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	var graphArray []model.Graph
+	for g := range ch {
+		graphArray = append(graphArray, g)
+	}
+
+	return union(graphArray), nextSeen
 }
 
 func union(graphArray []model.Graph) model.Graph {
