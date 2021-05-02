@@ -21,3 +21,27 @@ func NewGraph() Graph {
 		EdgeMap:   make(map[string]map[string]float32),
 	}
 }
+
+func (g *Graph) Edges() []Edge {
+	var edges []Edge
+	for tail, heads := range g.EdgeMap {
+		for head, weight := range heads {
+			edges = append(edges, Edge{
+				Tail:   g.VertexMap[tail],
+				Head:   g.VertexMap[head],
+				Weight: weight,
+			})
+		}
+	}
+	return edges
+}
+
+func (g *Graph) Vertices() []Vertex {
+	var vertices []Vertex
+
+	for _, v := range g.VertexMap {
+		vertices = append(vertices, v)
+	}
+
+	return vertices
+}

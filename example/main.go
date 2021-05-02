@@ -38,6 +38,7 @@ func main() {
 	q := model.NeighborQuery(a, 5)
 
 	res := repo.Load(q)
-	fmt.Println(res)
+	fmt.Println(res.Vertices())
+	fmt.Println(res.Edges())
 
 }
