@@ -78,7 +78,7 @@ func (c *CacheGraphRepository) expand(graph model.Graph, seen map[string]model.V
 		close(ch)
 	}()
 
-	var graphArray []model.Graph
+	graphArray := []model.Graph{graph}
 	for g := range ch {
 		graphArray = append(graphArray, g)
 	}
