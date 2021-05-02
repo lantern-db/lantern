@@ -39,7 +39,7 @@ func main() {
 
 	q := model.NeighborQuery{
 		Seed:      a,
-		Degree:    3,
+		Degree:    70,
 		MinWeight: -1,
 		MaxWeight: 100,
 	}

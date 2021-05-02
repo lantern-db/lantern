@@ -25,7 +25,7 @@ func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.Nei
 	g.VertexMap[query.Seed.Digest()] = query.Seed
 	seen := map[string]model.Vertex{}
 
-	for i := 0; i <= query.Degree; i++ {
+	for i := 0; i <= query.Degree - 1; i++ {
 		g, seen = c.expand(query, g, seen)
 	}
 
@@ -33,14 +33,14 @@ func (c *CacheGraphRepository) LoadNeighbor(ctx context.Context, query model.Nei
 }
 
 func (c *CacheGraphRepository) DumpVertex(ctx context.Context, vertex model.Vertex) error {
-	go c.vertices.Set(vertex.Digest(), vertex)
+	c.vertices.Set(vertex.Digest(), vertex)
 	return nil
 }
 
 func (c *CacheGraphRepository) DumpEdge(ctx context.Context, edge model.Edge) error {
-	go c.vertices.Set(edge.Tail.Digest(), edge.Tail)
-	go c.vertices.Set(edge.Head.Digest(), edge.Head)
-	go c.edges.Set(edge.Tail.Digest(), edge.Head.Digest(), edge.Weight)
+	c.vertices.Set(edge.Tail.Digest(), edge.Tail)
+	c.vertices.Set(edge.Head.Digest(), edge.Head)
+	c.edges.Set(edge.Tail.Digest(), edge.Head.Digest(), edge.Weight)
 
 	return nil
 }
@@ -76,6 +76,7 @@ func (c *CacheGraphRepository) getAdjacentGraph(query model.NeighborQuery, tail 
 func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
 	var wg sync.WaitGroup
 	ch := make(chan model.Graph)
+
 	nextSeen := make(map[string]model.Vertex)
 	for k, v := range seen {
 		nextSeen[k] = v
@@ -91,22 +92,19 @@ func (c *CacheGraphRepository) expand(query model.NeighborQuery, graph model.Gra
 		go c.getAdjacentGraph(query, vertex, ch, &wg)
 	}
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		ch <- graph
+	}()
+
 	go func() {
 		wg.Wait()
 		close(ch)
 	}()
 
-	graphArray := []model.Graph{graph}
-	for g := range ch {
-		graphArray = append(graphArray, g)
-	}
-
-	return union(graphArray), nextSeen
-}
-
-func union(graphArray []model.Graph) model.Graph {
 	result := model.NewGraph()
-	for _, graph := range graphArray {
+	for graph := range ch {
 		for k, v := range graph.VertexMap {
 			result.VertexMap[k] = v
 		}
@@ -121,5 +119,5 @@ func union(graphArray []model.Graph) model.Graph {
 		}
 	}
 
-	return result
+	return result, nextSeen
 }
