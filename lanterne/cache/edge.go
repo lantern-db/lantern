@@ -52,9 +52,19 @@ func (c *EdgeCache) Delete(tail string, head string) {
 
 func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
 	c.mu.RLock()
-	defer c.mu.RUnlock()
 
-	weight := c.cache[tail][head]
+	if _, ok := c.cache[tail]; !ok {
+		c.mu.RUnlock()
+		return 0.0, false
+	}
+
+	weight, ok := c.cache[tail][head]
+	c.mu.RUnlock()
+
+	if !ok {
+		return 0.0, false
+	}
+
 	if time.Now().Unix() > weight.expiration {
 		c.Delete(tail, head)
 		return 0.0, false
@@ -64,13 +74,27 @@ func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
 
 func (c *EdgeCache) GetHeads(tail string) (map[string]float32, bool) {
 	result := make(map[string]float32)
+	var expired []string
+
 	c.mu.RLock()
-	defer c.mu.RUnlock()
-	for head := range c.cache[tail] {
-		w, found := c.GetWeight(tail, head)
-		if found {
-			result[head] = w
+	heads, ok := c.cache[tail]
+	if !ok {
+		return nil, false
+	}
+	for head, weight := range heads {
+		if time.Now().Unix() > weight.expiration {
+			expired = append(expired, head)
+		} else {
+			result[head] = weight.value
 		}
 	}
+	c.mu.RUnlock()
+
+	defer func() {
+		for _, head := range expired {
+			c.Delete(tail, head)
+		}
+	}()
+
 	return result, len(result) != 0
 }
