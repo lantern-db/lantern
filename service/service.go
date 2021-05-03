@@ -26,12 +26,12 @@ func (l *LanterneService) Illuminate(ctx context.Context, request *pb.Illuminate
 	return &response, nil
 }
 
-func (l LanterneService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb.DumpResponse, error) {
+func (l *LanterneService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb.DumpResponse, error) {
 	l.cache.DumpVertex(adapter.LanterneVertex(vertex))
 	return &pb.DumpResponse{}, nil
 }
 
-func (l LanterneService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
+func (l *LanterneService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
 	l.cache.DumpEdge(adapter.LanterneEdge(edge))
 	return &pb.DumpResponse{}, nil
 }
