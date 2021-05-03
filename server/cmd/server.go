@@ -52,13 +52,13 @@ func main() {
 	}
 	svc := service.NewLanterneService(&graphCache)
 	s := grpc.NewServer()
+	pb.RegisterLanterneServer(s, svc)
+
 	go func() {
 		<-stopCh
 		log.Println("stop grpc server gracefully")
 		s.GracefulStop()
 	}()
-
-	pb.RegisterLanterneServer(s, svc)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
