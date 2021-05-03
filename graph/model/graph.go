@@ -12,19 +12,19 @@ type Edge struct {
 
 type Graph struct {
 	VertexMap map[string]Vertex
-	EdgeMap   map[string]map[string]float32
+	Adjacency map[string]map[string]float32
 }
 
 func NewGraph() Graph {
 	return Graph{
 		VertexMap: make(map[string]Vertex),
-		EdgeMap:   make(map[string]map[string]float32),
+		Adjacency: make(map[string]map[string]float32),
 	}
 }
 
 func (g *Graph) Edges() []Edge {
 	var edges []Edge
-	for tail, heads := range g.EdgeMap {
+	for tail, heads := range g.Adjacency {
 		for head, weight := range heads {
 			edges = append(edges, Edge{
 				Tail:   g.VertexMap[tail],

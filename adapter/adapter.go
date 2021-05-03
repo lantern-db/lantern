@@ -44,7 +44,7 @@ func ProtoGraph(graph model.Graph) *pb.Graph {
 		})
 	}
 
-	for tailKey, heads := range graph.EdgeMap {
+	for tailKey, heads := range graph.Adjacency {
 		for headKey, weight := range heads {
 			g.Edges = append(g.Edges, &pb.Edge{
 				Tail:   &pb.Vertex{Key: tailKey},
