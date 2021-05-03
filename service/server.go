@@ -4,20 +4,32 @@ import (
 	"context"
 	"github.com/piroyoung/lanterne/adapter"
 	"github.com/piroyoung/lanterne/graph/cache"
-	"github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/grpc"
 )
 
 type LanterneService struct {
-	grpc.UnimplementedLanterneServer
 	cache *cache.GraphCache
 }
 
-func (s *LanterneService) Illuminate(ctx context.Context, request *grpc.IlluminateRequest) (*grpc.IlluminateResponse, error) {
-	q := adapter.LanternQuery(request)
-	graph := s.cache.Load(q)
-	response := grpc.IlluminateResponse{
-		Graph: adapter.GrpcGraph(graph),
+func (l *LanterneService) Illuminate(ctx context.Context, request *pb.IlluminateRequest) (*pb.IlluminateResponse, error) {
+	q := adapter.LanterneQuery(request)
+	graph := l.cache.Load(q)
+	response := pb.IlluminateResponse{
+		Graph: adapter.ProtoGraph(graph),
 	}
 
 	return &response, nil
+}
+
+func (l LanterneService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb.DumpResponse, error) {
+	l.cache.DumpVertex(adapter.LanterneVertex(vertex))
+	return &pb.DumpResponse{}, nil
+}
+
+func (l LanterneService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
+	l.cache.DumpEdge(adapter.LanterneEdge(edge))
+	return &pb.DumpResponse{}, nil
+}
+
+func (l LanterneService) mustEmbedUnimplementedLanterneServer() {
 }

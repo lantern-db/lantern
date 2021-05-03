@@ -36,8 +36,15 @@ message IlluminateResponse {
     Status status = 2;
 }
 
+message DumpResponse {
+    Status status = 1;
+}
 
 service Lanterne {
     rpc Illuminate (IlluminateRequest) returns (IlluminateResponse) {
+    }
+    rpc DumpVertex (Vertex) returns (DumpResponse) {
+    }
+    rpc DumpEdge (Edge) returns (DumpResponse) {
     }
 }
