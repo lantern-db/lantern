@@ -98,3 +98,25 @@ func (c *EdgeCache) GetAdjacent(tail string) (map[string]float32, bool) {
 
 	return result, len(result) != 0
 }
+
+func (c *EdgeCache) Flush() {
+	var keys []struct {
+		tail string
+		head string
+	}
+	c.mu.RLock()
+	for tail, heads := range c.cache {
+		for head, weight := range heads {
+			if time.Now().Unix() > weight.expiration {
+				keys = append(keys, struct {
+					tail string
+					head string
+				}{tail: tail, head: head})
+			}
+		}
+	}
+	c.mu.RUnlock()
+	for _, key := range keys {
+		c.Delete(key.tail, key.head)
+	}
+}

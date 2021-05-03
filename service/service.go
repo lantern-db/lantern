@@ -13,7 +13,7 @@ type LanterneService struct {
 }
 
 func NewLanterneService(graphCache *cache.GraphCache) *LanterneService {
-	return &LanterneService{pb.UnimplementedLanterneServer{},graphCache}
+	return &LanterneService{cache: graphCache}
 }
 
 func (l *LanterneService) Illuminate(ctx context.Context, request *pb.IlluminateRequest) (*pb.IlluminateResponse, error) {

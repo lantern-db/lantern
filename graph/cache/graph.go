@@ -116,3 +116,8 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 
 	return result, nextSeen
 }
+
+func (c *GraphCache) Flush() {
+	c.vertices.Flush()
+	c.edges.Flush()
+}

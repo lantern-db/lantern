@@ -57,3 +57,18 @@ func (c *VertexCache) Get(digest string) (model.Vertex, bool) {
 	}
 	return item.value, true
 }
+
+func (c *VertexCache) Flush() {
+	var keys []string
+	c.mu.RLock()
+	for key, vertex := range c.cache {
+		if time.Now().Unix() > vertex.expiration {
+			keys = append(keys, key)
+		}
+	}
+	c.mu.RUnlock()
+
+	for _, key := range keys {
+		c.Delete(key)
+	}
+}
