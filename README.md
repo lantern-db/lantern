@@ -15,8 +15,8 @@ Most of the relations will disappear as time passes. In the case of treating som
 $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoung/lanterne
 ```
 
-`LANTERN_PORT`: Port number for `lanterne-server`
-`LANTERN_TTL`: `time-to-live` for each elements (seconds).
+* `LANTERN_PORT`: Port number for lanterne-server
+* `LANTERN_TTL`: time-to-live for each elements (seconds).
 
 # lanterne-client (Golang)
 Example usage of `lanterne-client` for Golang.
