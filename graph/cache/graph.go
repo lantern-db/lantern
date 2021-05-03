@@ -23,7 +23,7 @@ func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	g.VertexMap[query.Seed.Digest()] = query.Seed
 	seen := map[string]model.Vertex{}
 
-	for i := 0; i <= query.Degree-1; i++ {
+	for i := uint32(0); i+1 <= query.Degree; i++ {
 		g, seen = c.expand(query, g, seen)
 	}
 
