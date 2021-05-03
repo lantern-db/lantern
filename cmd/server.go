@@ -15,12 +15,16 @@ import (
 )
 
 func main() {
-	flushInterval, err := strconv.Atoi(os.Getenv("FLUSH_INTERVAL_SECOND"))
+	for _, pair := range os.Environ() {
+		log.Println(pair)
+	}
+
+	flushInterval, err := strconv.Atoi(os.Getenv("LANTERNE_FLUSH_INTERVAL"))
 	if err != nil {
 		log.Fatalf("flush interval parse failed: %v", err)
 	}
 	lanternePort := os.Getenv("LANTERNE_PORT")
-	ttl, err := strconv.Atoi(os.Getenv("TTL_SECOND"))
+	ttl, err := strconv.Atoi(os.Getenv("LANTERNE_TTL"))
 	if err != nil {
 		log.Fatalf("ttl parse error: %v", err)
 	}

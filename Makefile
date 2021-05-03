@@ -18,3 +18,11 @@ clean:
 	rm ./grpc/data.pb.go
 	rm ./grpc/data_grpc.pb.go
 .PHONY: clean
+
+build: ./Dockerfile
+	docker build -t lanterne .
+	docker tag lanterne piroyoung/lanterne:latest
+	docker tag lanterne piroyoung/lanterne:0.0.0
+	docker push piroyoung/lanterne:latest
+	docker push piroyoung/lanterne:0.0.0
+.PHONY: build
