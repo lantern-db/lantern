@@ -1,12 +1,23 @@
 package adapter
 
 import (
+	"errors"
 	"github.com/piroyoung/lanterne/graph/model"
 	pb "github.com/piroyoung/lanterne/grpc"
 )
 
 type ProtoVertex struct {
 	message *pb.Vertex
+}
+
+func NewProtoVertex(v model.Vertex) (*ProtoVertex, error) {
+	switch value := v.Value().(type) {
+	case *pb.Vertex:
+		return &ProtoVertex{message: value}, nil
+
+	default:
+		return nil, errors.New("value is not protobuf data")
+	}
 }
 
 func (k *ProtoVertex) Key() string {

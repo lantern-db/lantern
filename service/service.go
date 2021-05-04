@@ -32,6 +32,13 @@ func (l *LanterneService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*p
 }
 
 func (l *LanterneService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
+	switch edge.Tail.Value.(type) {
+	case *pb.Vertex_Nil:
+		v, found := l.cache.LoadVertex(edge.Tail.Key)
+		if found:
+			edge.Tail = v.Value()
+
+	}
 	l.cache.DumpEdge(adapter.LanterneEdge(edge))
 	return &pb.DumpResponse{}, nil
 }
