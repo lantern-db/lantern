@@ -21,6 +21,8 @@ message Vertex {
         string string = 9;
         bytes bytes = 10;
         google.protobuf.Timestamp timestamp = 11;
+
+        bool nil = 30;
     }
 }
 

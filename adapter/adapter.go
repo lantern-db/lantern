@@ -14,7 +14,7 @@ func (k *ProtoVertex) Key() string {
 }
 
 func (k *ProtoVertex) Value() interface{} {
-	return k.message.Value
+	return k.message
 }
 
 func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {

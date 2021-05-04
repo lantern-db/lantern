@@ -11,7 +11,7 @@
 		--go_opt=paths=source_relative \
 		--go-grpc_opt=paths=source_relative
 
-all: ./grpc/data.pb.go ./grpc/data_grpc.pb.go ./
+all: ./grpc/data.pb.go ./grpc/data_grpc.pb.go ./graph/model/mock.go
 .PHONY: all
 
 clean:
