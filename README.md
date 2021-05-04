@@ -26,6 +26,7 @@ $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoun
 Example usage of `lanterne-client` for Golang.
 
 `example/client/simple/simple.go`
+
 ```golang
 package main
 
@@ -52,12 +53,19 @@ func main() {
 
 	ctx := context.Background()
 
+	_ = c.DumpVertex(ctx, "a", "test")
+	_ = c.DumpVertex(ctx, "b", 42)
+	_ = c.DumpVertex(ctx, "c", 3.14)
+
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0)
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	graph, _ := c.Illuminate(ctx, "a", 2)
+	graph, err := c.Illuminate(ctx, "a", 2)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
 	m := jsonpb.Marshaler{}
 	jsonString, _ := m.MarshalToString(graph)
 	log.Println(jsonString)
@@ -69,36 +77,31 @@ Then we got
 
 ```json
 {
-  "vertices": [
-    {
-      "key": "a"
+  "vertexMap": {
+    "a": {
+      "key": "a",
+      "string": "test"
     },
-    {
-      "key": "b"
+    "b": {
+      "key": "b",
+      "int32": 42
     },
-    {
-      "key": "c"
+    "c": {
+      "key": "c",
+      "float64": 3.14
     }
-  ],
-  "edges": [
-    {
-      "tail": {
-        "key": "a"
-      },
-      "head": {
-        "key": "b"
-      },
-      "weight": 1
+  },
+  "neighborMap": {
+    "a": {
+      "weightMap": {
+        "b": 1
+      }
     },
-    {
-      "tail": {
-        "key": "b"
-      },
-      "head": {
-        "key": "c"
-      },
-      "weight": 1
+    "b": {
+      "weightMap": {
+        "c": 1
+      }
     }
-  ]
+  }
 }
 ```
