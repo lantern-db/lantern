@@ -75,10 +75,10 @@ func (c *LanterneClient) DumpVertex(ctx context.Context, key string) error {
 	return nil
 }
 
-func (c *LanterneClient) Illuminate(ctx context.Context, seed string, degree uint32) (*pb.Graph, error) {
+func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*pb.Graph, error) {
 	request := &pb.IlluminateRequest{
 		Seed:      &pb.Vertex{Key: seed},
-		Degree:    degree,
+		Step:      step,
 		MinWeight: -math.MaxFloat32,
 		MaxWeight: math.MaxFloat32,
 	}

@@ -15,7 +15,7 @@ func (i InMemoryGraphRepository) LoadNeighbor(ctx context.Context, query model.N
 }
 
 func (i InMemoryGraphRepository) DumpVertex(ctx context.Context, vertex model.Vertex) error {
-	i.vertexMap[vertex.Digest()] = vertex
+	i.vertexMap[vertex.Key()] = vertex
 	return nil
 }
 
@@ -28,6 +28,6 @@ func (i InMemoryGraphRepository) DumpEdge(ctx context.Context, edge model.Edge) 
 		return err
 	}
 
-	i.edgeMap[(*edge.Tail).Digest()][(*edge.Head).Digest()] = edge.Weight
+	i.edgeMap[(*edge.Tail).Key()][(*edge.Head).Key()] = edge.Weight
 	return nil
 }

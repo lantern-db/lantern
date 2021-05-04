@@ -4,15 +4,15 @@ import "math"
 
 type LoadQuery struct {
 	Seed      Vertex
-	Degree    uint32
+	Step      uint32
 	MinWeight float32
 	MaxWeight float32
 }
 
-func NeighborQuery(seed Vertex, degree uint32) LoadQuery {
+func NeighborQuery(seed Vertex, step uint32) LoadQuery {
 	return LoadQuery{
 		Seed:      seed,
-		Degree:    degree,
+		Step:      step,
 		MinWeight: -math.MaxFloat32,
 		MaxWeight: math.MaxFloat32,
 	}

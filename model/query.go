@@ -2,7 +2,7 @@ package model
 
 type NeighborQuery struct {
 	Seed      *Vertex
-	Degree    int
+	Step      int
 	MinWeight float32
 	MaxWeight float32
 }

@@ -5,26 +5,30 @@ import (
 	pb "github.com/piroyoung/lanterne/grpc"
 )
 
-type KeyVertex struct {
-	key string
+type ProtoVertex struct {
+	message *pb.Vertex
 }
 
-func (k KeyVertex) Digest() string {
-	return k.key
+func (k *ProtoVertex) Key() string {
+	return k.message.Key
+}
+
+func (k *ProtoVertex) Value() interface{} {
+	return k.message.Value
 }
 
 func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 	return model.LoadQuery{
-		Seed:      KeyVertex{key: request.Seed.Key},
-		Degree:    request.Degree,
+		Seed:      &ProtoVertex{message: request.Seed},
+		Step:      request.Step,
 		MinWeight: request.MinWeight,
 		MaxWeight: request.MaxWeight,
 	}
 }
 
 func LanterneVertex(vertex *pb.Vertex) model.Vertex {
-	return &KeyVertex{
-		key: vertex.Key,
+	return &ProtoVertex{
+		message: vertex,
 	}
 }
 
@@ -38,20 +42,27 @@ func LanterneEdge(edge *pb.Edge) model.Edge {
 
 func ProtoGraph(graph model.Graph) *pb.Graph {
 	g := pb.Graph{}
-	for _, v := range graph.VertexMap {
-		g.Vertices = append(g.Vertices, &pb.Vertex{
-			Key: v.Digest(),
-		})
+	g.VertexMap = make(map[string]*pb.Vertex)
+	for _, value := range graph.VertexMap {
+		switch v := value.Value().(type) {
+		case *pb.Vertex:
+			g.VertexMap[v.Key] = v
+		default:
+			g.VertexMap[value.Key()] = &pb.Vertex{
+				Key:   value.Key(),
+				Value: &pb.Vertex_Bool{Bool: true},
+			}
+		}
 	}
 
+	g.NeighborMap = make(map[string]*pb.Neighbor)
 	for tailKey, heads := range graph.Adjacency {
+		neighbor := pb.Neighbor{}
+		neighbor.WeightMap = make(map[string]float32)
 		for headKey, weight := range heads {
-			g.Edges = append(g.Edges, &pb.Edge{
-				Tail:   &pb.Vertex{Key: tailKey},
-				Head:   &pb.Vertex{Key: headKey},
-				Weight: weight,
-			})
+			neighbor.WeightMap[headKey] = weight
 		}
+		g.NeighborMap[tailKey] = &neighbor
 	}
 	return &g
 }

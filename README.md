@@ -26,6 +26,7 @@ $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoun
 Example usage of `lanterne-client` for Golang.
 
 `example/client/simple/simple.go`
+
 ```golang
 package main
 

@@ -1,6 +1,6 @@
 
-lanterne/model/mock.go: graph
-	mockgen -source lanterne/model/graph.go -destination lanterne/model/mock.go -package model
+./graph/model/mock.go: ./graph/model/graph.go
+	mockgen -source graph/model/graph.go -destination graph/model/mock.go -package model
 
 
 ./grpc/data.pb.go ./grpc/data_grpc.pb.go: ./proto/data.proto
@@ -11,7 +11,7 @@ lanterne/model/mock.go: graph
 		--go_opt=paths=source_relative \
 		--go-grpc_opt=paths=source_relative
 
-all: ./grpc/data.pb.go ./grpc/data_grpc.pb.go
+all: ./grpc/data.pb.go ./grpc/data_grpc.pb.go ./
 .PHONY: all
 
 clean:
@@ -19,7 +19,7 @@ clean:
 	rm ./grpc/data_grpc.pb.go
 .PHONY: clean
 
-build: ./Dockerfile
+build: ./Dockerfile ./graph/model/mock.go ./grpc/data_grpc.pb.go ./grpc/data.pb.go
 	docker build -t lanterne .
 	docker tag lanterne piroyoung/lanterne:latest
 	docker tag lanterne piroyoung/lanterne:0.0.0

@@ -28,7 +28,10 @@ func main() {
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	graph, _ := c.Illuminate(ctx, "a", 2)
+	graph, err := c.Illuminate(ctx, "a", 2)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
 	m := jsonpb.Marshaler{}
 	jsonString, _ := m.MarshalToString(graph)
 	log.Println(jsonString)

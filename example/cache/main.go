@@ -11,7 +11,11 @@ type StringVertex struct {
 	value string
 }
 
-func (s StringVertex) Digest() string {
+func (s *StringVertex) Key() string {
+	return s.value
+}
+
+func (s *StringVertex) Value() interface{} {
 	return s.value
 }
 
