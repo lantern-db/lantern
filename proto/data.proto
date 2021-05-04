@@ -14,8 +14,8 @@ message Edge {
 }
 
 message Graph {
-    repeated Vertex Vertices = 1;
-    repeated Edge Edges = 2;
+    repeated Vertex vertices = 1;
+    repeated Edge edges = 2;
 }
 
 enum Status {

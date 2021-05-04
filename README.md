@@ -25,18 +25,31 @@ $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoun
 
 Example usage of `lanterne-client` for Golang.
 
+`example/client/simple/simple.go`
 ```golang
 package main
 
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/piroyoung/lanterne/client"
+	"log"
 )
 
 func main() {
-	c := client.New("localhost", 6380)
-	defer c.Close()
+	c, err := client.NewLanterneClient("localhost", 6380)
+	if err != nil {
+		fmt.Printf("hoge %v", err)
+		panic(err)
+	}
+	defer func() {
+		err := c.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
 	ctx := context.Background()
 
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
@@ -45,8 +58,47 @@ func main() {
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
 	graph, _ := c.Illuminate(ctx, "a", 2)
-	fmt.Println(graph)
-	// => Vertices:{key:"a"} Vertices:{key:"b"} Vertices:{key:"c"} Edges:{tail:{key:"a"} head:{key:"b"} weight:1} Edges:{tail:{key:"b"} head:{key:"c"} weight:1}
+	m := jsonpb.Marshaler{}
+	jsonString, _ := m.MarshalToString(graph)
+	log.Println(jsonString)
+}
 
+```
+
+Then we got
+
+```json
+{
+  "vertices": [
+    {
+      "key": "a"
+    },
+    {
+      "key": "b"
+    },
+    {
+      "key": "c"
+    }
+  ],
+  "edges": [
+    {
+      "tail": {
+        "key": "a"
+      },
+      "head": {
+        "key": "b"
+      },
+      "weight": 1
+    },
+    {
+      "tail": {
+        "key": "b"
+      },
+      "head": {
+        "key": "c"
+      },
+      "weight": 1
+    }
+  ]
 }
 ```
