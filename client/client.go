@@ -51,9 +51,17 @@ func (c *LanterneClient) Close() error {
 }
 
 func (c *LanterneClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
+	tailVertex, err := newVertex(tail, nil)
+	if err != nil {
+		return err
+	}
+	headVertex, err := newVertex(head, nil)
+	if err != nil {
+		return err
+	}
 	edge := &pb.Edge{
-		Tail:   &pb.Vertex{Key: tail},
-		Head:   &pb.Vertex{Key: head},
+		Tail:   tailVertex,
+		Head:   headVertex,
 		Weight: weight,
 	}
 	response, err := c.client.DumpEdge(ctx, edge)
@@ -134,7 +142,7 @@ func newVertex(key string, value interface{}) (*pb.Vertex, error) {
 		vertex.Value = &pb.Vertex_Timestamp{Timestamp: timestamppb.New(v)}
 
 	case nil:
-		vertex.Value = &pb.Vertex_Bool{Bool: true}
+		vertex.Value = &pb.Vertex_Nil{Nil: true}
 
 	default:
 		return nil, errors.New("type mismatch")
