@@ -1,36 +1,25 @@
 package adapter
 
 import (
-	"errors"
 	"github.com/piroyoung/lanterne/graph/model"
 	pb "github.com/piroyoung/lanterne/grpc"
 )
 
 type ProtoVertex struct {
-	message *pb.Vertex
-}
-
-func NewProtoVertex(v model.Vertex) (*ProtoVertex, error) {
-	switch value := v.Value().(type) {
-	case *pb.Vertex:
-		return &ProtoVertex{message: value}, nil
-
-	default:
-		return nil, errors.New("value is not protobuf data")
-	}
+	Message *pb.Vertex
 }
 
 func (k *ProtoVertex) Key() string {
-	return k.message.Key
+	return k.Message.Key
 }
 
 func (k *ProtoVertex) Value() interface{} {
-	return k.message
+	return k.Message
 }
 
 func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 	return model.LoadQuery{
-		Seed:      &ProtoVertex{message: request.Seed},
+		Seed:      &ProtoVertex{Message: request.Seed},
 		Step:      request.Step,
 		MinWeight: request.MinWeight,
 		MaxWeight: request.MaxWeight,
@@ -39,7 +28,7 @@ func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 
 func LanterneVertex(vertex *pb.Vertex) model.Vertex {
 	return &ProtoVertex{
-		message: vertex,
+		Message: vertex,
 	}
 }
 
@@ -57,11 +46,12 @@ func ProtoGraph(graph model.Graph) *pb.Graph {
 	for _, value := range graph.VertexMap {
 		switch v := value.Value().(type) {
 		case *pb.Vertex:
-			g.VertexMap[v.Key] = v
+			g.VertexMap[value.Key()] = v
+
 		default:
 			g.VertexMap[value.Key()] = &pb.Vertex{
 				Key:   value.Key(),
-				Value: &pb.Vertex_Bool{Bool: true},
+				Value: &pb.Vertex_Nil{Nil: true},
 			}
 		}
 	}

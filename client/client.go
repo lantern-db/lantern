@@ -111,6 +111,9 @@ func newVertex(key string, value interface{}) (*pb.Vertex, error) {
 		Key: key,
 	}
 	switch v := value.(type) {
+	case int:
+		vertex.Value = &pb.Vertex_Int32{Int32: int32(v)}
+
 	case float64:
 		vertex.Value = &pb.Vertex_Float64{Float64: v}
 

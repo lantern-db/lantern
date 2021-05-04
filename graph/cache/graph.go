@@ -6,6 +6,19 @@ import (
 	"time"
 )
 
+type ValueVertex struct {
+	K string
+	V interface{}
+}
+
+func (v *ValueVertex) Key() string {
+	return v.K
+}
+
+func (v *ValueVertex) Value() interface{} {
+	return v.V
+}
+
 type GraphCache struct {
 	vertices VertexCache
 	edges    EdgeCache
@@ -20,7 +33,17 @@ func NewGraphCache(ttl time.Duration) GraphCache {
 
 func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	g := model.NewGraph()
-	g.VertexMap[query.Seed.Key()] = query.Seed
+	loadedSeed, found := c.vertices.Get(query.Seed.Key())
+	if found {
+		g.VertexMap[query.Seed.Key()] = loadedSeed
+
+	} else {
+		g.VertexMap[query.Seed.Key()] = &ValueVertex{
+			K: query.Seed.Key(),
+			V: nil,
+		}
+	}
+
 	seen := map[string]model.Vertex{}
 
 	for i := uint32(0); i < query.Step; i++ {
