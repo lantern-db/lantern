@@ -27,6 +27,7 @@ func NewLanterneClient(hostname string, port int) (*LanterneClient, error) {
 		conn, err := grpc.DialContext(ctx, hostname+":"+strconv.Itoa(port), grpc.WithInsecure())
 		if err != nil {
 			chErr <- err
+			return
 		}
 		chConn <- conn
 	}()
