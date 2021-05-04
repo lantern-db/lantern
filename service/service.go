@@ -50,6 +50,6 @@ func (l *LanterneService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.Dump
 		}
 	}
 
-	l.cache.DumpEdge(adapter.LanterneEdge(edge))
+	l.cache.DumpEdge(le)
 	return &pb.DumpResponse{}, nil
 }

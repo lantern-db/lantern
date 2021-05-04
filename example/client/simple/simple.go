@@ -23,6 +23,10 @@ func main() {
 
 	ctx := context.Background()
 
+	_ = c.DumpVertex(ctx, "a", "test")
+	_ = c.DumpVertex(ctx, "b", 42)
+	_ = c.DumpVertex(ctx, "c", 3.14)
+
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0)
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
