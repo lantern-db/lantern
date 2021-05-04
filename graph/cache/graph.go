@@ -30,6 +30,10 @@ func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	return g
 }
 
+func (c *GraphCache) LoadVertex(key string) (model.Vertex, bool) {
+	return c.vertices.Get(key)
+}
+
 func (c *GraphCache) DumpVertex(vertex model.Vertex) {
 	c.vertices.Set(vertex.Key(), vertex)
 }
