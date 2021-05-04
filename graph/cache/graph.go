@@ -6,6 +6,19 @@ import (
 	"time"
 )
 
+type ValueVertex struct {
+	K string
+	V interface{}
+}
+
+func (v *ValueVertex) Key() string {
+	return v.K
+}
+
+func (v *ValueVertex) Value() interface{} {
+	return v.V
+}
+
 type GraphCache struct {
 	vertices VertexCache
 	edges    EdgeCache
@@ -20,32 +33,46 @@ func NewGraphCache(ttl time.Duration) GraphCache {
 
 func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	g := model.NewGraph()
-	g.VertexMap[query.Seed.Digest()] = query.Seed
+	loadedSeed, found := c.vertices.Get(query.Seed.Key())
+	if found {
+		g.VertexMap[query.Seed.Key()] = loadedSeed
+
+	} else {
+		g.VertexMap[query.Seed.Key()] = &ValueVertex{
+			K: query.Seed.Key(),
+			V: nil,
+		}
+	}
+
 	seen := map[string]model.Vertex{}
 
-	for i := uint32(0); i+1 <= query.Degree; i++ {
+	for i := uint32(0); i < query.Step; i++ {
 		g, seen = c.expand(query, g, seen)
 	}
 
 	return g
 }
 
+func (c *GraphCache) LoadVertex(key string) (model.Vertex, bool) {
+	return c.vertices.Get(key)
+}
+
 func (c *GraphCache) DumpVertex(vertex model.Vertex) {
-	c.vertices.Set(vertex.Digest(), vertex)
+	c.vertices.Set(vertex.Key(), vertex)
 }
 
 func (c *GraphCache) DumpEdge(edge model.Edge) {
-	c.vertices.Set(edge.Tail.Digest(), edge.Tail)
-	c.vertices.Set(edge.Head.Digest(), edge.Head)
-	c.edges.Set(edge.Tail.Digest(), edge.Head.Digest(), edge.Weight)
+	c.vertices.Set(edge.Tail.Key(), edge.Tail)
+	c.vertices.Set(edge.Head.Key(), edge.Head)
+	c.edges.Set(edge.Tail.Key(), edge.Head.Key(), edge.Weight)
 }
 
 func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	result := model.NewGraph()
-	result.VertexMap[tail.Digest()] = tail
-	heads, found := c.edges.GetAdjacent(tail.Digest())
+	result.VertexMap[tail.Key()] = tail
+	heads, found := c.edges.GetAdjacent(tail.Key())
 	if !found {
 		ch <- result
 		return
@@ -54,12 +81,12 @@ func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex,
 		if query.MinWeight <= weight && weight <= query.MaxWeight {
 			head, found := c.vertices.Get(headDigest)
 			if found {
-				_, ok := result.Adjacency[tail.Digest()]
+				_, ok := result.Adjacency[tail.Key()]
 				if !ok {
-					result.Adjacency[tail.Digest()] = make(map[string]float32)
+					result.Adjacency[tail.Key()] = make(map[string]float32)
 				}
-				result.VertexMap[head.Digest()] = head
-				result.Adjacency[tail.Digest()][head.Digest()] = weight
+				result.VertexMap[head.Key()] = head
+				result.Adjacency[tail.Key()][head.Key()] = weight
 			}
 		}
 	}
@@ -88,7 +115,7 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 		if ok {
 			continue
 		}
-		nextSeen[vertex.Digest()] = vertex
+		nextSeen[vertex.Key()] = vertex
 		wg.Add(1)
 		go c.calculateAdjacent(query, vertex, ch, &wg)
 	}

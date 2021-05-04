@@ -24,35 +24,35 @@ func NewVertexCache(ttl time.Duration) VertexCache {
 	}
 }
 
-func (c *VertexCache) Set(digest string, vertex model.Vertex) {
+func (c *VertexCache) Set(key string, vertex model.Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache[digest] = &itemVertex{
+	c.cache[key] = &itemVertex{
 		value:      vertex,
 		expiration: time.Now().Add(c.ttl).Unix(),
 	}
 }
 
-func (c *VertexCache) Delete(digest string) {
+func (c *VertexCache) Delete(key string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	_, ok := c.cache[digest]
+	_, ok := c.cache[key]
 	if ok {
-		delete(c.cache, digest)
+		delete(c.cache, key)
 	}
 }
 
-func (c *VertexCache) Get(digest string) (model.Vertex, bool) {
+func (c *VertexCache) Get(key string) (model.Vertex, bool) {
 	c.mu.RLock()
 
-	item, ok := c.cache[digest]
+	item, ok := c.cache[key]
 	c.mu.RUnlock()
 
 	if !ok {
 		return nil, false
 	}
 	if time.Now().Unix() > item.expiration {
-		defer c.Delete(digest)
+		defer c.Delete(key)
 		return nil, false
 	}
 	return item.value, true

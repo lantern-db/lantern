@@ -11,7 +11,8 @@ func TestVertexCache_Delete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Digest().Return("mock").AnyTimes()
+	m.EXPECT().Key().Return("mock").AnyTimes()
+	m.EXPECT().Value().Return("mock").AnyTimes()
 
 	c := NewVertexCache(10 * time.Second)
 	t.Run("valid_case", func(t *testing.T) {
@@ -28,7 +29,7 @@ func TestVertexCache_Get(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Digest().Return("mock").AnyTimes()
+	m.EXPECT().Key().Return("mock").AnyTimes()
 
 	v := NewVertexCache(3 * time.Second)
 	t.Run("valid_case", func(t *testing.T) {
@@ -52,7 +53,7 @@ func TestVertexCache_Set(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Digest().Return("mock").AnyTimes()
+	m.EXPECT().Key().Return("mock").AnyTimes()
 
 	v := NewVertexCache(3 * time.Second)
 	t.Run("valid_case", func(t *testing.T) {

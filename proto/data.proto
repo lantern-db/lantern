@@ -1,10 +1,29 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/piroyoung/lanterne/grpc";
 
+message Value {
+
+}
 
 message Vertex {
     string key = 1;
+    oneof value {
+        double float64 = 2;
+        float float32 = 3;
+        int32 int32 = 4;
+        int64 int64 = 5;
+        uint32 uint32 = 6;
+        uint64 uint64 = 7;
+        bool bool = 8;
+        string string = 9;
+        bytes bytes = 10;
+        google.protobuf.Timestamp timestamp = 11;
+
+        bool nil = 30;
+    }
 }
 
 message Edge {
@@ -13,9 +32,13 @@ message Edge {
     float weight = 3;
 }
 
+message Neighbor {
+    map<string, float> weight_map = 1;
+}
+
 message Graph {
-    repeated Vertex vertices = 1;
-    repeated Edge edges = 2;
+    map<string, Vertex> vertex_map = 1;
+    map<string, Neighbor> neighbor_map = 2;
 }
 
 enum Status {
@@ -26,7 +49,7 @@ enum Status {
 
 message IlluminateRequest {
     Vertex seed = 1;
-    uint32 degree = 2;
+    uint32 step = 2;
     float min_weight = 3;
     float max_weight = 4;
 }

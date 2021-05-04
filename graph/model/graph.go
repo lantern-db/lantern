@@ -1,7 +1,8 @@
 package model
 
 type Vertex interface {
-	Digest() string
+	Key() string
+	Value() interface{}
 }
 
 type Edge struct {
