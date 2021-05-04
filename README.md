@@ -1,13 +1,16 @@
 # lanterne
+
 [
 ![DSC00732](https://user-images.githubusercontent.com/6128022/116864177-6824e700-ac42-11eb-8475-c2d06d1761c6.jpg)
 ](url)
 
-Lanterns illuminate just your neighbors. Lanterns light only this moment up. 
+Lanterns illuminate just your neighbors. Lanterns light only this moment up.
 
-Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed time is an important feature to understand these structures.
+Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed
+time is an important feature to understand these structures.
 
-`Lanterne` is an in-memory, graph-based, streaming database. Each element like `Edge` or `Vertex` has `time to live`, and disappears as time passes just like real relationships.
+`Lanterne` is an in-memory, graph-based, streaming database. Each element like `Edge` or `Vertex` has `time to live`,
+and disappears as time passes just like real relationships.
 
 # lanterne-server
 
@@ -19,6 +22,7 @@ $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoun
 * `LANTERN_TTL`: time-to-live for each elements (seconds).
 
 # lanterne-client (Golang)
+
 Example usage of `lanterne-client` for Golang.
 
 ```golang

@@ -5,9 +5,9 @@ import (
 	"errors"
 	pb "github.com/piroyoung/lanterne/grpc"
 	"google.golang.org/grpc"
-	"log"
 	"math"
 	"strconv"
+	"time"
 )
 
 type LanterneClient struct {
@@ -15,14 +15,32 @@ type LanterneClient struct {
 	client pb.LanterneClient
 }
 
-func New(hostname string, port int) LanterneClient {
-	conn, err := grpc.Dial(hostname+":"+strconv.Itoa(port), grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	return LanterneClient{
-		conn:   conn,
-		client: pb.NewLanterneClient(conn),
+func NewLanterneClient(hostname string, port int) (*LanterneClient, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	chConn := make(chan *grpc.ClientConn)
+	chErr := make(chan error)
+
+	go func() {
+		conn, err := grpc.DialContext(ctx, hostname+":"+strconv.Itoa(port), grpc.WithInsecure())
+		if err != nil {
+			chErr <- err
+		}
+		chConn <- conn
+	}()
+	select {
+	case <-ctx.Done():
+		return nil, errors.New("grpc connection timeout")
+
+	case err := <-chErr:
+		return nil, err
+
+	case conn := <-chConn:
+		return &LanterneClient{
+			conn:   conn,
+			client: pb.NewLanterneClient(conn),
+		}, nil
 	}
 }
 
