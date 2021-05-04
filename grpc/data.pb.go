@@ -10,6 +10,7 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -74,18 +75,68 @@ func (Status) EnumDescriptor() ([]byte, []int) {
 	return file_data_proto_rawDescGZIP(), []int{0}
 }
 
+type Value struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Value) Reset() {
+	*x = Value{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_data_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Value) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Value) ProtoMessage() {}
+
+func (x *Value) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Value.ProtoReflect.Descriptor instead.
+func (*Value) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{0}
+}
+
 type Vertex struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// Types that are assignable to Value:
+	//	*Vertex_Float64
+	//	*Vertex_Float32
+	//	*Vertex_Int32
+	//	*Vertex_Int64
+	//	*Vertex_Uint32
+	//	*Vertex_Uint64
+	//	*Vertex_Bool
+	//	*Vertex_String_
+	//	*Vertex_Bytes
+	//	*Vertex_Timestamp
+	Value isVertex_Value `protobuf_oneof:"value"`
 }
 
 func (x *Vertex) Reset() {
 	*x = Vertex{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[0]
+		mi := &file_data_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -98,7 +149,7 @@ func (x *Vertex) String() string {
 func (*Vertex) ProtoMessage() {}
 
 func (x *Vertex) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[0]
+	mi := &file_data_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +162,7 @@ func (x *Vertex) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Vertex.ProtoReflect.Descriptor instead.
 func (*Vertex) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{0}
+	return file_data_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Vertex) GetKey() string {
@@ -120,6 +171,147 @@ func (x *Vertex) GetKey() string {
 	}
 	return ""
 }
+
+func (m *Vertex) GetValue() isVertex_Value {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+func (x *Vertex) GetFloat64() float64 {
+	if x, ok := x.GetValue().(*Vertex_Float64); ok {
+		return x.Float64
+	}
+	return 0
+}
+
+func (x *Vertex) GetFloat32() float32 {
+	if x, ok := x.GetValue().(*Vertex_Float32); ok {
+		return x.Float32
+	}
+	return 0
+}
+
+func (x *Vertex) GetInt32() int32 {
+	if x, ok := x.GetValue().(*Vertex_Int32); ok {
+		return x.Int32
+	}
+	return 0
+}
+
+func (x *Vertex) GetInt64() int64 {
+	if x, ok := x.GetValue().(*Vertex_Int64); ok {
+		return x.Int64
+	}
+	return 0
+}
+
+func (x *Vertex) GetUint32() uint32 {
+	if x, ok := x.GetValue().(*Vertex_Uint32); ok {
+		return x.Uint32
+	}
+	return 0
+}
+
+func (x *Vertex) GetUint64() uint64 {
+	if x, ok := x.GetValue().(*Vertex_Uint64); ok {
+		return x.Uint64
+	}
+	return 0
+}
+
+func (x *Vertex) GetBool() bool {
+	if x, ok := x.GetValue().(*Vertex_Bool); ok {
+		return x.Bool
+	}
+	return false
+}
+
+func (x *Vertex) GetString_() string {
+	if x, ok := x.GetValue().(*Vertex_String_); ok {
+		return x.String_
+	}
+	return ""
+}
+
+func (x *Vertex) GetBytes() []byte {
+	if x, ok := x.GetValue().(*Vertex_Bytes); ok {
+		return x.Bytes
+	}
+	return nil
+}
+
+func (x *Vertex) GetTimestamp() *timestamppb.Timestamp {
+	if x, ok := x.GetValue().(*Vertex_Timestamp); ok {
+		return x.Timestamp
+	}
+	return nil
+}
+
+type isVertex_Value interface {
+	isVertex_Value()
+}
+
+type Vertex_Float64 struct {
+	Float64 float64 `protobuf:"fixed64,2,opt,name=float64,proto3,oneof"`
+}
+
+type Vertex_Float32 struct {
+	Float32 float32 `protobuf:"fixed32,3,opt,name=float32,proto3,oneof"`
+}
+
+type Vertex_Int32 struct {
+	Int32 int32 `protobuf:"varint,4,opt,name=int32,proto3,oneof"`
+}
+
+type Vertex_Int64 struct {
+	Int64 int64 `protobuf:"varint,5,opt,name=int64,proto3,oneof"`
+}
+
+type Vertex_Uint32 struct {
+	Uint32 uint32 `protobuf:"varint,6,opt,name=uint32,proto3,oneof"`
+}
+
+type Vertex_Uint64 struct {
+	Uint64 uint64 `protobuf:"varint,7,opt,name=uint64,proto3,oneof"`
+}
+
+type Vertex_Bool struct {
+	Bool bool `protobuf:"varint,8,opt,name=bool,proto3,oneof"`
+}
+
+type Vertex_String_ struct {
+	String_ string `protobuf:"bytes,9,opt,name=string,proto3,oneof"`
+}
+
+type Vertex_Bytes struct {
+	Bytes []byte `protobuf:"bytes,10,opt,name=bytes,proto3,oneof"`
+}
+
+type Vertex_Timestamp struct {
+	Timestamp *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=timestamp,proto3,oneof"`
+}
+
+func (*Vertex_Float64) isVertex_Value() {}
+
+func (*Vertex_Float32) isVertex_Value() {}
+
+func (*Vertex_Int32) isVertex_Value() {}
+
+func (*Vertex_Int64) isVertex_Value() {}
+
+func (*Vertex_Uint32) isVertex_Value() {}
+
+func (*Vertex_Uint64) isVertex_Value() {}
+
+func (*Vertex_Bool) isVertex_Value() {}
+
+func (*Vertex_String_) isVertex_Value() {}
+
+func (*Vertex_Bytes) isVertex_Value() {}
+
+func (*Vertex_Timestamp) isVertex_Value() {}
 
 type Edge struct {
 	state         protoimpl.MessageState
@@ -134,7 +326,7 @@ type Edge struct {
 func (x *Edge) Reset() {
 	*x = Edge{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[1]
+		mi := &file_data_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -147,7 +339,7 @@ func (x *Edge) String() string {
 func (*Edge) ProtoMessage() {}
 
 func (x *Edge) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[1]
+	mi := &file_data_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -160,7 +352,7 @@ func (x *Edge) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Edge.ProtoReflect.Descriptor instead.
 func (*Edge) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{1}
+	return file_data_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Edge) GetTail() *Vertex {
@@ -196,7 +388,7 @@ type Graph struct {
 func (x *Graph) Reset() {
 	*x = Graph{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[2]
+		mi := &file_data_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -209,7 +401,7 @@ func (x *Graph) String() string {
 func (*Graph) ProtoMessage() {}
 
 func (x *Graph) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[2]
+	mi := &file_data_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -222,7 +414,7 @@ func (x *Graph) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Graph.ProtoReflect.Descriptor instead.
 func (*Graph) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{2}
+	return file_data_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Graph) GetVertices() []*Vertex {
@@ -245,7 +437,7 @@ type IlluminateRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	Seed      *Vertex `protobuf:"bytes,1,opt,name=seed,proto3" json:"seed,omitempty"`
-	Degree    uint32  `protobuf:"varint,2,opt,name=degree,proto3" json:"degree,omitempty"`
+	Step      uint32  `protobuf:"varint,2,opt,name=step,proto3" json:"step,omitempty"`
 	MinWeight float32 `protobuf:"fixed32,3,opt,name=min_weight,json=minWeight,proto3" json:"min_weight,omitempty"`
 	MaxWeight float32 `protobuf:"fixed32,4,opt,name=max_weight,json=maxWeight,proto3" json:"max_weight,omitempty"`
 }
@@ -253,7 +445,7 @@ type IlluminateRequest struct {
 func (x *IlluminateRequest) Reset() {
 	*x = IlluminateRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[3]
+		mi := &file_data_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -266,7 +458,7 @@ func (x *IlluminateRequest) String() string {
 func (*IlluminateRequest) ProtoMessage() {}
 
 func (x *IlluminateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[3]
+	mi := &file_data_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -279,7 +471,7 @@ func (x *IlluminateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IlluminateRequest.ProtoReflect.Descriptor instead.
 func (*IlluminateRequest) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{3}
+	return file_data_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *IlluminateRequest) GetSeed() *Vertex {
@@ -289,9 +481,9 @@ func (x *IlluminateRequest) GetSeed() *Vertex {
 	return nil
 }
 
-func (x *IlluminateRequest) GetDegree() uint32 {
+func (x *IlluminateRequest) GetStep() uint32 {
 	if x != nil {
-		return x.Degree
+		return x.Step
 	}
 	return 0
 }
@@ -322,7 +514,7 @@ type IlluminateResponse struct {
 func (x *IlluminateResponse) Reset() {
 	*x = IlluminateResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[4]
+		mi := &file_data_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -335,7 +527,7 @@ func (x *IlluminateResponse) String() string {
 func (*IlluminateResponse) ProtoMessage() {}
 
 func (x *IlluminateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[4]
+	mi := &file_data_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -348,7 +540,7 @@ func (x *IlluminateResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IlluminateResponse.ProtoReflect.Descriptor instead.
 func (*IlluminateResponse) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{4}
+	return file_data_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *IlluminateResponse) GetGraph() *Graph {
@@ -376,7 +568,7 @@ type DumpResponse struct {
 func (x *DumpResponse) Reset() {
 	*x = DumpResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_data_proto_msgTypes[5]
+		mi := &file_data_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -389,7 +581,7 @@ func (x *DumpResponse) String() string {
 func (*DumpResponse) ProtoMessage() {}
 
 func (x *DumpResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[5]
+	mi := &file_data_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -402,7 +594,7 @@ func (x *DumpResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DumpResponse.ProtoReflect.Descriptor instead.
 func (*DumpResponse) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{5}
+	return file_data_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DumpResponse) GetStatus() Status {
@@ -415,24 +607,45 @@ func (x *DumpResponse) GetStatus() Status {
 var File_data_proto protoreflect.FileDescriptor
 
 var file_data_proto_rawDesc = []byte{
-	0x0a, 0x0a, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x1a, 0x0a, 0x06,
-	0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x22, 0x58, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65,
-	0x12, 0x1b, 0x0a, 0x04, 0x74, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x07,
-	0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x04, 0x74, 0x61, 0x69, 0x6c, 0x12, 0x1b, 0x0a,
-	0x04, 0x68, 0x65, 0x61, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x07, 0x2e, 0x56, 0x65,
-	0x72, 0x74, 0x65, 0x78, 0x52, 0x04, 0x68, 0x65, 0x61, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x77, 0x65,
-	0x69, 0x67, 0x68, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x06, 0x77, 0x65, 0x69, 0x67,
-	0x68, 0x74, 0x22, 0x49, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12, 0x23, 0x0a, 0x08, 0x76,
-	0x65, 0x72, 0x74, 0x69, 0x63, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x07, 0x2e,
-	0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x08, 0x76, 0x65, 0x72, 0x74, 0x69, 0x63, 0x65, 0x73,
-	0x12, 0x1b, 0x0a, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x05, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x22, 0x86, 0x01,
-	0x0a, 0x11, 0x49, 0x6c, 0x6c, 0x75, 0x6d, 0x69, 0x6e, 0x61, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x04, 0x73, 0x65, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x07, 0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x04, 0x73, 0x65, 0x65, 0x64,
-	0x12, 0x16, 0x0a, 0x06, 0x64, 0x65, 0x67, 0x72, 0x65, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d,
-	0x52, 0x06, 0x64, 0x65, 0x67, 0x72, 0x65, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x6d, 0x69, 0x6e, 0x5f,
+	0x0a, 0x0a, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69,
+	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x07, 0x0a,
+	0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x22, 0xc3, 0x02, 0x0a, 0x06, 0x56, 0x65, 0x72, 0x74, 0x65,
+	0x78, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03,
+	0x6b, 0x65, 0x79, 0x12, 0x1a, 0x0a, 0x07, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0x36, 0x34, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x01, 0x48, 0x00, 0x52, 0x07, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0x36, 0x34, 0x12,
+	0x1a, 0x0a, 0x07, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0x33, 0x32, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02,
+	0x48, 0x00, 0x52, 0x07, 0x66, 0x6c, 0x6f, 0x61, 0x74, 0x33, 0x32, 0x12, 0x16, 0x0a, 0x05, 0x69,
+	0x6e, 0x74, 0x33, 0x32, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x48, 0x00, 0x52, 0x05, 0x69, 0x6e,
+	0x74, 0x33, 0x32, 0x12, 0x16, 0x0a, 0x05, 0x69, 0x6e, 0x74, 0x36, 0x34, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x03, 0x48, 0x00, 0x52, 0x05, 0x69, 0x6e, 0x74, 0x36, 0x34, 0x12, 0x18, 0x0a, 0x06, 0x75,
+	0x69, 0x6e, 0x74, 0x33, 0x32, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x00, 0x52, 0x06, 0x75,
+	0x69, 0x6e, 0x74, 0x33, 0x32, 0x12, 0x18, 0x0a, 0x06, 0x75, 0x69, 0x6e, 0x74, 0x36, 0x34, 0x18,
+	0x07, 0x20, 0x01, 0x28, 0x04, 0x48, 0x00, 0x52, 0x06, 0x75, 0x69, 0x6e, 0x74, 0x36, 0x34, 0x12,
+	0x14, 0x0a, 0x04, 0x62, 0x6f, 0x6f, 0x6c, 0x18, 0x08, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52,
+	0x04, 0x62, 0x6f, 0x6f, 0x6c, 0x12, 0x18, 0x0a, 0x06, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x18,
+	0x09, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x06, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x12,
+	0x16, 0x0a, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0c, 0x48, 0x00,
+	0x52, 0x05, 0x62, 0x79, 0x74, 0x65, 0x73, 0x12, 0x3a, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73,
+	0x74, 0x61, 0x6d, 0x70, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d,
+	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x48, 0x00, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74,
+	0x61, 0x6d, 0x70, 0x42, 0x07, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x58, 0x0a, 0x04,
+	0x45, 0x64, 0x67, 0x65, 0x12, 0x1b, 0x0a, 0x04, 0x74, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x07, 0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x04, 0x74, 0x61, 0x69,
+	0x6c, 0x12, 0x1b, 0x0a, 0x04, 0x68, 0x65, 0x61, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x07, 0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x04, 0x68, 0x65, 0x61, 0x64, 0x12, 0x16,
+	0x0a, 0x06, 0x77, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x06,
+	0x77, 0x65, 0x69, 0x67, 0x68, 0x74, 0x22, 0x49, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12,
+	0x23, 0x0a, 0x08, 0x76, 0x65, 0x72, 0x74, 0x69, 0x63, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x07, 0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x08, 0x76, 0x65, 0x72, 0x74,
+	0x69, 0x63, 0x65, 0x73, 0x12, 0x1b, 0x0a, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x05, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65,
+	0x73, 0x22, 0x82, 0x01, 0x0a, 0x11, 0x49, 0x6c, 0x6c, 0x75, 0x6d, 0x69, 0x6e, 0x61, 0x74, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x04, 0x73, 0x65, 0x65, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x07, 0x2e, 0x56, 0x65, 0x72, 0x74, 0x65, 0x78, 0x52, 0x04,
+	0x73, 0x65, 0x65, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x73, 0x74, 0x65, 0x70, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0d, 0x52, 0x04, 0x73, 0x74, 0x65, 0x70, 0x12, 0x1d, 0x0a, 0x0a, 0x6d, 0x69, 0x6e, 0x5f,
 	0x77, 0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x09, 0x6d, 0x69,
 	0x6e, 0x57, 0x65, 0x69, 0x67, 0x68, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x6d, 0x61, 0x78, 0x5f, 0x77,
 	0x65, 0x69, 0x67, 0x68, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x02, 0x52, 0x09, 0x6d, 0x61, 0x78,
@@ -476,36 +689,39 @@ func file_data_proto_rawDescGZIP() []byte {
 }
 
 var file_data_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_data_proto_goTypes = []interface{}{
-	(Status)(0),                // 0: Status
-	(*Vertex)(nil),             // 1: Vertex
-	(*Edge)(nil),               // 2: Edge
-	(*Graph)(nil),              // 3: Graph
-	(*IlluminateRequest)(nil),  // 4: IlluminateRequest
-	(*IlluminateResponse)(nil), // 5: IlluminateResponse
-	(*DumpResponse)(nil),       // 6: DumpResponse
+	(Status)(0),                   // 0: Status
+	(*Value)(nil),                 // 1: Value
+	(*Vertex)(nil),                // 2: Vertex
+	(*Edge)(nil),                  // 3: Edge
+	(*Graph)(nil),                 // 4: Graph
+	(*IlluminateRequest)(nil),     // 5: IlluminateRequest
+	(*IlluminateResponse)(nil),    // 6: IlluminateResponse
+	(*DumpResponse)(nil),          // 7: DumpResponse
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
 }
 var file_data_proto_depIdxs = []int32{
-	1,  // 0: Edge.tail:type_name -> Vertex
-	1,  // 1: Edge.head:type_name -> Vertex
-	1,  // 2: Graph.vertices:type_name -> Vertex
-	2,  // 3: Graph.edges:type_name -> Edge
-	1,  // 4: IlluminateRequest.seed:type_name -> Vertex
-	3,  // 5: IlluminateResponse.graph:type_name -> Graph
-	0,  // 6: IlluminateResponse.status:type_name -> Status
-	0,  // 7: DumpResponse.status:type_name -> Status
-	4,  // 8: Lanterne.Illuminate:input_type -> IlluminateRequest
-	1,  // 9: Lanterne.DumpVertex:input_type -> Vertex
-	2,  // 10: Lanterne.DumpEdge:input_type -> Edge
-	5,  // 11: Lanterne.Illuminate:output_type -> IlluminateResponse
-	6,  // 12: Lanterne.DumpVertex:output_type -> DumpResponse
-	6,  // 13: Lanterne.DumpEdge:output_type -> DumpResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	8,  // 0: Vertex.timestamp:type_name -> google.protobuf.Timestamp
+	2,  // 1: Edge.tail:type_name -> Vertex
+	2,  // 2: Edge.head:type_name -> Vertex
+	2,  // 3: Graph.vertices:type_name -> Vertex
+	3,  // 4: Graph.edges:type_name -> Edge
+	2,  // 5: IlluminateRequest.seed:type_name -> Vertex
+	4,  // 6: IlluminateResponse.graph:type_name -> Graph
+	0,  // 7: IlluminateResponse.status:type_name -> Status
+	0,  // 8: DumpResponse.status:type_name -> Status
+	5,  // 9: Lanterne.Illuminate:input_type -> IlluminateRequest
+	2,  // 10: Lanterne.DumpVertex:input_type -> Vertex
+	3,  // 11: Lanterne.DumpEdge:input_type -> Edge
+	6,  // 12: Lanterne.Illuminate:output_type -> IlluminateResponse
+	7,  // 13: Lanterne.DumpVertex:output_type -> DumpResponse
+	7,  // 14: Lanterne.DumpEdge:output_type -> DumpResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_data_proto_init() }
@@ -515,7 +731,7 @@ func file_data_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_data_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Vertex); i {
+			switch v := v.(*Value); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -527,7 +743,7 @@ func file_data_proto_init() {
 			}
 		}
 		file_data_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Edge); i {
+			switch v := v.(*Vertex); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -539,7 +755,7 @@ func file_data_proto_init() {
 			}
 		}
 		file_data_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Graph); i {
+			switch v := v.(*Edge); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -551,7 +767,7 @@ func file_data_proto_init() {
 			}
 		}
 		file_data_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IlluminateRequest); i {
+			switch v := v.(*Graph); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -563,7 +779,7 @@ func file_data_proto_init() {
 			}
 		}
 		file_data_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*IlluminateResponse); i {
+			switch v := v.(*IlluminateRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -575,6 +791,18 @@ func file_data_proto_init() {
 			}
 		}
 		file_data_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IlluminateResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_data_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DumpResponse); i {
 			case 0:
 				return &v.state
@@ -587,13 +815,25 @@ func file_data_proto_init() {
 			}
 		}
 	}
+	file_data_proto_msgTypes[1].OneofWrappers = []interface{}{
+		(*Vertex_Float64)(nil),
+		(*Vertex_Float32)(nil),
+		(*Vertex_Int32)(nil),
+		(*Vertex_Int64)(nil),
+		(*Vertex_Uint32)(nil),
+		(*Vertex_Uint64)(nil),
+		(*Vertex_Bool)(nil),
+		(*Vertex_String_)(nil),
+		(*Vertex_Bytes)(nil),
+		(*Vertex_Timestamp)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_data_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
