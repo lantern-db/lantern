@@ -4,7 +4,8 @@
 ![DSC00732](https://user-images.githubusercontent.com/6128022/116864177-6824e700-ac42-11eb-8475-c2d06d1761c6.jpg)
 ](url)
 
-# LanterneDB: 
+# LanterneDB: key-vertex-store
+
 In recent years, many applications, recommender, fraud detection, are based on a graph structure. And these applications have got more real-time, and dynamic. There are so many graph-based databases, but almost all of graph DB seems too heavy, or too huge.
 
 We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization techniques.
