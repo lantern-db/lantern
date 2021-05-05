@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/piroyoung/lanterne/client"
 	"log"
 )
@@ -27,16 +27,28 @@ func main() {
 	_ = c.DumpVertex(ctx, "b", 42)
 	_ = c.DumpVertex(ctx, "c", 3.14)
 
+	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
+		log.Println(resA.String())
+	}
+	if resB, err := c.LoadVertex(ctx, "b"); err == nil {
+		log.Println(resB.Int())
+	}
+	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
+		log.Println(resC.Float64())
+	}
+	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
+		log.Println(resD.Nil())
+	}
+
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0)
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	graph, err := c.Illuminate(ctx, "a", 2)
+	result, err := c.Illuminate(ctx, "a", 2)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	m := jsonpb.Marshaler{}
-	jsonString, _ := m.MarshalToString(graph)
-	log.Println(jsonString)
+	jsonBytes, _ := json.Marshal(result)
+	log.Println(string(jsonBytes))
 }

@@ -9,8 +9,9 @@ Lanterns illuminate just your neighbors. Lanterns light only this moment up.
 Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed
 time is an important feature to understand these structures.
 
-`Lanterne` is an in-memory, graph-based, streaming database. Each element like `Edge` or `Vertex` has `time to live`,
-and disappears as time passes just like real relationships.
+`Lanterne` is an in-memory, graph-based, streaming KVS. Each element like `Edge` or `Vertex` has `time to live`,
+and disappears as time passes just like real relationships. 
+We can load Vertex with KVS-like interfaces, and also explore with `steps` based on graph structure (We call this `Illuminate`).
 
 # lanterne-server
 
@@ -18,8 +19,8 @@ and disappears as time passes just like real relationships.
 $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoung/lanterne
 ```
 
-* `LANTERN_PORT`: Port number for lanterne-server
-* `LANTERN_TTL`: time-to-live for each elements (seconds).
+* `LANTERNE_PORT`: Port number for lanterne-server
+* `LANTERNE_TTL`: time-to-live for each elements (seconds).
 
 # lanterne-client (Golang)
 
@@ -32,8 +33,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/piroyoung/lanterne/client"
 	"log"
 )
@@ -57,20 +58,31 @@ func main() {
 	_ = c.DumpVertex(ctx, "b", 42)
 	_ = c.DumpVertex(ctx, "c", 3.14)
 
+	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
+		log.Println(resA.String())
+	}
+	if resB, err := c.LoadVertex(ctx, "b"); err == nil {
+		log.Println(resB.Int())
+	}
+	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
+		log.Println(resC.Float64())
+	}
+	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
+		log.Println(resD.Nil())
+	}
+
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0)
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	graph, err := c.Illuminate(ctx, "a", 2)
+	result, err := c.Illuminate(ctx, "a", 2)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	m := jsonpb.Marshaler{}
-	jsonString, _ := m.MarshalToString(graph)
-	log.Println(jsonString)
+	jsonBytes, _ := json.Marshal(result)
+	log.Println(string(jsonBytes))
 }
-
 ```
 
 Then we got
@@ -79,28 +91,36 @@ Then we got
 {
   "vertexMap": {
     "a": {
-      "key": "a",
-      "string": "test"
+      "message": {
+        "key": "a",
+        "Value": {
+          "String_": "test"
+        }
+      }
     },
     "b": {
-      "key": "b",
-      "int32": 42
+      "message": {
+        "key": "b",
+        "Value": {
+          "Int32": 42
+        }
+      }
     },
     "c": {
-      "key": "c",
-      "float64": 3.14
+      "message": {
+        "key": "c",
+        "Value": {
+          "Float64": 3.14
+        }
+      }
     }
   },
   "neighborMap": {
     "a": {
-      "weightMap": {
-        "b": 1
-      }
+      "b": 1
     },
     "b": {
-      "weightMap": {
-        "c": 1
-      }
+      "c": 1
     }
   }
 }

@@ -2,24 +2,12 @@ package adapter
 
 import (
 	"github.com/piroyoung/lanterne/graph/model"
-	pb "github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/pb"
 )
-
-type ProtoVertex struct {
-	Message *pb.Vertex
-}
-
-func (k *ProtoVertex) Key() string {
-	return k.Message.Key
-}
-
-func (k *ProtoVertex) Value() interface{} {
-	return k.Message
-}
 
 func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 	return model.LoadQuery{
-		Seed:      &ProtoVertex{Message: request.Seed},
+		Seed:      &model.ProtoVertex{Message: request.Seed},
 		Step:      request.Step,
 		MinWeight: request.MinWeight,
 		MaxWeight: request.MaxWeight,
@@ -27,7 +15,7 @@ func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 }
 
 func LanterneVertex(vertex *pb.Vertex) model.Vertex {
-	return &ProtoVertex{
+	return &model.ProtoVertex{
 		Message: vertex,
 	}
 }
