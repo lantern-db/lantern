@@ -1,4 +1,4 @@
-# lanterne
+# lantern
 
 [
 ![DSC00732](https://user-images.githubusercontent.com/6128022/116864177-6824e700-ac42-11eb-8475-c2d06d1761c6.jpg)
