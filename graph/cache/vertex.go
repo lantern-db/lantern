@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/piroyoung/lanterne/graph/model"
+	"github.com/lanternedb/lanterne/graph/model"
 	"sync"
 	"time"
 )

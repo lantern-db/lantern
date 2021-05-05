@@ -1,4 +1,4 @@
-module github.com/piroyoung/lanterne
+module github.com/lanternedb/lanterne
 
 go 1.16
 

@@ -35,7 +35,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/piroyoung/lanterne/client"
+	"github.com/lanternedb/lanterne/client"
 	"log"
 )
 

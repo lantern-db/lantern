@@ -1,8 +1,8 @@
 package adapter
 
 import (
-	"github.com/piroyoung/lanterne/graph/model"
-	pb "github.com/piroyoung/lanterne/pb"
+	"github.com/lanternedb/lanterne/graph/model"
+	pb "github.com/lanternedb/lanterne/pb"
 )
 
 func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {

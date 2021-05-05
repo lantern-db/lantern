@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"github.com/piroyoung/lanterne/client"
+	"github.com/lanternedb/lanterne/client"
 	"log"
 	"math/rand"
 	"strconv"

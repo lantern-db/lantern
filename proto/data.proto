@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/piroyoung/lanterne/pb";
+option go_package = "github.com/lanternedb/lanterne/pb";
 
 
 message Vertex {
