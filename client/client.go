@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"errors"
-	pb "github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"math"

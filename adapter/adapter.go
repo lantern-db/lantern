@@ -2,7 +2,7 @@ package adapter
 
 import (
 	"github.com/piroyoung/lanterne/graph/model"
-	pb "github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/pb"
 )
 
 type ProtoVertex struct {

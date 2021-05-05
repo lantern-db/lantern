@@ -2,11 +2,8 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/piroyoung/lanterne/grpc";
+option go_package = "github.com/piroyoung/lanterne/pb";
 
-message Value {
-
-}
 
 message Vertex {
     string key = 1;

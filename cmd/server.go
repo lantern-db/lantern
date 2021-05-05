@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/piroyoung/lanterne/graph/cache"
-	pb "github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/pb"
 	"github.com/piroyoung/lanterne/service"
 	"google.golang.org/grpc"
 	"log"
