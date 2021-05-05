@@ -27,6 +27,19 @@ func main() {
 	_ = c.DumpVertex(ctx, "b", 42)
 	_ = c.DumpVertex(ctx, "c", 3.14)
 
+	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
+		log.Println(resA.String())
+	}
+	if resB, err := c.LoadVertex(ctx, "b"); err == nil {
+		log.Println(resB.Int())
+	}
+	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
+		log.Println(resC.Float64())
+	}
+	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
+		log.Println(resD.Nil())
+	}
+
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0)
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)

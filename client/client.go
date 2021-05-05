@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"github.com/piroyoung/lanterne/graph/model"
 	pb "github.com/piroyoung/lanterne/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -87,6 +88,14 @@ func (c *LanterneClient) DumpVertex(ctx context.Context, key string, value inter
 		return errors.New("dump vertex error. status: " + pb.Status_OK.String())
 	}
 	return nil
+}
+
+func (c *LanterneClient) LoadVertex(ctx context.Context, key string) (*model.ProtoVertex, error) {
+	result, err := c.Illuminate(ctx, key, 0)
+	if err != nil {
+		return nil, err
+	}
+	return result.VertexMap[key], err
 }
 
 func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {

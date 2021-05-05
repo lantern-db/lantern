@@ -7,7 +7,7 @@ import (
 )
 
 type ProtoVertex struct {
-	Message *pb.Vertex
+	Message *pb.Vertex `json:"message,omitempty"`
 }
 
 func (p *ProtoVertex) Key() string {
