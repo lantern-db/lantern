@@ -11,7 +11,7 @@ time is an important feature to understand these structures.
 
 `Lanterne` is an in-memory, graph-based, streaming KVS. Each element like `Edge` or `Vertex` has `time to live`,
 and disappears as time passes just like real relationships. 
-We can load Vertex with KVS-like interfaces, and also explorer with `steps` based on graph structure (We call this `Illuminate`).
+We can load Vertex with KVS-like interfaces, and also explore with `steps` based on graph structure (We call this `Illuminate`).
 
 # lanterne-server
 
