@@ -13,7 +13,7 @@ type IlluminateResult struct {
 	NeighborMap NeighborMap `json:"neighborMap,omitempty"`
 }
 
-func NewIlluminateResult(graph *pb.Graph) IlluminateResult {
+func NewIlluminateResult(graph *pb.Graph) *IlluminateResult {
 	vertexMap := make(VertexMap)
 	for key, value := range graph.VertexMap {
 		vertexMap[key] = &model.ProtoVertex{Message: value}
@@ -26,7 +26,7 @@ func NewIlluminateResult(graph *pb.Graph) IlluminateResult {
 		}
 	}
 
-	return IlluminateResult{
+	return &IlluminateResult{
 		VertexMap:   vertexMap,
 		NeighborMap: neighborMap,
 	}

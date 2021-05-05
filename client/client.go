@@ -89,7 +89,7 @@ func (c *LanterneClient) DumpVertex(ctx context.Context, key string, value inter
 	return nil
 }
 
-func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*pb.Graph, error) {
+func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {
 	request := &pb.IlluminateRequest{
 		Seed:      &pb.Vertex{Key: seed},
 		Step:      step,
@@ -103,7 +103,7 @@ func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint3
 	if response.Status != pb.Status_OK {
 		return nil, errors.New("illuminate error. status: " + response.Status.String())
 	}
-	return response.Graph, nil
+	return NewIlluminateResult(response.Graph), nil
 }
 
 func newVertex(key string, value interface{}) (*pb.Vertex, error) {
