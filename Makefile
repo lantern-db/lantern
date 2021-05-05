@@ -23,7 +23,7 @@ clean:
 build: ./Dockerfile ./graph/model/mock.go ./pb/data.pb.go ./pb/data_grpc.pb.go
 	docker build -t lanterne .
 	docker tag lanterne piroyoung/lanterne:latest
-	docker tag lanterne piroyoung/lanterne:0.0.0
+	docker tag lanterne piroyoung/lanterne:0.0.3
 	docker push piroyoung/lanterne:latest
-	docker push piroyoung/lanterne:0.0.0
+	docker push piroyoung/lanterne:0.0.3
 .PHONY: build
