@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/golang/protobuf/jsonpb"
+	"encoding/json"
 	"github.com/piroyoung/lanterne/client"
 	"log"
 	"math/rand"
@@ -35,7 +35,10 @@ func main() {
 		i = j
 	}
 
-	graph, _ := c.Illuminate(ctx, "0", 5)
-	m := jsonpb.Marshaler{}
-	log.Println(m.MarshalToString(graph))
+	result, err := c.Illuminate(ctx, "0", 5)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	jsonBytes, _ := json.Marshal(result)
+	log.Println(string(jsonBytes))
 }

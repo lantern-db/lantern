@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/piroyoung/lanterne/adapter"
+	"github.com/piroyoung/lanterne/graph/adapter"
 	"github.com/piroyoung/lanterne/graph/cache"
-	pb "github.com/piroyoung/lanterne/grpc"
+	pb "github.com/piroyoung/lanterne/pb"
 )
 
 type LanterneService struct {

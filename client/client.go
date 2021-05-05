@@ -3,7 +3,8 @@ package client
 import (
 	"context"
 	"errors"
-	pb "github.com/piroyoung/lanterne/grpc"
+	"github.com/piroyoung/lanterne/graph/model"
+	pb "github.com/piroyoung/lanterne/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"math"
@@ -89,7 +90,15 @@ func (c *LanterneClient) DumpVertex(ctx context.Context, key string, value inter
 	return nil
 }
 
-func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*pb.Graph, error) {
+func (c *LanterneClient) LoadVertex(ctx context.Context, key string) (*model.ProtoVertex, error) {
+	result, err := c.Illuminate(ctx, key, 0)
+	if err != nil {
+		return nil, err
+	}
+	return result.VertexMap[key], err
+}
+
+func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {
 	request := &pb.IlluminateRequest{
 		Seed:      &pb.Vertex{Key: seed},
 		Step:      step,
@@ -103,7 +112,7 @@ func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint3
 	if response.Status != pb.Status_OK {
 		return nil, errors.New("illuminate error. status: " + response.Status.String())
 	}
-	return response.Graph, nil
+	return NewIlluminateResult(response.Graph), nil
 }
 
 func newVertex(key string, value interface{}) (*pb.Vertex, error) {
