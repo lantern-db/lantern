@@ -19,8 +19,8 @@ We can load Vertex with KVS-like interfaces, and also explorer with `steps` base
 $ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoung/lanterne
 ```
 
-* `LANTERN_PORT`: Port number for lanterne-server
-* `LANTERN_TTL`: time-to-live for each elements (seconds).
+* `LANTERNE_PORT`: Port number for lanterne-server
+* `LANTERNE_TTL`: time-to-live for each elements (seconds).
 
 # lanterne-client (Golang)
 
