@@ -10,10 +10,10 @@ In recent years, many applications, recommender, fraud detection, are based on a
 We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization techniques.
 
 LanterneDB is In-memory `key-vertex-store` (KVS). 
-It just behaves like `key-value-store` but can explore neighbor vertices based on graph structure.
+It behaves like `key-value-store` but can explore neighbor vertices based on graph structure.
 
 LanterneDB is a streaming database.
-All vertices or edges will be expired with TTL, just like real relationships.
+All vertices or edges will be expired as time passes, just like real relationships.
 
 LanterneDB just illuminates the moment, just focuses on neighbors, not global structures.
 
