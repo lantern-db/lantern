@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/piroyoung/lanterne/graph/cache"
-	pb "github.com/piroyoung/lanterne/pb"
-	"github.com/piroyoung/lanterne/server/service"
+	"github.com/lanternedb/lanterne/graph/cache"
+	pb "github.com/lanternedb/lanterne/pb"
+	"github.com/lanternedb/lanterne/server/service"
 	"google.golang.org/grpc"
 	"log"
 	"net"
