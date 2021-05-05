@@ -4,14 +4,18 @@
 ![DSC00732](https://user-images.githubusercontent.com/6128022/116864177-6824e700-ac42-11eb-8475-c2d06d1761c6.jpg)
 ](url)
 
-Lanterns illuminate just your neighbors. Lanterns light only this moment up.
+# LanterneDB
+In recent years, many applications, recommender, fraud detection, are based on a graph structure. And these applications have got more real-time, and dynamic. There are so many graph-based databases, but almost all of graph DB seems too heavy, or too huge.
 
-Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed
-time is an important feature to understand these structures.
+We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization techniques.
 
-`Lanterne` is an in-memory, graph-based, streaming KVS. Each element like `Edge` or `Vertex` has `time to live`,
-and disappears as time passes just like real relationships. 
-We can load Vertex with KVS-like interfaces, and also explore with `steps` based on graph structure (We call this `Illuminate`).
+LanterneDB is In-memory `key-vertex-store` (KVS). 
+It just behaves like `key-value-store` but can explore neighbor vertices based on graph structure.
+
+LanterneDB is a streaming database.
+All vertices or edges will be expired with TTL, just like real relationships.
+
+LanterneDB just illuminates the moment, just focuses on neighbors, not global structures.
 
 # lanterne-server
 
