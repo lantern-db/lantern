@@ -9,8 +9,9 @@ Lanterns illuminate just your neighbors. Lanterns light only this moment up.
 Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed
 time is an important feature to understand these structures.
 
-`Lanterne` is an in-memory, graph-based, streaming database. Each element like `Edge` or `Vertex` has `time to live`,
-and disappears as time passes just like real relationships.
+`Lanterne` is an in-memory, graph-based, streaming KVS. Each element like `Edge` or `Vertex` has `time to live`,
+and disappears as time passes just like real relationships. 
+We can load Vertex with KVS-like interfaces, and also explorer with `steps` based on graph structure (We call this `Illuminate`).
 
 # lanterne-server
 
