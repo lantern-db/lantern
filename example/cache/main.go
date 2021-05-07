@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/lanternedb/lanterne/graph/cache"
-	"github.com/lanternedb/lanterne/graph/model"
+	"github.com/lantern-db/lantern/graph/cache"
+	"github.com/lantern-db/lantern/graph/model"
 	"time"
 )
 

@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"github.com/lanternedb/lanterne/client"
+	"github.com/lantern-db/lantern/client"
 	"log"
 	"math/rand"
 	"strconv"
 )
 
 func main() {
-	c, err := client.NewLanterneClient("localhost", 6380)
+	c, err := client.NewLanternClient("localhost", 6380)
 	if err != nil {
 		panic(err)
 	}

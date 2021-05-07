@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/lanternedb/lanterne/graph/cache"
-	pb "github.com/lanternedb/lanterne/pb"
-	"github.com/lanternedb/lanterne/server/service"
+	"github.com/lantern-db/lantern/graph/cache"
+	pb "github.com/lantern-db/lantern/pb"
+	"github.com/lantern-db/lantern/server/service"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -19,12 +19,12 @@ func main() {
 		log.Println(pair)
 	}
 
-	flushInterval, err := strconv.Atoi(os.Getenv("LANTERNE_FLUSH_INTERVAL"))
+	flushInterval, err := strconv.Atoi(os.Getenv("LANTERN_FLUSH_INTERVAL"))
 	if err != nil {
 		log.Fatalf("flush interval parse failed: %v", err)
 	}
-	lanternePort := os.Getenv("LANTERNE_PORT")
-	ttl, err := strconv.Atoi(os.Getenv("LANTERNE_TTL"))
+	LanternPort := os.Getenv("LANTERN_PORT")
+	ttl, err := strconv.Atoi(os.Getenv("LANTERN_TTL"))
 	if err != nil {
 		log.Fatalf("ttl parse error: %v", err)
 	}
@@ -50,13 +50,13 @@ func main() {
 		stopCh <- true
 	}()
 
-	lis, err := net.Listen("tcp", ":"+lanternePort)
+	lis, err := net.Listen("tcp", ":"+LanternPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	svc := service.NewLanterneService(&graphCache)
+	svc := service.NewLanternService(&graphCache)
 	s := grpc.NewServer()
-	pb.RegisterLanterneServer(s, svc)
+	pb.RegisterLanternServer(s, svc)
 
 	go func() {
 		<-stopCh

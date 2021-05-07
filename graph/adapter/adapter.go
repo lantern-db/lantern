@@ -1,11 +1,11 @@
 package adapter
 
 import (
-	"github.com/lanternedb/lanterne/graph/model"
-	pb "github.com/lanternedb/lanterne/pb"
+	"github.com/lantern-db/lantern/graph/model"
+	pb "github.com/lantern-db/lantern/pb"
 )
 
-func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
+func LanternQuery(request *pb.IlluminateRequest) model.LoadQuery {
 	return model.LoadQuery{
 		Seed:      &model.ProtoVertex{Message: request.Seed},
 		Step:      request.Step,
@@ -14,16 +14,16 @@ func LanterneQuery(request *pb.IlluminateRequest) model.LoadQuery {
 	}
 }
 
-func LanterneVertex(vertex *pb.Vertex) model.Vertex {
+func LanternVertex(vertex *pb.Vertex) model.Vertex {
 	return &model.ProtoVertex{
 		Message: vertex,
 	}
 }
 
-func LanterneEdge(edge *pb.Edge) model.Edge {
+func LanternEdge(edge *pb.Edge) model.Edge {
 	return model.Edge{
-		Tail:   LanterneVertex(edge.Tail),
-		Head:   LanterneVertex(edge.Head),
+		Tail:   LanternVertex(edge.Tail),
+		Head:   LanternVertex(edge.Head),
 		Weight: edge.Weight,
 	}
 }

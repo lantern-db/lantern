@@ -14,158 +14,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// LanterneClient is the client API for Lanterne service.
+// LanternClient is the client API for Lantern service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type LanterneClient interface {
+type LanternClient interface {
 	Illuminate(ctx context.Context, in *IlluminateRequest, opts ...grpc.CallOption) (*IlluminateResponse, error)
 	DumpVertex(ctx context.Context, in *Vertex, opts ...grpc.CallOption) (*DumpResponse, error)
 	DumpEdge(ctx context.Context, in *Edge, opts ...grpc.CallOption) (*DumpResponse, error)
 }
 
-type lanterneClient struct {
+type lanternClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewLanterneClient(cc grpc.ClientConnInterface) LanterneClient {
-	return &lanterneClient{cc}
+func NewLanternClient(cc grpc.ClientConnInterface) LanternClient {
+	return &lanternClient{cc}
 }
 
-func (c *lanterneClient) Illuminate(ctx context.Context, in *IlluminateRequest, opts ...grpc.CallOption) (*IlluminateResponse, error) {
+func (c *lanternClient) Illuminate(ctx context.Context, in *IlluminateRequest, opts ...grpc.CallOption) (*IlluminateResponse, error) {
 	out := new(IlluminateResponse)
-	err := c.cc.Invoke(ctx, "/Lanterne/Illuminate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Lantern/Illuminate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lanterneClient) DumpVertex(ctx context.Context, in *Vertex, opts ...grpc.CallOption) (*DumpResponse, error) {
+func (c *lanternClient) DumpVertex(ctx context.Context, in *Vertex, opts ...grpc.CallOption) (*DumpResponse, error) {
 	out := new(DumpResponse)
-	err := c.cc.Invoke(ctx, "/Lanterne/DumpVertex", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Lantern/DumpVertex", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lanterneClient) DumpEdge(ctx context.Context, in *Edge, opts ...grpc.CallOption) (*DumpResponse, error) {
+func (c *lanternClient) DumpEdge(ctx context.Context, in *Edge, opts ...grpc.CallOption) (*DumpResponse, error) {
 	out := new(DumpResponse)
-	err := c.cc.Invoke(ctx, "/Lanterne/DumpEdge", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Lantern/DumpEdge", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// LanterneServer is the server API for Lanterne service.
-// All implementations must embed UnimplementedLanterneServer
+// LanternServer is the server API for Lantern service.
+// All implementations must embed UnimplementedLanternServer
 // for forward compatibility
-type LanterneServer interface {
+type LanternServer interface {
 	Illuminate(context.Context, *IlluminateRequest) (*IlluminateResponse, error)
 	DumpVertex(context.Context, *Vertex) (*DumpResponse, error)
 	DumpEdge(context.Context, *Edge) (*DumpResponse, error)
-	mustEmbedUnimplementedLanterneServer()
+	mustEmbedUnimplementedLanternServer()
 }
 
-// UnimplementedLanterneServer must be embedded to have forward compatible implementations.
-type UnimplementedLanterneServer struct {
+// UnimplementedLanternServer must be embedded to have forward compatible implementations.
+type UnimplementedLanternServer struct {
 }
 
-func (UnimplementedLanterneServer) Illuminate(context.Context, *IlluminateRequest) (*IlluminateResponse, error) {
+func (UnimplementedLanternServer) Illuminate(context.Context, *IlluminateRequest) (*IlluminateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Illuminate not implemented")
 }
-func (UnimplementedLanterneServer) DumpVertex(context.Context, *Vertex) (*DumpResponse, error) {
+func (UnimplementedLanternServer) DumpVertex(context.Context, *Vertex) (*DumpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DumpVertex not implemented")
 }
-func (UnimplementedLanterneServer) DumpEdge(context.Context, *Edge) (*DumpResponse, error) {
+func (UnimplementedLanternServer) DumpEdge(context.Context, *Edge) (*DumpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DumpEdge not implemented")
 }
-func (UnimplementedLanterneServer) mustEmbedUnimplementedLanterneServer() {}
+func (UnimplementedLanternServer) mustEmbedUnimplementedLanternServer() {}
 
-// UnsafeLanterneServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to LanterneServer will
+// UnsafeLanternServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LanternServer will
 // result in compilation errors.
-type UnsafeLanterneServer interface {
-	mustEmbedUnimplementedLanterneServer()
+type UnsafeLanternServer interface {
+	mustEmbedUnimplementedLanternServer()
 }
 
-func RegisterLanterneServer(s grpc.ServiceRegistrar, srv LanterneServer) {
-	s.RegisterService(&Lanterne_ServiceDesc, srv)
+func RegisterLanternServer(s grpc.ServiceRegistrar, srv LanternServer) {
+	s.RegisterService(&Lantern_ServiceDesc, srv)
 }
 
-func _Lanterne_Illuminate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lantern_Illuminate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IlluminateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LanterneServer).Illuminate(ctx, in)
+		return srv.(LanternServer).Illuminate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Lanterne/Illuminate",
+		FullMethod: "/Lantern/Illuminate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LanterneServer).Illuminate(ctx, req.(*IlluminateRequest))
+		return srv.(LanternServer).Illuminate(ctx, req.(*IlluminateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lanterne_DumpVertex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lantern_DumpVertex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Vertex)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LanterneServer).DumpVertex(ctx, in)
+		return srv.(LanternServer).DumpVertex(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Lanterne/DumpVertex",
+		FullMethod: "/Lantern/DumpVertex",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LanterneServer).DumpVertex(ctx, req.(*Vertex))
+		return srv.(LanternServer).DumpVertex(ctx, req.(*Vertex))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lanterne_DumpEdge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lantern_DumpEdge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Edge)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LanterneServer).DumpEdge(ctx, in)
+		return srv.(LanternServer).DumpEdge(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Lanterne/DumpEdge",
+		FullMethod: "/Lantern/DumpEdge",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LanterneServer).DumpEdge(ctx, req.(*Edge))
+		return srv.(LanternServer).DumpEdge(ctx, req.(*Edge))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Lanterne_ServiceDesc is the grpc.ServiceDesc for Lanterne service.
+// Lantern_ServiceDesc is the grpc.ServiceDesc for Lantern service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Lanterne_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "Lanterne",
-	HandlerType: (*LanterneServer)(nil),
+var Lantern_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Lantern",
+	HandlerType: (*LanternServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Illuminate",
-			Handler:    _Lanterne_Illuminate_Handler,
+			Handler:    _Lantern_Illuminate_Handler,
 		},
 		{
 			MethodName: "DumpVertex",
-			Handler:    _Lanterne_DumpVertex_Handler,
+			Handler:    _Lantern_DumpVertex_Handler,
 		},
 		{
 			MethodName: "DumpEdge",
-			Handler:    _Lanterne_DumpEdge_Handler,
+			Handler:    _Lantern_DumpEdge_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

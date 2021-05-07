@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"errors"
-	"github.com/lanternedb/lanterne/graph/model"
-	pb "github.com/lanternedb/lanterne/pb"
+	"github.com/lantern-db/lantern/graph/model"
+	pb "github.com/lantern-db/lantern/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"math"
@@ -12,12 +12,12 @@ import (
 	"time"
 )
 
-type LanterneClient struct {
+type LanternClient struct {
 	conn   *grpc.ClientConn
-	client pb.LanterneClient
+	client pb.LanternClient
 }
 
-func NewLanterneClient(hostname string, port int) (*LanterneClient, error) {
+func NewLanternClient(hostname string, port int) (*LanternClient, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -40,18 +40,18 @@ func NewLanterneClient(hostname string, port int) (*LanterneClient, error) {
 		return nil, err
 
 	case conn := <-chConn:
-		return &LanterneClient{
+		return &LanternClient{
 			conn:   conn,
-			client: pb.NewLanterneClient(conn),
+			client: pb.NewLanternClient(conn),
 		}, nil
 	}
 }
 
-func (c *LanterneClient) Close() error {
+func (c *LanternClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *LanterneClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
+func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
 	tailVertex, err := newVertex(tail, nil)
 	if err != nil {
 		return err
@@ -75,7 +75,7 @@ func (c *LanterneClient) DumpEdge(ctx context.Context, tail string, head string,
 	return nil
 }
 
-func (c *LanterneClient) DumpVertex(ctx context.Context, key string, value interface{}) error {
+func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}) error {
 	vertex, err := newVertex(key, value)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (c *LanterneClient) DumpVertex(ctx context.Context, key string, value inter
 	return nil
 }
 
-func (c *LanterneClient) LoadVertex(ctx context.Context, key string) (*model.ProtoVertex, error) {
+func (c *LanternClient) LoadVertex(ctx context.Context, key string) (*model.ProtoVertex, error) {
 	result, err := c.Illuminate(ctx, key, 0)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (c *LanterneClient) LoadVertex(ctx context.Context, key string) (*model.Pro
 	return result.VertexMap[key], err
 }
 
-func (c *LanterneClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {
+func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {
 	request := &pb.IlluminateRequest{
 		Seed:      &pb.Vertex{Key: seed},
 		Step:      step,

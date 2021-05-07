@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"github.com/lanternedb/lanterne/pb"
+	"github.com/lantern-db/lantern/pb"
 	"time"
 )
 

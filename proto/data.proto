@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/lanternedb/lanterne/pb";
+option go_package = "github.com/lantern-db/lantern/pb";
 
 
 message Vertex {
@@ -60,7 +60,7 @@ message DumpResponse {
     Status status = 1;
 }
 
-service Lanterne {
+service Lantern {
     rpc Illuminate (IlluminateRequest) returns (IlluminateResponse) {
     }
     rpc DumpVertex (Vertex) returns (DumpResponse) {
