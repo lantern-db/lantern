@@ -32,7 +32,7 @@ func (l *LanternService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb
 }
 
 func (l *LanternService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
-	le := adapter.Lanterndge(edge)
+	le := adapter.LanternEdge(edge)
 
 	switch edge.Tail.Value.(type) {
 	case *pb.Vertex_Nil:
