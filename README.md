@@ -18,7 +18,7 @@ All vertices or edges will be expired as time passes, just like real relationshi
 
 LanternDB just illuminates the moment, just focuses on neighbors, not global structures.
 
-# Lantern-server
+# lantern-server
 
 ```
 $ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e LANTERN_TTL=300 piroyoung/lantern-server
@@ -27,7 +27,7 @@ $ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e LANTERN_TTL=300 piroyoung/
 * `LANTERN_PORT`: Port number for Lantern-server
 * `LANTERN_TTL`: time-to-live for each elements (seconds).
 
-# Lantern-client (Golang)
+# lantern-client (Golang)
 
 Example usage of `Lantern-client` for Golang.
 
