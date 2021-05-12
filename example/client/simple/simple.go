@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/piroyoung/lanterne/client"
+	"github.com/lantern-db/lantern/client"
 	"log"
 )
 
 func main() {
-	c, err := client.NewLanterneClient("localhost", 6380)
+	c, err := client.NewLanternClient("localhost", 6380)
 	if err != nil {
 		fmt.Printf("hoge %v", err)
 		panic(err)

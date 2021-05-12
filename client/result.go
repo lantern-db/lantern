@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/piroyoung/lanterne/graph/model"
-	"github.com/piroyoung/lanterne/pb"
+	"github.com/lantern-db/lantern/graph/model"
+	"github.com/lantern-db/lantern/pb"
 )
 
 type VertexMap map[string]*model.ProtoVertex

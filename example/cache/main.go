@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/piroyoung/lanterne/graph/cache"
-	"github.com/piroyoung/lanterne/graph/model"
+	"github.com/lantern-db/lantern/graph/cache"
+	"github.com/lantern-db/lantern/graph/model"
 	"time"
 )
 

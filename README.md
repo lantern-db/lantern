@@ -1,30 +1,35 @@
-# lanterne
+# lantern
 
 [
 ![DSC00732](https://user-images.githubusercontent.com/6128022/116864177-6824e700-ac42-11eb-8475-c2d06d1761c6.jpg)
 ](url)
 
-Lanterns illuminate just your neighbors. Lanterns light only this moment up.
+# LanternDB: key-vertex-store
 
-Most of the relations will disappear as time passes. In the case of treating something like social networks, the elapsed
-time is an important feature to understand these structures.
+In recent years, many applications, recommender, fraud detection, are based on a graph structure. And these applications have got more real-time, and dynamic. There are so many graph-based databases, but almost all of graph DB seems too heavy, or too huge.
 
-`Lanterne` is an in-memory, graph-based, streaming KVS. Each element like `Edge` or `Vertex` has `time to live`,
-and disappears as time passes just like real relationships. 
-We can load Vertex with KVS-like interfaces, and also explore with `steps` based on graph structure (We call this `Illuminate`).
+We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization techniques.
 
-# lanterne-server
+LanternDB is In-memory `key-vertex-store` (KVS). 
+It behaves like `key-value-store` but can explore neighbor vertices based on graph structure.
+
+LanternDB is a streaming database.
+All vertices or edges will be expired as time passes, just like real relationships.
+
+LanternDB just illuminates the moment, just focuses on neighbors, not global structures.
+
+# lantern-server
 
 ```
-$ docker run -it -p 6380:6380 -e LANTERNE_PORT=6380 -e LANTERNE_TTL=300 piroyoung/lanterne
+$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e LANTERN_TTL=300 piroyoung/lantern-server
 ```
 
-* `LANTERNE_PORT`: Port number for lanterne-server
-* `LANTERNE_TTL`: time-to-live for each elements (seconds).
+* `LANTERN_PORT`: Port number for Lantern-server
+* `LANTERN_TTL`: time-to-live for each elements (seconds).
 
-# lanterne-client (Golang)
+# lantern-client (Golang)
 
-Example usage of `lanterne-client` for Golang.
+Example usage of `Lantern-client` for Golang.
 
 `example/client/simple/simple.go`
 
@@ -35,12 +40,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/piroyoung/lanterne/client"
+	"github.com/lantern-db/lantern/client"
 	"log"
 )
 
 func main() {
-	c, err := client.NewLanterneClient("localhost", 6380)
+	c, err := client.NewLanternClient("localhost", 6380)
 	if err != nil {
 		fmt.Printf("hoge %v", err)
 		panic(err)
