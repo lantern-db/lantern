@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
-	pb "github.com/lantern-db/lantern/pb"
+	"github.com/lantern-db/lantern/pb"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -81,10 +81,10 @@ func (s *LanternServer) Run(ctx context.Context) error {
 	L:
 		for {
 			select {
-			case sig := <-ctx.Done():
-				log.Printf("exit with %v", sig)
+			case <-ctx.Done():
 				break L
 			case <-t.C:
+				log.Println("ping")
 				s.svc.cache.Flush()
 			}
 		}
