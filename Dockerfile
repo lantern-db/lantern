@@ -1,7 +1,7 @@
 # build stage
 FROM golang:1.16.3-alpine3.13 AS builder
 ADD . /src
-RUN cd /src && go build -o /src/bin/lantern-server -v /src/server/cmd/server.go
+RUN cd /src && go build -o /src/bin/lantern-server -v /src/server/cmd/
 
 # final stage
 FROM alpine
