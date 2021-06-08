@@ -5,6 +5,10 @@ import (
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
 	pb "github.com/lantern-db/lantern/pb"
+	"google.golang.org/grpc"
+	"log"
+	"net"
+	"time"
 )
 
 type LanternService struct {
@@ -52,4 +56,43 @@ func (l *LanternService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpR
 
 	l.cache.DumpEdge(le)
 	return &pb.DumpResponse{}, nil
+}
+
+type LanternServer struct {
+	flushInterval time.Duration
+	listener      net.Listener
+	svc           *LanternService
+	server        *grpc.Server
+}
+
+func NewLanternServer(flushInterval time.Duration, listener net.Listener, svc *LanternService, server *grpc.Server) *LanternServer {
+	return &LanternServer{
+		flushInterval: flushInterval,
+		listener:      listener,
+		svc:           svc,
+		server:        server,
+	}
+}
+
+func (s *LanternServer) Run(ctx context.Context) error {
+	pb.RegisterLanternServer(s.server, s.svc)
+	go func() {
+		t := time.NewTicker(s.flushInterval)
+	L:
+		for {
+			select {
+			case sig := <-ctx.Done():
+				log.Printf("exit with %v", sig)
+				break L
+			case <-t.C:
+				s.svc.cache.Flush()
+			}
+		}
+	}()
+	go func() {
+		<-ctx.Done()
+		log.Println("stop grpc server gracefully")
+		s.server.GracefulStop()
+	}()
+	return s.server.Serve(s.listener)
 }
