@@ -84,7 +84,7 @@ func (s *LanternServer) Run(ctx context.Context) error {
 			case <-ctx.Done():
 				break L
 			case <-t.C:
-				log.Println("ping")
+				log.Println("flush expired cache")
 				s.svc.cache.Flush()
 			}
 		}
