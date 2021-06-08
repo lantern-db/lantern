@@ -3,7 +3,6 @@ package cache
 import (
 	"github.com/lantern-db/lantern/graph/model"
 	"sync"
-	"time"
 )
 
 type ValueVertex struct {
@@ -20,14 +19,14 @@ func (v *ValueVertex) Value() interface{} {
 }
 
 type GraphCache struct {
-	vertices VertexCache
-	edges    EdgeCache
+	vertices *VertexCache
+	edges    *EdgeCache
 }
 
-func NewGraphCache(ttl time.Duration) GraphCache {
-	return GraphCache{
-		vertices: NewVertexCache(ttl),
-		edges:    NewEdgeCache(ttl),
+func NewGraphCache(vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
+	return &GraphCache{
+		vertices: vertexCache,
+		edges:    edgeCache,
 	}
 }
 

@@ -17,8 +17,8 @@ type VertexCache struct {
 	mu    sync.RWMutex
 }
 
-func NewVertexCache(ttl time.Duration) VertexCache {
-	return VertexCache{
+func NewVertexCache(ttl time.Duration) *VertexCache {
+	return &VertexCache{
 		ttl:   ttl,
 		cache: make(map[string]*itemVertex),
 	}
