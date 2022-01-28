@@ -16,8 +16,8 @@ type EdgeCache struct {
 	mu    sync.RWMutex
 }
 
-func NewEdgeCache(ttl time.Duration) EdgeCache {
-	return EdgeCache{
+func NewEdgeCache(ttl time.Duration) *EdgeCache {
+	return &EdgeCache{
 		ttl:   ttl,
 		cache: make(map[string]map[string]*itemWeight),
 	}

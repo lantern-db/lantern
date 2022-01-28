@@ -6,15 +6,17 @@
 
 # LanternDB: key-vertex-store
 
-In recent years, many applications, recommender, fraud detection, are based on a graph structure. And these applications have got more real-time, and dynamic. There are so many graph-based databases, but almost all of graph DB seems too heavy, or too huge.
+In recent years, many applications, recommender, fraud detection, are based on a graph structure. And these applications
+have got more real-time, and dynamic. There are so many graph-based databases, but almost all of graph DB seems too
+heavy, or too huge.
 
-We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization techniques.
+We've just needed a simple graph structure, but not highly theorized algorithms such as ontologies or optimization
+techniques.
 
-LanternDB is In-memory `key-vertex-store` (KVS). 
-It behaves like `key-value-store` but can explore neighbor vertices based on graph structure.
+LanternDB is In-memory `key-vertex-store` (KVS). It behaves like `key-value-store` but can explore neighbor vertices
+based on graph structure.
 
-LanternDB is a streaming database.
-All vertices or edges will be expired as time passes, just like real relationships.
+LanternDB is a streaming database. All vertices or edges will be expired as time passes, just like real relationships.
 
 LanternDB just illuminates the moment, just focuses on neighbors, not global structures.
 
