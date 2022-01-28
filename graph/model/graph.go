@@ -2,9 +2,9 @@ package model
 
 type Key string
 
-type Vertex interface {
-	Key() Key
-	Value() interface{}
+type Vertex struct {
+	Key Key
+	Value interface{}
 }
 
 type Edge struct {

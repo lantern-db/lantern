@@ -49,11 +49,11 @@ func (c *VertexCache) Get(key string) (model.Vertex, bool) {
 	c.mu.RUnlock()
 
 	if !ok {
-		return nil, false
+		return model.Vertex{}, false
 	}
 	if time.Now().Unix() > item.expiration {
 		defer c.Delete(key)
-		return nil, false
+		return model.Vertex{}, false
 	}
 	return item.value, true
 }
