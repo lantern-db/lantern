@@ -45,7 +45,7 @@ func ProtoGraph(graph model.Graph) *pb.Graph {
 	}
 
 	g.NeighborMap = make(map[string]*pb.Neighbor)
-	for tailKey, heads := range graph.Adjacency {
+	for tailKey, heads := range graph.EdgeMap {
 		neighbor := pb.Neighbor{}
 		neighbor.WeightMap = make(map[string]float32)
 		for headKey, weight := range heads {

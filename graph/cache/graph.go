@@ -80,12 +80,12 @@ func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex,
 		if query.MinWeight <= weight && weight <= query.MaxWeight {
 			head, found := c.vertices.Get(headDigest)
 			if found {
-				_, ok := result.Adjacency[tail.Key()]
+				_, ok := result.EdgeMap[tail.Key()]
 				if !ok {
-					result.Adjacency[tail.Key()] = make(map[string]float32)
+					result.EdgeMap[tail.Key()] = make(map[string]float32)
 				}
 				result.VertexMap[head.Key()] = head
-				result.Adjacency[tail.Key()][head.Key()] = weight
+				result.EdgeMap[tail.Key()][head.Key()] = weight
 			}
 		}
 	}
@@ -129,13 +129,13 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 		for k, v := range g.VertexMap {
 			result.VertexMap[k] = v
 		}
-		for tail, headMap := range g.Adjacency {
+		for tail, headMap := range g.EdgeMap {
 			for head, weight := range headMap {
-				_, ok := result.Adjacency[tail]
+				_, ok := result.EdgeMap[tail]
 				if !ok {
-					result.Adjacency[tail] = make(map[string]float32)
+					result.EdgeMap[tail] = make(map[string]float32)
 				}
-				result.Adjacency[tail][head] = weight
+				result.EdgeMap[tail][head] = weight
 			}
 		}
 	}

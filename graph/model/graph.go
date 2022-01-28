@@ -1,35 +1,37 @@
 package model
 
+type Key string
+
 type Vertex interface {
-	Key() string
+	Key() Key
 	Value() interface{}
 }
 
 type Edge struct {
-	Tail   Vertex
-	Head   Vertex
+	Tail   Key
+	Head   Key
 	Weight float32
 }
 
 type Graph struct {
-	VertexMap map[string]Vertex
-	Adjacency map[string]map[string]float32
+	VertexMap map[Key]Vertex
+	EdgeMap   map[Key]map[Key]float32
 }
 
 func NewGraph() Graph {
 	return Graph{
-		VertexMap: make(map[string]Vertex),
-		Adjacency: make(map[string]map[string]float32),
+		VertexMap: make(map[Key]Vertex),
+		EdgeMap:   make(map[Key]map[Key]float32),
 	}
 }
 
 func (g *Graph) Edges() []Edge {
 	var edges []Edge
-	for tail, heads := range g.Adjacency {
+	for tail, heads := range g.EdgeMap {
 		for head, weight := range heads {
 			edges = append(edges, Edge{
-				Tail:   g.VertexMap[tail],
-				Head:   g.VertexMap[head],
+				Tail:   tail,
+				Head:   head,
 				Weight: weight,
 			})
 		}
