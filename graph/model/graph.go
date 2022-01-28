@@ -1,27 +1,29 @@
 package model
 
-type Key string
+type Key *string
+type Value *interface{}
+type Weight *float32
 
 type Vertex struct {
-	Key Key
-	Value interface{}
+	Key   Key
+	Value Value
 }
 
 type Edge struct {
 	Tail   Key
 	Head   Key
-	Weight float32
+	Weight Weight
 }
 
 type Graph struct {
 	VertexMap map[Key]Vertex
-	EdgeMap   map[Key]map[Key]float32
+	EdgeMap   map[Key]map[Key]Weight
 }
 
 func NewGraph() Graph {
 	return Graph{
 		VertexMap: make(map[Key]Vertex),
-		EdgeMap:   make(map[Key]map[Key]float32),
+		EdgeMap:   make(map[Key]map[Key]Weight),
 	}
 }
 
