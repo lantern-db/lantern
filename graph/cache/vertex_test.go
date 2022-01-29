@@ -41,7 +41,7 @@ func TestVertexCache_Get(t *testing.T) {
 		time.Sleep(4 * time.Second)
 		got, found := c.Get(v.Key)
 		if found {
-			t.Errorf("Get() got = %c, want %c", got.Value, nil)
+			t.Errorf("Get() got = %c, want %v", got.Value, nil)
 		}
 	})
 }
@@ -54,7 +54,7 @@ func TestVertexCache_Set(t *testing.T) {
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(v)
-		got, found := c.Get("mock")
+		got, found := c.Get("key")
 		if !found {
 			t.Errorf("Get() got = %c, want %c", got.Value, v.Value)
 		}
