@@ -10,15 +10,13 @@ import (
 func TestVertexCache_Delete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Key().Return("mock").AnyTimes()
-	m.EXPECT().Value().Return("mock").AnyTimes()
+	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
 
-	c := NewVertexCache(10 * time.Second)
+	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set("mock", m)
-		c.Delete("mock")
-		got, found := c.Get("mock")
+		c.Set(v)
+		c.Delete(v.Key)
+		got, found := c.Get(v.Key)
 		if found {
 			t.Errorf("Get() got = %v, want %v", got, nil)
 		}
@@ -28,23 +26,22 @@ func TestVertexCache_Delete(t *testing.T) {
 func TestVertexCache_Get(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Key().Return("mock").AnyTimes()
+	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
 
-	v := NewVertexCache(3 * time.Second)
+	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		v.Set("mock", m)
-		got, found := v.Get("mock")
+		c.Set(v)
+		got, found := c.Get(v.Key)
 		if !found {
-			t.Errorf("Get() got = %v, want %v", got, m)
+			t.Errorf("Get() got = %c, want %c", got.Value, v.Value)
 		}
 	})
 
 	t.Run("time_out", func(t *testing.T) {
 		time.Sleep(4 * time.Second)
-		got, found := v.Get("mock")
+		got, found := c.Get(v.Key)
 		if found {
-			t.Errorf("Get() got = %v, want %v", got, nil)
+			t.Errorf("Get() got = %c, want %c", got.Value, nil)
 		}
 	})
 }
@@ -52,15 +49,14 @@ func TestVertexCache_Get(t *testing.T) {
 func TestVertexCache_Set(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := model.NewMockVertex(ctrl)
-	m.EXPECT().Key().Return("mock").AnyTimes()
+	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
 
-	v := NewVertexCache(3 * time.Second)
+	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		v.Set("mock", m)
-		got, found := v.Get("mock")
+		c.Set(v)
+		got, found := c.Get("mock")
 		if !found {
-			t.Errorf("Get() got = %v, want %v", got, m)
+			t.Errorf("Get() got = %c, want %c", got.Value, v.Value)
 		}
 	})
 }

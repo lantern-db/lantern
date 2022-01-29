@@ -1,20 +1,19 @@
 package model
 
-type Key *string
-type Value *interface{}
-type Weight *float32
-type Expiration *int64
+type Key string
+type Value interface{}
+type Weight float32
 
 type Vertex struct {
-	Key   Key
-	Value Value
+	Key        Key
+	Value      Value
 	Expiration Expiration
 }
 
 type Edge struct {
-	Tail   Key
-	Head   Key
-	Weight Weight
+	Tail       Key
+	Head       Key
+	Weight     Weight
 	Expiration Expiration
 }
 

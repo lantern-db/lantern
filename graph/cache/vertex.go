@@ -3,37 +3,26 @@ package cache
 import (
 	"github.com/lantern-db/lantern/graph/model"
 	"sync"
-	"time"
 )
 
-type itemVertex struct {
-	value      model.Vertex
-	expiration int64
-}
-
 type VertexCache struct {
-	ttl   time.Duration
-	cache map[string]*itemVertex
+	cache map[model.Key]model.Vertex
 	mu    sync.RWMutex
 }
 
-func NewVertexCache(ttl time.Duration) *VertexCache {
+func NewVertexCache() *VertexCache {
 	return &VertexCache{
-		ttl:   ttl,
-		cache: make(map[string]*itemVertex),
+		cache: make(map[model.Key]model.Vertex),
 	}
 }
 
-func (c *VertexCache) Set(key string, vertex model.Vertex) {
+func (c *VertexCache) Set(vertex model.Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache[key] = &itemVertex{
-		value:      vertex,
-		expiration: time.Now().Add(c.ttl).Unix(),
-	}
+	c.cache[vertex.Key] = vertex
 }
 
-func (c *VertexCache) Delete(key string) {
+func (c *VertexCache) Delete(key model.Key) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	_, ok := c.cache[key]
@@ -42,7 +31,7 @@ func (c *VertexCache) Delete(key string) {
 	}
 }
 
-func (c *VertexCache) Get(key string) (model.Vertex, bool) {
+func (c *VertexCache) Get(key model.Key) (model.Vertex, bool) {
 	c.mu.RLock()
 
 	item, ok := c.cache[key]
@@ -51,24 +40,19 @@ func (c *VertexCache) Get(key string) (model.Vertex, bool) {
 	if !ok {
 		return model.Vertex{}, false
 	}
-	if time.Now().Unix() > item.expiration {
+	if item.Expiration.Dead() {
 		defer c.Delete(key)
 		return model.Vertex{}, false
 	}
-	return item.value, true
+	return item, true
 }
 
 func (c *VertexCache) Flush() {
-	var keys []string
 	c.mu.RLock()
 	for key, vertex := range c.cache {
-		if time.Now().Unix() > vertex.expiration {
-			keys = append(keys, key)
+		if vertex.Expiration.Dead() {
+			c.Delete(key)
 		}
 	}
 	c.mu.RUnlock()
-
-	for _, key := range keys {
-		c.Delete(key)
-	}
 }
