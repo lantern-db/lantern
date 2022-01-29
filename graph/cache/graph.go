@@ -1,49 +1,35 @@
 package cache
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
+	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
 )
 
-type ValueVertex struct {
-	K string
-	V interface{}
-}
-
-func (v *ValueVertex) Key() string {
-	return v.K
-}
-
-func (v *ValueVertex) Value() interface{} {
-	return v.V
-}
-
 type GraphCache struct {
-	vertices *VertexCache
-	edges    *EdgeCache
+	vertexCache *VertexCache
+	edgeCache   *EdgeCache
 }
 
 func NewGraphCache(vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
 	return &GraphCache{
-		vertices: vertexCache,
-		edges:    edgeCache,
+		vertexCache: vertexCache,
+		edgeCache:   edgeCache,
 	}
 }
 
-func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
-	g := model.NewGraph()
-	loadedSeed, found := c.vertices.Get(query.Seed.Key())
+func (c *GraphCache) Load(query LoadQuery) Graph {
+	g := NewGraph()
+	loadedSeed, found := c.vertexCache.Get(query.Seed)
 	if found {
-		g.VertexMap[query.Seed.Key()] = loadedSeed
+		g.VertexMap[query.Seed] = loadedSeed
 
 	} else {
-		g.VertexMap[query.Seed.Key()] = &ValueVertex{
-			K: query.Seed.Key(),
-			V: nil,
+		g.VertexMap[query.Seed] = Vertex{
+			Key: query.Seed,
 		}
 	}
 
-	seen := map[string]model.Vertex{}
+	seen := map[Key]Vertex{}
 
 	for i := uint32(0); i < query.Step; i++ {
 		g, seen = c.expand(query, g, seen)
@@ -52,40 +38,39 @@ func (c *GraphCache) Load(query model.LoadQuery) model.Graph {
 	return g
 }
 
-func (c *GraphCache) LoadVertex(key string) (model.Vertex, bool) {
-	return c.vertices.Get(key)
+func (c *GraphCache) LoadVertex(key Key) (Vertex, bool) {
+	return c.vertexCache.Get(key)
 }
 
-func (c *GraphCache) DumpVertex(vertex model.Vertex) {
-	c.vertices.Set(vertex.Key(), vertex)
+func (c *GraphCache) DumpVertex(vertex Vertex) {
+	c.vertexCache.Set(vertex)
 }
 
-func (c *GraphCache) DumpEdge(edge model.Edge) {
-	c.vertices.Set(edge.Tail.Key(), edge.Tail)
-	c.vertices.Set(edge.Head.Key(), edge.Head)
-	c.edges.Set(edge.Tail.Key(), edge.Head.Key(), edge.Weight)
+func (c *GraphCache) DumpEdge(edge Edge) {
+	c.edgeCache.Set(edge)
 }
 
-func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex, ch chan model.Graph, wg *sync.WaitGroup) {
+func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Graph, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	result := model.NewGraph()
-	result.VertexMap[tail.Key()] = tail
-	heads, found := c.edges.GetAdjacent(tail.Key())
+	result := NewGraph()
+	result.VertexMap[tail.Key] = tail
+	heads, found := c.edgeCache.GetAdjacent(tail.Key)
 	if !found {
 		ch <- result
 		return
 	}
-	for headDigest, weight := range heads {
+	for headDigest, edge := range heads {
+		weight := float32(edge.Weight)
 		if query.MinWeight <= weight && weight <= query.MaxWeight {
-			head, found := c.vertices.Get(headDigest)
+			head, found := c.vertexCache.Get(headDigest)
 			if found {
-				_, ok := result.EdgeMap[tail.Key()]
+				_, ok := result.EdgeMap[tail.Key]
 				if !ok {
-					result.EdgeMap[tail.Key()] = make(map[string]float32)
+					result.EdgeMap[tail.Key] = make(map[Key]Weight)
 				}
-				result.VertexMap[head.Key()] = head
-				result.EdgeMap[tail.Key()][head.Key()] = weight
+				result.VertexMap[head.Key] = head
+				result.EdgeMap[tail.Key][head.Key] = edge.Weight
 			}
 		}
 	}
@@ -94,11 +79,11 @@ func (c *GraphCache) calculateAdjacent(query model.LoadQuery, tail model.Vertex,
 	return
 }
 
-func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[string]model.Vertex) (model.Graph, map[string]model.Vertex) {
+func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (Graph, map[Key]Vertex) {
 	var wg sync.WaitGroup
-	ch := make(chan model.Graph)
+	ch := make(chan Graph)
 
-	nextSeen := make(map[string]model.Vertex)
+	nextSeen := make(map[Key]Vertex)
 	for k, v := range seen {
 		nextSeen[k] = v
 	}
@@ -114,7 +99,7 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 		if ok {
 			continue
 		}
-		nextSeen[vertex.Key()] = vertex
+		nextSeen[vertex.Key] = vertex
 		wg.Add(1)
 		go c.calculateAdjacent(query, vertex, ch, &wg)
 	}
@@ -124,7 +109,7 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 		close(ch)
 	}()
 
-	result := model.NewGraph()
+	result := NewGraph()
 	for g := range ch {
 		for k, v := range g.VertexMap {
 			result.VertexMap[k] = v
@@ -133,7 +118,7 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 			for head, weight := range headMap {
 				_, ok := result.EdgeMap[tail]
 				if !ok {
-					result.EdgeMap[tail] = make(map[string]float32)
+					result.EdgeMap[tail] = make(map[Key]Weight)
 				}
 				result.EdgeMap[tail][head] = weight
 			}
@@ -144,6 +129,6 @@ func (c *GraphCache) expand(query model.LoadQuery, graph model.Graph, seen map[s
 }
 
 func (c *GraphCache) Flush() {
-	c.vertices.Flush()
-	c.edges.Flush()
+	c.vertexCache.Flush()
+	c.edgeCache.Flush()
 }
