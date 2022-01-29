@@ -1,43 +1,33 @@
 package cache
 
 import (
+	"github.com/lantern-db/lantern/graph/model"
 	"sync"
-	"time"
 )
 
-type itemWeight struct {
-	value      float32
-	expiration int64
-}
-
 type EdgeCache struct {
-	ttl   time.Duration
-	cache map[string]map[string]*itemWeight
+	cache map[model.Key]map[model.Key]model.Edge
 	mu    sync.RWMutex
 }
 
-func NewEdgeCache(ttl time.Duration) *EdgeCache {
+func NewEdgeCache() *EdgeCache {
 	return &EdgeCache{
-		ttl:   ttl,
-		cache: make(map[string]map[string]*itemWeight),
+		cache: make(map[model.Key]map[model.Key]model.Edge),
 	}
 }
 
-func (c *EdgeCache) Set(tail string, head string, value float32) {
+func (c *EdgeCache) Set(edge model.Edge) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	_, ok := c.cache[tail]
+	_, ok := c.cache[edge.Tail]
 	if !ok {
-		c.cache[tail] = make(map[string]*itemWeight)
+		c.cache[edge.Tail] = make(map[model.Key]model.Edge)
 	}
-	c.cache[tail][head] = &itemWeight{
-		value:      value,
-		expiration: time.Now().Add(c.ttl).Unix(),
-	}
+	c.cache[edge.Tail][edge.Head] = edge
 }
 
-func (c *EdgeCache) Delete(tail string, head string) {
+func (c *EdgeCache) Delete(tail model.Key, head model.Key) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if _, ok := c.cache[tail]; ok {
@@ -50,47 +40,47 @@ func (c *EdgeCache) Delete(tail string, head string) {
 	}
 }
 
-func (c *EdgeCache) GetWeight(tail string, head string) (float32, bool) {
+func (c *EdgeCache) Get(tail model.Key, head model.Key) (model.Edge, bool) {
 	c.mu.RLock()
 
 	if _, ok := c.cache[tail]; !ok {
 		c.mu.RUnlock()
-		return 0.0, false
+		return model.Edge{}, false
 	}
 
-	weight, ok := c.cache[tail][head]
+	edge, ok := c.cache[tail][head]
 	c.mu.RUnlock()
 
 	if !ok {
-		return 0.0, false
+		return model.Edge{}, false
 	}
 
-	if time.Now().Unix() > weight.expiration {
+	if edge.Expiration.Dead() {
 		c.Delete(tail, head)
-		return 0.0, false
+		return model.Edge{}, false
 	}
-	return weight.value, true
+	return edge, true
 }
 
-func (c *EdgeCache) GetAdjacent(tail string) (map[string]float32, bool) {
-	result := make(map[string]float32)
-	var expired []string
+func (c *EdgeCache) GetAdjacent(tail model.Key) (map[model.Key]model.Edge, bool) {
+	result := make(map[model.Key]model.Edge)
+	var expired []model.Key
 
 	c.mu.RLock()
-	heads, ok := c.cache[tail]
+	headMap, ok := c.cache[tail]
 	if !ok {
 		return nil, false
 	}
-	for head, weight := range heads {
-		if time.Now().Unix() > weight.expiration {
+	for head, edge := range headMap {
+		if edge.Expiration.Dead() {
 			expired = append(expired, head)
 		} else {
-			result[head] = weight.value
+			result[head] = edge
 		}
 	}
 	c.mu.RUnlock()
 
-	defer func() {
+	go func() {
 		for _, head := range expired {
 			c.Delete(tail, head)
 		}
@@ -100,23 +90,19 @@ func (c *EdgeCache) GetAdjacent(tail string) (map[string]float32, bool) {
 }
 
 func (c *EdgeCache) Flush() {
-	var keys []struct {
-		tail string
-		head string
-	}
+	var keys []model.Edge
 	c.mu.RLock()
-	for tail, heads := range c.cache {
-		for head, weight := range heads {
-			if time.Now().Unix() > weight.expiration {
-				keys = append(keys, struct {
-					tail string
-					head string
-				}{tail: tail, head: head})
+	for tail, headMap := range c.cache {
+		for head, edge := range headMap {
+			if edge.Expiration.Dead() {
+				keys = append(keys, model.Edge{Tail: tail, Head: head})
 			}
 		}
 	}
 	c.mu.RUnlock()
-	for _, key := range keys {
-		c.Delete(key.tail, key.head)
-	}
+	go func() {
+		for _, key := range keys {
+			c.Delete(key.Tail, key.Head)
+		}
+	}()
 }
