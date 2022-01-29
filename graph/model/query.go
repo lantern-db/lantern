@@ -3,13 +3,13 @@ package model
 import "math"
 
 type LoadQuery struct {
-	Seed      Vertex
+	Seed      Key
 	Step      uint32
 	MinWeight float32
 	MaxWeight float32
 }
 
-func NeighborQuery(seed Vertex, step uint32) LoadQuery {
+func NeighborQuery(seed Key, step uint32) LoadQuery {
 	return LoadQuery{
 		Seed:      seed,
 		Step:      step,
@@ -18,6 +18,6 @@ func NeighborQuery(seed Vertex, step uint32) LoadQuery {
 	}
 }
 
-func AdjacentQuery(seed Vertex) LoadQuery {
+func AdjacentQuery(seed Key) LoadQuery {
 	return NeighborQuery(seed, 1)
 }
