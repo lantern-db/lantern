@@ -2,7 +2,7 @@ package cache
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/lantern-db/lantern/graph/model"
+	. "github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
@@ -10,7 +10,7 @@ import (
 func TestVertexCache_Delete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
+	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
@@ -26,7 +26,7 @@ func TestVertexCache_Delete(t *testing.T) {
 func TestVertexCache_Get(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
+	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
@@ -49,7 +49,7 @@ func TestVertexCache_Get(t *testing.T) {
 func TestVertexCache_Set(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	v := model.Vertex{Key: "key", Value: "value", Expiration: model.NewExpiration(3 * time.Second)}
+	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {

@@ -1,33 +1,33 @@
 package cache
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
+	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
 )
 
 type EdgeCache struct {
-	cache map[model.Key]map[model.Key]model.Edge
+	cache map[Key]map[Key]Edge
 	mu    sync.RWMutex
 }
 
 func NewEdgeCache() *EdgeCache {
 	return &EdgeCache{
-		cache: make(map[model.Key]map[model.Key]model.Edge),
+		cache: make(map[Key]map[Key]Edge),
 	}
 }
 
-func (c *EdgeCache) Set(edge model.Edge) {
+func (c *EdgeCache) Set(edge Edge) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	_, ok := c.cache[edge.Tail]
 	if !ok {
-		c.cache[edge.Tail] = make(map[model.Key]model.Edge)
+		c.cache[edge.Tail] = make(map[Key]Edge)
 	}
 	c.cache[edge.Tail][edge.Head] = edge
 }
 
-func (c *EdgeCache) Delete(tail model.Key, head model.Key) {
+func (c *EdgeCache) Delete(tail Key, head Key) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if _, ok := c.cache[tail]; ok {
@@ -40,31 +40,31 @@ func (c *EdgeCache) Delete(tail model.Key, head model.Key) {
 	}
 }
 
-func (c *EdgeCache) Get(tail model.Key, head model.Key) (model.Edge, bool) {
+func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 	c.mu.RLock()
 
 	if _, ok := c.cache[tail]; !ok {
 		c.mu.RUnlock()
-		return model.Edge{}, false
+		return Edge{}, false
 	}
 
 	edge, ok := c.cache[tail][head]
 	c.mu.RUnlock()
 
 	if !ok {
-		return model.Edge{}, false
+		return Edge{}, false
 	}
 
 	if edge.Expiration.Dead() {
 		c.Delete(tail, head)
-		return model.Edge{}, false
+		return Edge{}, false
 	}
 	return edge, true
 }
 
-func (c *EdgeCache) GetAdjacent(tail model.Key) (map[model.Key]model.Edge, bool) {
-	result := make(map[model.Key]model.Edge)
-	var expired []model.Key
+func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
+	result := make(map[Key]Edge)
+	var expired []Key
 
 	c.mu.RLock()
 	headMap, ok := c.cache[tail]
@@ -90,12 +90,12 @@ func (c *EdgeCache) GetAdjacent(tail model.Key) (map[model.Key]model.Edge, bool)
 }
 
 func (c *EdgeCache) Flush() {
-	var keys []model.Edge
+	var keys []Edge
 	c.mu.RLock()
 	for tail, headMap := range c.cache {
 		for head, edge := range headMap {
 			if edge.Expiration.Dead() {
-				keys = append(keys, model.Edge{Tail: tail, Head: head})
+				keys = append(keys, Edge{Tail: tail, Head: head})
 			}
 		}
 	}

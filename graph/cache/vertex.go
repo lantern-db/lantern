@@ -1,28 +1,28 @@
 package cache
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
+	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
 )
 
 type VertexCache struct {
-	cache map[model.Key]model.Vertex
+	cache map[Key]Vertex
 	mu    sync.RWMutex
 }
 
 func NewVertexCache() *VertexCache {
 	return &VertexCache{
-		cache: make(map[model.Key]model.Vertex),
+		cache: make(map[Key]Vertex),
 	}
 }
 
-func (c *VertexCache) Set(vertex model.Vertex) {
+func (c *VertexCache) Set(vertex Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.cache[vertex.Key] = vertex
 }
 
-func (c *VertexCache) Delete(key model.Key) {
+func (c *VertexCache) Delete(key Key) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	_, ok := c.cache[key]
@@ -31,18 +31,18 @@ func (c *VertexCache) Delete(key model.Key) {
 	}
 }
 
-func (c *VertexCache) Get(key model.Key) (model.Vertex, bool) {
+func (c *VertexCache) Get(key Key) (Vertex, bool) {
 	c.mu.RLock()
 
 	item, ok := c.cache[key]
 	c.mu.RUnlock()
 
 	if !ok {
-		return model.Vertex{}, false
+		return Vertex{}, false
 	}
 	if item.Expiration.Dead() {
 		defer c.Delete(key)
-		return model.Vertex{}, false
+		return Vertex{}, false
 	}
 	return item, true
 }

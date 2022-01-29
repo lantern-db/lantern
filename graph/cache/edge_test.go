@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
+	. "github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
@@ -9,8 +9,8 @@ import (
 func TestEdgeCache_Delete(t *testing.T) {
 	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		edge1 := model.Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
-		edge2 := model.Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
+		edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+		edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 		c.Set(edge1)
 		c.Set(edge2)
 		if len(c.cache["tail"]) != 2 {
@@ -31,8 +31,8 @@ func TestEdgeCache_Delete(t *testing.T) {
 
 func TestEdgeCache_GetAdjacent(t *testing.T) {
 	c := NewEdgeCache()
-	edge1 := model.Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
-	edge2 := model.Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
+	edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+	edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge1)
 		c.Set(edge2)
@@ -48,7 +48,7 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 
 func TestEdgeCache_Get(t *testing.T) {
 	c := NewEdgeCache()
-	edge := model.Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
+	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge)
 		got, found := c.Get("tail", "head")
@@ -64,7 +64,7 @@ func TestEdgeCache_Get(t *testing.T) {
 
 func TestEdgeCache_Set(t *testing.T) {
 	c := NewEdgeCache()
-	edge := model.Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: model.NewExpiration(5 * time.Second)}
+	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge)
