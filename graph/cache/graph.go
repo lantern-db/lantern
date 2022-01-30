@@ -3,9 +3,11 @@ package cache
 import (
 	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
+	"time"
 )
 
 type GraphCache struct {
+	defaultTtl time.Duration
 	vertexCache *VertexCache
 	edgeCache   *EdgeCache
 }
@@ -43,10 +45,16 @@ func (c *GraphCache) LoadVertex(key Key) (Vertex, bool) {
 }
 
 func (c *GraphCache) DumpVertex(vertex Vertex) {
+	if vertex.Expiration == 0.0 {
+		vertex.Expiration = NewExpiration(c.defaultTtl)
+	}
 	c.vertexCache.Set(vertex)
 }
 
 func (c *GraphCache) DumpEdge(edge Edge) {
+	if edge.Expiration == 0.0 {
+		edge.Expiration = NewExpiration(c.defaultTtl)
+	}
 	c.edgeCache.Set(edge)
 }
 
