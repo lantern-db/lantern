@@ -7,25 +7,26 @@ option go_package = "github.com/lantern-db/lantern/pb";
 
 message Vertex {
   string key = 1;
+  google.protobuf.Timestamp expiration = 2;
   oneof value {
-    double float64 = 2;
-    float float32 = 3;
-    int32 int32 = 4;
-    int64 int64 = 5;
-    uint32 uint32 = 6;
-    uint64 uint64 = 7;
-    bool bool = 8;
-    string string = 9;
-    bytes bytes = 10;
-    google.protobuf.Timestamp timestamp = 11;
+    double float64 = 3;
+    float float32 = 4;
+    int32 int32 = 5;
+    int64 int64 = 6;
+    uint32 uint32 = 7;
+    uint64 uint64 = 8;
+    bool bool = 9;
+    string string = 10;
+    bytes bytes = 11;
+    google.protobuf.Timestamp timestamp = 12;
 
     bool nil = 30;
   }
 }
 
 message Edge {
-  Vertex tail = 1;
-  Vertex head = 2;
+  string tail = 1;
+  string head = 2;
   float weight = 3;
 }
 
@@ -45,7 +46,7 @@ enum Status {
 }
 
 message IlluminateRequest {
-  Vertex seed = 1;
+  string seed = 1;
   uint32 step = 2;
   float min_weight = 3;
   float max_weight = 4;
