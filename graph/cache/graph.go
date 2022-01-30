@@ -7,14 +7,14 @@ import (
 )
 
 type GraphCache struct {
-	defaultTtl time.Duration
+	defaultTtl  time.Duration
 	vertexCache *VertexCache
 	edgeCache   *EdgeCache
 }
 
 func NewGraphCache(defaultTtl time.Duration, vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
 	return &GraphCache{
-		defaultTtl: defaultTtl,
+		defaultTtl:  defaultTtl,
 		vertexCache: vertexCache,
 		edgeCache:   edgeCache,
 	}
@@ -56,6 +56,22 @@ func (c *GraphCache) DumpEdge(edge Edge) {
 	if edge.Expiration == 0.0 {
 		edge.Expiration = NewExpiration(c.defaultTtl)
 	}
+	if !c.vertexCache.Has(edge.Tail) {
+		c.vertexCache.Set(Vertex{
+			Key:        edge.Tail,
+			Value:      nil,
+			Expiration: edge.Expiration,
+		})
+	}
+
+	if !c.vertexCache.Has(edge.Head) {
+		c.vertexCache.Set(Vertex{
+			Key:        edge.Head,
+			Value:      nil,
+			Expiration: edge.Expiration,
+		})
+	}
+
 	c.edgeCache.Set(edge)
 }
 
