@@ -12,8 +12,9 @@ type GraphCache struct {
 	edgeCache   *EdgeCache
 }
 
-func NewGraphCache(vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
+func NewGraphCache(defaultTtl time.Duration, vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
 	return &GraphCache{
+		defaultTtl: defaultTtl,
 		vertexCache: vertexCache,
 		edgeCache:   edgeCache,
 	}
