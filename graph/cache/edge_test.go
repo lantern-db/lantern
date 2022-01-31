@@ -1,15 +1,18 @@
 package cache
 
 import (
+	. "github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
 
 func TestEdgeCache_Delete(t *testing.T) {
-	c := NewEdgeCache(5 * time.Second)
+	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set("tail", "head1", 1.0)
-		c.Set("tail", "head2", 1.0)
+		edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+		edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+		c.Set(edge1)
+		c.Set(edge2)
 		if len(c.cache["tail"]) != 2 {
 			t.Errorf("mismatch length")
 		}
@@ -27,10 +30,12 @@ func TestEdgeCache_Delete(t *testing.T) {
 }
 
 func TestEdgeCache_GetAdjacent(t *testing.T) {
-	c := NewEdgeCache(5 * time.Second)
+	c := NewEdgeCache()
+	edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+	edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set("tail", "head1", 1.0)
-		c.Set("tail", "head2", 1.0)
+		c.Set(edge1)
+		c.Set(edge2)
 		if got, found := c.GetAdjacent("tail"); !found {
 			t.Errorf("not found")
 		} else {
@@ -41,15 +46,16 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 	})
 }
 
-func TestEdgeCache_GetWeight(t *testing.T) {
-	c := NewEdgeCache(5 * time.Second)
+func TestEdgeCache_Get(t *testing.T) {
+	c := NewEdgeCache()
+	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set("tail", "head", 1.0)
-		got, found := c.GetWeight("tail", "head")
+		c.Set(edge)
+		got, found := c.Get("tail", "head")
 		if !found {
 			t.Errorf("not found")
 		}
-		if got != 1.0 {
+		if got.Weight != 1.0 {
 			t.Errorf("GetWeight() got = %v, want %v", got, 1.0)
 		}
 	})
@@ -57,21 +63,22 @@ func TestEdgeCache_GetWeight(t *testing.T) {
 }
 
 func TestEdgeCache_Set(t *testing.T) {
-	c := NewEdgeCache(5 * time.Second)
+	c := NewEdgeCache()
+	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set("tail", "head", 0.0)
+		c.Set(edge)
 	})
 
 	t.Run("not_expired", func(t *testing.T) {
-		_, found := c.GetWeight("tail", "head")
+		_, found := c.Get("tail", "head")
 		if !found {
 			t.Errorf("not found")
 		}
 	})
 	time.Sleep(6 * time.Second)
 	t.Run("expired", func(t *testing.T) {
-		_, found := c.GetWeight("tail", "head")
+		_, found := c.Get("tail", "head")
 		if found {
 			t.Errorf("not expired")
 		}

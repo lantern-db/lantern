@@ -24,9 +24,9 @@ func initializeLanternServer() (*service.LanternServer, error) {
 	if err != nil {
 		return nil, err
 	}
-	vertexCache := newVertexCache(lanternServerConfig)
-	edgeCache := newEdgeCache(lanternServerConfig)
-	graphCache := newGraphCache(vertexCache, edgeCache)
+	vertexCache := newVertexCache()
+	edgeCache := newEdgeCache()
+	graphCache := newGraphCache(lanternServerConfig, vertexCache, edgeCache)
 	lanternService := service.NewLanternService(graphCache)
 	v := newGrpcServerOptions()
 	server := grpc.NewServer(v...)
@@ -36,16 +36,16 @@ func initializeLanternServer() (*service.LanternServer, error) {
 
 // wire.go:
 
-func newVertexCache(config *model.LanternServerConfig) *cache.VertexCache {
-	return cache.NewVertexCache(config.Ttl)
+func newVertexCache() *cache.VertexCache {
+	return cache.NewVertexCache()
 }
 
-func newEdgeCache(config *model.LanternServerConfig) *cache.EdgeCache {
-	return cache.NewEdgeCache(config.Ttl)
+func newEdgeCache() *cache.EdgeCache {
+	return cache.NewEdgeCache()
 }
 
-func newGraphCache(v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
-	return cache.NewGraphCache(v, e)
+func newGraphCache(config *model.LanternServerConfig, v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
+	return cache.NewGraphCache(config.Ttl, v, e)
 }
 
 func newListener(config *model.LanternServerConfig) (net.Listener, error) {

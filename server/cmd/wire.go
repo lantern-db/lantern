@@ -11,16 +11,16 @@ import (
 	"net"
 )
 
-func newVertexCache(config *model.LanternServerConfig) *cache.VertexCache {
-	return cache.NewVertexCache(config.Ttl)
+func newVertexCache() *cache.VertexCache {
+	return cache.NewVertexCache()
 }
 
-func newEdgeCache(config *model.LanternServerConfig) *cache.EdgeCache {
-	return cache.NewEdgeCache(config.Ttl)
+func newEdgeCache() *cache.EdgeCache {
+	return cache.NewEdgeCache()
 }
 
-func newGraphCache(v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
-	return cache.NewGraphCache(v, e)
+func newGraphCache(config *model.LanternServerConfig, v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
+	return cache.NewGraphCache(config.Ttl, v, e)
 }
 
 func newListener(config *model.LanternServerConfig) (net.Listener, error) {

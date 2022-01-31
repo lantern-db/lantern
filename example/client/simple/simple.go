@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/lantern-db/lantern/client"
 	"log"
+	"os"
 )
 
 func main() {
@@ -28,16 +29,16 @@ func main() {
 	_ = c.DumpVertex(ctx, "c", 3.14)
 
 	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
-		log.Println(resA.String())
+		log.Println(resA.StringValue())
 	}
 	if resB, err := c.LoadVertex(ctx, "b"); err == nil {
-		log.Println(resB.Int())
+		log.Println(resB.IntValue())
 	}
 	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
-		log.Println(resC.Float64())
+		log.Println(resC.Float64Value())
 	}
 	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
-		log.Println(resD.Nil())
+		log.Println(resD.NilValue())
 	}
 
 	_ = c.DumpEdge(ctx, "a", "b", 1.0)
@@ -45,10 +46,28 @@ func main() {
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	result, err := c.Illuminate(ctx, "a", 2)
+	result, err := c.Illuminate(ctx, "a", 3)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 	jsonBytes, _ := json.Marshal(result)
 	log.Println(string(jsonBytes))
+	if err := writeBytes("./simple.json", string(jsonBytes)); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeBytes(filename string, content string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b := []byte(content)
+	_, err = file.Write(b)
+	if err != nil {
+		return err
+	}
+	return nil
 }
