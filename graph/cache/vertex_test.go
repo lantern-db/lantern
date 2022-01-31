@@ -1,15 +1,12 @@
 package cache
 
 import (
-	"github.com/golang/mock/gomock"
 	. "github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
 
 func TestVertexCache_Delete(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
@@ -24,8 +21,6 @@ func TestVertexCache_Delete(t *testing.T) {
 }
 
 func TestVertexCache_Get(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
@@ -47,8 +42,6 @@ func TestVertexCache_Get(t *testing.T) {
 }
 
 func TestVertexCache_Set(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
 
 	c := NewVertexCache()
@@ -57,6 +50,23 @@ func TestVertexCache_Set(t *testing.T) {
 		got, found := c.Get("key")
 		if !found {
 			t.Errorf("Get() got = %c, want %c", got.Value, v.Value)
+		}
+	})
+}
+
+func TestVertexCache_Has(t *testing.T) {
+	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
+	c := NewVertexCache()
+	t.Run("exist_case", func(t *testing.T) {
+		c.Set(v)
+		if !c.Has("key") {
+			t.Errorf("Get() got = %v want %v", c.Has("key"), true)
+		}
+	})
+
+	t.Run("missing_case", func(t *testing.T) {
+		if c.Has("missing") {
+			t.Errorf("Get() got = %v want %v", c.Has("missing"), false)
 		}
 	})
 }
