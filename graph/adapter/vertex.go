@@ -57,6 +57,9 @@ func ProtoVertex(lanternVertex Vertex) *pb.Vertex {
 	case nil:
 		protoVertex.Value = &pb.Vertex_Nil{Nil: true}
 
+	case *pb.Vertex:
+		protoVertex = v
+
 	default:
 		protoVertex.Value = &pb.Vertex_Nil{Nil: true}
 	}
