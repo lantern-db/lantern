@@ -8,11 +8,49 @@ import (
 )
 
 func LanternVertex(protoVertex *pb.Vertex) Vertex {
-	return Vertex{
+	lanternVertex := Vertex{
 		Key:        Key(protoVertex.Key),
 		Expiration: Expiration(protoVertex.Expiration.AsTime().Unix()),
-		Value:      protoVertex,
 	}
+	switch v := protoVertex.Value.(type) {
+	case *pb.Vertex_Int32:
+		lanternVertex.Value = v.Int32
+
+	case *pb.Vertex_Uint32:
+		lanternVertex.Value = v.Uint32
+
+	case *pb.Vertex_Int64:
+		lanternVertex.Value = v.Int64
+
+	case *pb.Vertex_Uint64:
+		lanternVertex.Value = v.Uint64
+
+	case *pb.Vertex_Float32:
+		lanternVertex.Value = v.Float32
+
+	case *pb.Vertex_Float64:
+		lanternVertex.Value = v.Float64
+
+	case *pb.Vertex_Bool:
+		lanternVertex.Value = v.Bool
+
+	case *pb.Vertex_String_:
+		lanternVertex.Value = v.String_
+
+	case *pb.Vertex_Bytes:
+		lanternVertex.Value = v.Bytes
+
+	case *pb.Vertex_Timestamp:
+		lanternVertex.Value = v.Timestamp
+
+	case *pb.Vertex_Nil:
+		lanternVertex.Value = nil
+
+	default:
+		lanternVertex.Value = nil
+	}
+
+	return lanternVertex
 }
 
 func ProtoVertex(lanternVertex Vertex) *pb.Vertex {
