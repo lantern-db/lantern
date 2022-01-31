@@ -5,7 +5,7 @@ import (
 	"github.com/lantern-db/lantern/pb"
 )
 
-type VertexMap map[string]*model.ProtoVertex
+type VertexMap map[string]*model.Vertex
 type NeighborMap map[string]map[string]float32
 
 type IlluminateResult struct {
@@ -16,7 +16,7 @@ type IlluminateResult struct {
 func NewIlluminateResult(graph *pb.Graph) *IlluminateResult {
 	vertexMap := make(VertexMap)
 	for key, value := range graph.VertexMap {
-		vertexMap[key] = &model.ProtoVertex{Message: value}
+		vertexMap[key] = &model.Vertex{Message: value}
 	}
 	neighborMap := make(NeighborMap)
 	for tailKey, heads := range graph.NeighborMap {
