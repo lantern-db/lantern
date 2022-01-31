@@ -68,10 +68,7 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 }
 
 func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}) error {
-	vertex, err := adapter.ProtoVertex(model.Vertex{Key: model.Key(key), Value: value})
-	if err != nil {
-		return err
-	}
+	vertex := adapter.ProtoVertex(model.Vertex{Key: model.Key(key), Value: value})
 	response, err := c.client.DumpVertex(ctx, vertex)
 	if err != nil {
 		return err
@@ -83,11 +80,12 @@ func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interf
 }
 
 func (c *LanternClient) LoadVertex(ctx context.Context, key string) (*model.Vertex, error) {
-	result, err := c.Illuminate(ctx, key, 0)
+	lanternGraph, err := c.Illuminate(ctx, key, 0)
 	if err != nil {
 		return nil, err
 	}
-	return adapter.LanternVertex(result)
+	r := lanternGraph.VertexMap[model.Key(key)]
+	return &r, nil
 }
 
 func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*model.Graph, error) {
@@ -104,5 +102,6 @@ func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32
 	if response.Status != pb.Status_OK {
 		return nil, errors.New("illuminate error. status: " + response.Status.String())
 	}
-	return adapter.P
+	lanternGraph := adapter.LanternGraph(response.Graph)
+	return &lanternGraph, nil
 }
