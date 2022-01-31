@@ -20,6 +20,10 @@ func NewGraphCache(defaultTtl time.Duration, vertexCache *VertexCache, edgeCache
 	}
 }
 
+func NewEmptyGraphCache(defaultTtl time.Duration) *GraphCache {
+	return NewGraphCache(defaultTtl, NewVertexCache(), NewEdgeCache())
+}
+
 func (c *GraphCache) Load(query LoadQuery) Graph {
 	g := NewGraph()
 	loadedSeed, found := c.vertexCache.Get(query.Seed)

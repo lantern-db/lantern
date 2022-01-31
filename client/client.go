@@ -52,17 +52,9 @@ func (c *LanternClient) Close() error {
 }
 
 func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
-	tailVertex, err := newVertex(tail, nil)
-	if err != nil {
-		return err
-	}
-	headVertex, err := newVertex(head, nil)
-	if err != nil {
-		return err
-	}
 	edge := &pb.Edge{
-		Tail:   tailVertex,
-		Head:   headVertex,
+		Tail:   tail,
+		Head:   head,
 		Weight: weight,
 	}
 	response, err := c.client.DumpEdge(ctx, edge)
@@ -100,7 +92,7 @@ func (c *LanternClient) LoadVertex(ctx context.Context, key string) (*model.Prot
 
 func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*IlluminateResult, error) {
 	request := &pb.IlluminateRequest{
-		Seed:      &pb.Vertex{Key: seed},
+		Seed:      seed,
 		Step:      step,
 		MinWeight: -math.MaxFloat32,
 		MaxWeight: math.MaxFloat32,
