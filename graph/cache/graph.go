@@ -50,29 +50,30 @@ func (c *GraphCache) LoadVertex(key Key) (Vertex, bool) {
 }
 
 func (c *GraphCache) DumpVertex(vertex Vertex) {
-	if vertex.Expiration == 0.0 {
+	if vertex.Expiration == 0 {
 		vertex.Expiration = NewExpiration(c.defaultTtl)
 	}
 	c.vertexCache.Set(vertex)
 }
 
 func (c *GraphCache) DumpEdge(edge Edge) {
-	if edge.Expiration == 0.0 {
-		edge.Expiration = NewExpiration(c.defaultTtl)
+	expiration := NewExpiration(c.defaultTtl)
+	if edge.Expiration == 0 {
+		edge.Expiration = expiration
 	}
-	if !c.vertexCache.Has(edge.Tail) {
+	if _, found := c.vertexCache.Get(edge.Tail); !found {
 		c.vertexCache.Set(Vertex{
 			Key:        edge.Tail,
 			Value:      nil,
-			Expiration: edge.Expiration,
+			Expiration: expiration,
 		})
 	}
 
-	if !c.vertexCache.Has(edge.Head) {
+	if _, found := c.vertexCache.Get(edge.Head); !found {
 		c.vertexCache.Set(Vertex{
 			Key:        edge.Head,
 			Value:      nil,
-			Expiration: edge.Expiration,
+			Expiration: expiration,
 		})
 	}
 

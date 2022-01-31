@@ -47,11 +47,6 @@ func (c *VertexCache) Get(key Key) (Vertex, bool) {
 	return item, true
 }
 
-func (c *VertexCache) Has(key Key) bool {
-	_, ok := c.cache[key]
-	return ok
-}
-
 func (c *VertexCache) Flush() {
 	c.mu.RLock()
 	for key, vertex := range c.cache {

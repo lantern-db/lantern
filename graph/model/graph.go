@@ -13,7 +13,7 @@ type Weight float32
 type Vertex struct {
 	Key        Key        `json:"key,omitempty"`
 	Value      Value      `json:"value,omitempty"`
-	Expiration Expiration `json:"value,omitempty""`
+	Expiration Expiration `json:"expiration,omitempty""`
 }
 
 func (v *Vertex) IntValue() (int, error) {

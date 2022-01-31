@@ -53,20 +53,3 @@ func TestVertexCache_Set(t *testing.T) {
 		}
 	})
 }
-
-func TestVertexCache_Has(t *testing.T) {
-	v := Vertex{Key: "key", Value: "value", Expiration: NewExpiration(3 * time.Second)}
-	c := NewVertexCache()
-	t.Run("exist_case", func(t *testing.T) {
-		c.Set(v)
-		if !c.Has("key") {
-			t.Errorf("Get() got = %v want %v", c.Has("key"), true)
-		}
-	})
-
-	t.Run("missing_case", func(t *testing.T) {
-		if c.Has("missing") {
-			t.Errorf("Get() got = %v want %v", c.Has("missing"), false)
-		}
-	})
-}
