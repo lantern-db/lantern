@@ -70,7 +70,7 @@ _ = c.DumpEdge(ctx, "c", "d", 1.0)
 _ = c.DumpEdge(ctx, "d", "e", 1.0)
 ```
 
-If the vertex which has key `a`, then empty valued vertices will be created with same expirations.
+If the vertex which has key `a` is missing in a graph, then empty valued vertices will be created with same expirations.
 
 ## Loading vertices and its neighbors with key and n_step
 
