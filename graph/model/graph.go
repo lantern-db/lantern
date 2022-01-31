@@ -177,25 +177,21 @@ type Edge struct {
 
 type Graph struct {
 	VertexMap map[Key]Vertex
-	EdgeMap   map[Key]map[Key]Weight
+	EdgeMap   map[Key]map[Key]Edge
 }
 
 func NewGraph() Graph {
 	return Graph{
 		VertexMap: make(map[Key]Vertex),
-		EdgeMap:   make(map[Key]map[Key]Weight),
+		EdgeMap:   make(map[Key]map[Key]Edge),
 	}
 }
 
 func (g *Graph) Edges() []Edge {
 	var edges []Edge
-	for tail, heads := range g.EdgeMap {
-		for head, weight := range heads {
-			edges = append(edges, Edge{
-				Tail:   tail,
-				Head:   head,
-				Weight: weight,
-			})
+	for _, heads := range g.EdgeMap {
+		for _, edge := range heads {
+			edges = append(edges, edge)
 		}
 	}
 	return edges
