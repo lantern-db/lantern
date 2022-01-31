@@ -77,7 +77,7 @@ If the vertex which has key `a` is missing in a graph, then empty valued vertice
 All vertices can be loaded with a graph structure linking with edges, And we call this transaction `Illuminate`. An
 client has method `Illuminate(ctx, key, step)`.
 
-For Example, `client.Illuminate(ctx, "a", 2)` returns all vertices within 2-steps from a vertex "a". type of returning
+For example, `client.Illuminate(ctx, "a", 2)` returns all vertices within 2-steps from a vertex "a". type of returning
 value is an instance of `model.Graph` and it's json-parsable struct.
 
 ```json
