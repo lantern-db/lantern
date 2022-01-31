@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/lantern-db/lantern/client"
 	"log"
+	"os"
 )
 
 func main() {
@@ -45,10 +46,28 @@ func main() {
 	_ = c.DumpEdge(ctx, "c", "d", 1.0)
 	_ = c.DumpEdge(ctx, "d", "e", 1.0)
 
-	result, err := c.Illuminate(ctx, "a", 2)
+	result, err := c.Illuminate(ctx, "a", 3)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 	jsonBytes, _ := json.Marshal(result)
 	log.Println(string(jsonBytes))
+	if err := writeBytes("./simple.json", string(jsonBytes)); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeBytes(filename string, content string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b := []byte(content)
+	_, err = file.Write(b)
+	if err != nil {
+		return err
+	}
+	return nil
 }

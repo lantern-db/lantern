@@ -12,7 +12,6 @@ type Vertex struct {
 	Expiration Expiration `json:"expiration,omitempty""`
 }
 
-
 func (v *Vertex) IntValue() (int, error) {
 	switch v := v.Value.(type) {
 	case int:
