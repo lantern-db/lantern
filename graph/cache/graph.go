@@ -96,10 +96,10 @@ func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Gra
 			if found {
 				_, ok := result.EdgeMap[tail.Key]
 				if !ok {
-					result.EdgeMap[tail.Key] = make(map[Key]Weight)
+					result.EdgeMap[tail.Key] = make(map[Key]Edge)
 				}
 				result.VertexMap[head.Key] = head
-				result.EdgeMap[tail.Key][head.Key] = edge.Weight
+				result.EdgeMap[tail.Key][head.Key] = edge
 			}
 		}
 	}
@@ -144,12 +144,12 @@ func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (
 			result.VertexMap[k] = v
 		}
 		for tail, headMap := range g.EdgeMap {
-			for head, weight := range headMap {
+			for head, edge := range headMap {
 				_, ok := result.EdgeMap[tail]
 				if !ok {
-					result.EdgeMap[tail] = make(map[Key]Weight)
+					result.EdgeMap[tail] = make(map[Key]Edge)
 				}
-				result.EdgeMap[tail][head] = weight
+				result.EdgeMap[tail][head] = edge
 			}
 		}
 	}
