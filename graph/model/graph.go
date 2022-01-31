@@ -7,13 +7,13 @@ import (
 )
 
 type Key string
-type Value interface {}
+type Value interface{}
 type Weight float32
 
 type Vertex struct {
-	Key        Key
-	Value      Value
-	Expiration Expiration
+	Key        Key        `json:"key,omitempty"`
+	Value      Value      `json:"value,omitempty"`
+	Expiration Expiration `json:"value,omitempty""`
 }
 
 func (p *Vertex) IntValue() (int, error) {
@@ -169,21 +169,24 @@ func (p *Vertex) NilValue() (interface{}, error) {
 }
 
 type Edge struct {
-	Tail       Key
-	Head       Key
-	Weight     Weight
-	Expiration Expiration
+	Tail       Key        `json:"tail,omitempty"`
+	Head       Key        `json:"head,omitempty"`
+	Weight     Weight     `json:"weight,omitempty"`
+	Expiration Expiration `json:"expiration,omitempty"`
 }
 
+type VertexMap map[Key]Vertex
+type EdgeMap map[Key]map[Key]Edge
+
 type Graph struct {
-	VertexMap map[Key]Vertex
-	EdgeMap   map[Key]map[Key]Edge
+	VertexMap VertexMap `json:"vertexMap,omitempty"`
+	EdgeMap   EdgeMap   `json:"edgeMap,omitempty"`
 }
 
 func NewGraph() Graph {
 	return Graph{
-		VertexMap: make(map[Key]Vertex),
-		EdgeMap:   make(map[Key]map[Key]Edge),
+		VertexMap: make(VertexMap),
+		EdgeMap:   make(EdgeMap),
 	}
 }
 

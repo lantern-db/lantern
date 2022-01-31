@@ -1,7 +1,6 @@
 package adapter
 
 import (
-	"errors"
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -16,7 +15,7 @@ func LanternVertex(protoVertex *pb.Vertex) Vertex {
 	}
 }
 
-func ProtoVertex(lanternVertex Vertex) (*pb.Vertex, error) {
+func ProtoVertex(lanternVertex Vertex) *pb.Vertex {
 	protoVertex := &pb.Vertex{
 		Key:        string(lanternVertex.Key),
 		Expiration: timestamppb.New(time.Unix(int64(lanternVertex.Expiration), 0)),
@@ -59,7 +58,7 @@ func ProtoVertex(lanternVertex Vertex) (*pb.Vertex, error) {
 		protoVertex.Value = &pb.Vertex_Nil{Nil: true}
 
 	default:
-		return nil, errors.New("type mismatch")
+		protoVertex.Value = &pb.Vertex_Nil{Nil: true}
 	}
-	return protoVertex, nil
+	return protoVertex
 }

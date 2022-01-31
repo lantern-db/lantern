@@ -32,7 +32,7 @@ message Edge {
 }
 
 message Neighbor {
-    map<string, float> weight_map = 1;
+    map<string, Edge> edge_map = 1;
 }
 
 message Graph {
