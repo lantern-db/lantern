@@ -16,15 +16,6 @@ func LanternQuery(request *pb.IlluminateRequest) LoadQuery {
 	}
 }
 
-func LanternEdge(edge *pb.Edge) Edge {
-	return Edge{
-		Tail:   Key(edge.Tail),
-		Head:   Key(edge.Head),
-		Weight: Weight(edge.Weight),
-		Expiration: Expiration(edge.Expiration.AsTime().Unix()),
-	}
-}
-
 func ProtoGraph(graph Graph) *pb.Graph {
 	g := pb.Graph{}
 	g.VertexMap = make(map[string]*pb.Vertex)
