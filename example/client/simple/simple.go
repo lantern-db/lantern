@@ -28,19 +28,15 @@ func main() {
 	_ = c.DumpVertex(ctx, "c", 3.14)
 
 	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
-		log.Println(resA)
 		log.Println(resA.StringValue())
 	}
 	if resB, err := c.LoadVertex(ctx, "b"); err == nil {
-		log.Println(resB)
 		log.Println(resB.IntValue())
 	}
 	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
-		log.Println(resC)
 		log.Println(resC.Float64Value())
 	}
 	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
-		log.Println(resD)
 		log.Println(resD.NilValue())
 	}
 
