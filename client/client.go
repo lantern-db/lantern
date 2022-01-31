@@ -68,7 +68,7 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 }
 
 func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}) error {
-	vertex, err := newVertex(key, value)
+	vertex, err := newProtoVertex(key, value)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32
 	return NewIlluminateResult(response.Graph), nil
 }
 
-func newVertex(key string, value interface{}) (*pb.Vertex, error) {
+func newProtoVertex(key string, value interface{}) (*pb.Vertex, error) {
 	vertex := &pb.Vertex{
 		Key: key,
 	}

@@ -28,6 +28,7 @@ message Edge {
     string tail = 1;
     string head = 2;
     float weight = 3;
+    google.protobuf.Timestamp expiration = 4;
 }
 
 message Neighbor {
