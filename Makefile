@@ -1,8 +1,4 @@
 
-./graph/model/mock.go: ./graph/model/graph.go
-	mockgen -source graph/model/graph.go -destination graph/model/mock.go -package model
-
-
 ./pb/data.pb.go ./pb/data_grpc.pb.go: ./proto/data.proto
 	protoc data.proto \
 		--proto_path=./proto \
@@ -20,10 +16,10 @@ clean:
 	rm ./graph/model/mock.go
 .PHONY: clean
 
-build: ./Dockerfile ./graph/model/mock.go ./pb/data.pb.go ./pb/data_grpc.pb.go
+build: ./Dockerfile ./pb/data.pb.go ./pb/data_grpc.pb.go
 	docker build -t lantern .
 	docker tag lantern piroyoung/lantern-server:latest
-	docker tag lantern piroyoung/lantern-server:0.0.3
+	docker tag lantern piroyoung/lantern-server:0.0.4
 	docker push piroyoung/lantern-server:latest
-	docker push piroyoung/lantern-server:0.0.3
+	docker push piroyoung/lantern-server:0.0.4
 .PHONY: build
