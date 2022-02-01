@@ -3,7 +3,6 @@ module github.com/lantern-db/lantern
 go 1.16
 
 require (
-	github.com/golang/mock v1.5.0
 	github.com/golang/protobuf v1.5.0
 	github.com/google/wire v0.5.0
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb // indirect
