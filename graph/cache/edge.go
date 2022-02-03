@@ -20,11 +20,11 @@ func (c *EdgeCache) Set(edge Edge) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	_, ok := c.cache[edge.Tail]
+	_, ok := c.cache[edge.Tail()]
 	if !ok {
-		c.cache[edge.Tail] = make(map[Key]Edge)
+		c.cache[edge.Tail()] = make(map[Key]Edge)
 	}
-	c.cache[edge.Tail][edge.Head] = edge
+	c.cache[edge.Tail()][edge.Head()] = edge
 }
 
 func (c *EdgeCache) Delete(tail Key, head Key) {
@@ -45,19 +45,19 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 
 	if _, ok := c.cache[tail]; !ok {
 		c.mu.RUnlock()
-		return Edge{}, false
+		return nil, false
 	}
 
 	edge, ok := c.cache[tail][head]
 	c.mu.RUnlock()
 
 	if !ok {
-		return Edge{}, false
+		return nil, false
 	}
 
-	if edge.Expiration.Dead() {
+	if edge.Expiration().Dead() {
 		c.Delete(tail, head)
-		return Edge{}, false
+		return nil, false
 	}
 	return edge, true
 }
@@ -72,7 +72,7 @@ func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
 		return nil, false
 	}
 	for head, edge := range headMap {
-		if edge.Expiration.Dead() {
+		if edge.Expiration().Dead() {
 			expired = append(expired, head)
 		} else {
 			result[head] = edge
@@ -90,12 +90,17 @@ func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
 }
 
 func (c *EdgeCache) Flush() {
-	var keys []Edge
+	type key struct {
+		Head Key
+		Tail Key
+	}
+	var keys []key
+
 	c.mu.RLock()
 	for tail, headMap := range c.cache {
 		for head, edge := range headMap {
-			if edge.Expiration.Dead() {
-				keys = append(keys, Edge{Tail: tail, Head: head})
+			if edge.Expiration().Dead() {
+				keys = append(keys, key{Tail: tail, Head: head})
 			}
 		}
 	}

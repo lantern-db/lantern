@@ -20,7 +20,7 @@ func newEdgeCache() *cache.EdgeCache {
 }
 
 func newGraphCache(config *model.LanternServerConfig, v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
-	return cache.NewGraphCache(config.Ttl, v, e)
+	return cache.NewGraphCache(v, e)
 }
 
 func newListener(config *model.LanternServerConfig) (net.Listener, error) {
