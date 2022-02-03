@@ -8,22 +8,22 @@ import (
 )
 
 type ProtoVertex struct {
-	message pb.Vertex
+	message *pb.Vertex
 }
 
-func (p *ProtoVertex) Key() Key {
+func (p ProtoVertex) Key() Key {
 	return Key(p.message.Key)
 }
 
-func (p *ProtoVertex) Value() Value {
+func (p ProtoVertex) Value() Value {
 	return p.message
 }
 
-func (p *ProtoVertex) AsProto() pb.Vertex {
+func (p ProtoVertex) AsProto() *pb.Vertex {
 	return p.message
 }
 
-func (p *ProtoVertex) StringValue() (string, error) {
+func (p ProtoVertex) StringValue() (string, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_String_:
 		return v.String_, nil
@@ -32,11 +32,11 @@ func (p *ProtoVertex) StringValue() (string, error) {
 	}
 }
 
-func (p *ProtoVertex) Expiration() Expiration {
+func (p ProtoVertex) Expiration() Expiration {
 	return Expiration(p.message.Expiration.AsTime().Unix())
 }
 
-func (p *ProtoVertex) IntValue() (int, error) {
+func (p ProtoVertex) IntValue() (int, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Int32:
 		return int(v.Int32), nil
@@ -45,7 +45,7 @@ func (p *ProtoVertex) IntValue() (int, error) {
 	}
 }
 
-func (p *ProtoVertex) Int64Value() (int64, error) {
+func (p ProtoVertex) Int64Value() (int64, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Int32:
 		return int64(v.Int32), nil
@@ -60,7 +60,7 @@ func (p *ProtoVertex) Int64Value() (int64, error) {
 	}
 }
 
-func (p *ProtoVertex) Float32Value() (float32, error) {
+func (p ProtoVertex) Float32Value() (float32, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Float32:
 		return v.Float32, nil
@@ -69,7 +69,7 @@ func (p *ProtoVertex) Float32Value() (float32, error) {
 	}
 }
 
-func (p *ProtoVertex) Float64Value() (float64, error) {
+func (p ProtoVertex) Float64Value() (float64, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Float64:
 		return v.Float64, nil
@@ -78,7 +78,7 @@ func (p *ProtoVertex) Float64Value() (float64, error) {
 	}
 }
 
-func (p *ProtoVertex) BoolValue() (bool, error) {
+func (p ProtoVertex) BoolValue() (bool, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Bool:
 		return v.Bool, nil
@@ -87,7 +87,7 @@ func (p *ProtoVertex) BoolValue() (bool, error) {
 	}
 }
 
-func (p *ProtoVertex) BytesValue() ([]byte, error) {
+func (p ProtoVertex) BytesValue() ([]byte, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Bytes:
 		return v.Bytes, nil
@@ -96,7 +96,7 @@ func (p *ProtoVertex) BytesValue() ([]byte, error) {
 	}
 }
 
-func (p *ProtoVertex) TimeValue() (time.Time, error) {
+func (p ProtoVertex) TimeValue() (time.Time, error) {
 	switch v := p.message.Value.(type) {
 	case *pb.Vertex_Timestamp:
 		return v.Timestamp.AsTime(), nil
@@ -105,6 +105,6 @@ func (p *ProtoVertex) TimeValue() (time.Time, error) {
 	}
 }
 
-func (p *ProtoVertex) NilValue() (interface{}, error) {
+func (p ProtoVertex) NilValue() (interface{}, error) {
 	return nil, nil
 }

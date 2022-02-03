@@ -9,7 +9,7 @@ type Vertex interface {
 	Key() Key
 	Value() Value
 	Expiration() Expiration
-	AsProto() pb.Vertex
+	AsProto() *pb.Vertex
 	StringValue() (string, error)
 	IntValue() (int, error)
 	Int64Value() (int64, error)
