@@ -51,11 +51,12 @@ func (c *LanternClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
+func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32, ttl time.Duration) error {
 	edge := &pb.Edge{
-		Tail:   tail,
-		Head:   head,
-		Weight: weight,
+		Tail:       tail,
+		Head:       head,
+		Weight:     weight,
+		Expiration: model.NewExpiration(ttl).AsProtoTimestamp(),
 	}
 	response, err := c.client.DumpEdge(ctx, edge)
 	if err != nil {

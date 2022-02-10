@@ -41,10 +41,10 @@ func main() {
 		log.Println(resD.NilValue())
 	}
 
-	_ = c.DumpEdge(ctx, "a", "b", 1.0)
-	_ = c.DumpEdge(ctx, "b", "c", 1.0)
-	_ = c.DumpEdge(ctx, "c", "d", 1.0)
-	_ = c.DumpEdge(ctx, "d", "e", 1.0)
+	_ = c.DumpEdge(ctx, "a", "b", 1.0, 60)
+	_ = c.DumpEdge(ctx, "b", "c", 1.0, 60)
+	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60)
+	_ = c.DumpEdge(ctx, "d", "e", 1.0, 60)
 
 	result, err := c.Illuminate(ctx, "a", 3)
 	if err != nil {

@@ -28,7 +28,7 @@ func main() {
 	for range make([]int, 1000) {
 		j = rand.Intn(100)
 		log.Println(i, j)
-		err := c.DumpEdge(ctx, strconv.Itoa(i), strconv.Itoa(j), 1.0)
+		err := c.DumpEdge(ctx, strconv.Itoa(i), strconv.Itoa(j), 1.0, 60)
 		if err != nil {
 			panic(err)
 		}
