@@ -39,6 +39,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	jsonBytes, _ := json.Marshal(result)
+	jsonBytes, _ := json.Marshal(result.Render())
 	log.Println(string(jsonBytes))
 }
