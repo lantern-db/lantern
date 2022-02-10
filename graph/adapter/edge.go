@@ -28,3 +28,7 @@ func (p ProtoEdge) Expiration() Expiration {
 func (p ProtoEdge) AsProto() *pb.Edge {
 	return p.message
 }
+
+func NewProtoEdge(message *pb.Edge) Edge {
+	return ProtoEdge{message: message}
+}

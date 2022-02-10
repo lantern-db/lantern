@@ -111,7 +111,11 @@ func (p ProtoVertex) NilValue() (interface{}, error) {
 	return nil, nil
 }
 
-func NewProtoVertex(key Key, value Value, expiration Expiration) (ProtoVertex, error) {
+func NewProtoVertex(message *pb.Vertex) Vertex {
+	return ProtoVertex{message: message}
+}
+
+func NewProtoVertexOfValue(key Key, value Value, expiration Expiration) (Vertex, error) {
 	message := &pb.Vertex{}
 	message.Key = string(key)
 	message.Expiration = expiration.AsProtoTimestamp()
@@ -164,6 +168,6 @@ func NewProtoVertex(key Key, value Value, expiration Expiration) (ProtoVertex, e
 
 	}
 
-	return ProtoVertex{message: message}, nil
+	return NewProtoVertex(message), nil
 
 }
