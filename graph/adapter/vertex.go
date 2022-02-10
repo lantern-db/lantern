@@ -4,6 +4,8 @@ import (
 	"errors"
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
+	"go/types"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
@@ -107,4 +109,61 @@ func (p ProtoVertex) TimeValue() (time.Time, error) {
 
 func (p ProtoVertex) NilValue() (interface{}, error) {
 	return nil, nil
+}
+
+func NewProtoVertex(key Key, value Value, expiration Expiration) (ProtoVertex, error) {
+	message := &pb.Vertex{}
+	message.Key = string(key)
+	message.Expiration = expiration.AsProtoTimestamp()
+
+	switch v := value.(type) {
+	case int:
+		message.Value = &pb.Vertex_Int32{Int32: int32(v)}
+
+	case int32:
+		message.Value = &pb.Vertex_Int32{Int32: v}
+
+	case int64:
+		message.Value = &pb.Vertex_Int64{Int64: v}
+
+	case uint8:
+		message.Value = &pb.Vertex_Uint32{Uint32: uint32(v)}
+
+	case uint16:
+		message.Value = &pb.Vertex_Uint32{Uint32: uint32(v)}
+
+	case uint32:
+		message.Value = &pb.Vertex_Uint32{Uint32: v}
+
+	case uint64:
+		message.Value = &pb.Vertex_Uint64{Uint64: v}
+
+	case float32:
+		message.Value = &pb.Vertex_Float32{Float32: v}
+
+	case float64:
+		message.Value = &pb.Vertex_Float64{Float64: v}
+
+	case bool:
+		message.Value = &pb.Vertex_Bool{Bool: v}
+
+	case string:
+		message.Value = &pb.Vertex_String_{String_: v}
+
+	case []byte:
+		message.Value = &pb.Vertex_Bytes{Bytes: v}
+
+	case time.Time:
+		message.Value = &pb.Vertex_Timestamp{Timestamp: timestamppb.New(v)}
+
+	case types.Nil:
+		message.Value = &pb.Vertex_Nil{Nil: true}
+
+	default:
+		return ProtoVertex{}, errors.New("parse error")
+
+	}
+
+	return ProtoVertex{message: message}, nil
+
 }

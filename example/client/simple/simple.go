@@ -24,9 +24,9 @@ func main() {
 
 	ctx := context.Background()
 
-	_ = c.DumpVertex(ctx, "a", "test")
-	_ = c.DumpVertex(ctx, "b", 42)
-	_ = c.DumpVertex(ctx, "c", 3.14)
+	_ = c.DumpVertex(ctx, "a", "test", 60)
+	_ = c.DumpVertex(ctx, "b", 42, 60)
+	_ = c.DumpVertex(ctx, "c", 3.14, 60)
 
 	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
 		log.Println(resA.StringValue())
