@@ -20,9 +20,3 @@ type Vertex interface {
 	TimeValue() (time.Time, error)
 	NilValue() (interface{}, error)
 }
-
-type VertexExpression struct {
-	Key        Key        `json:"key,omitempty"`
-	Value      Value      `json:"value,omitempty"`
-	Expiration Expiration `json:"expiration,omitempty""`
-}

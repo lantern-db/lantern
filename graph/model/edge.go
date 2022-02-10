@@ -9,10 +9,3 @@ type Edge interface {
 	Expiration() Expiration
 	AsProto() *pb.Edge
 }
-
-type EdgeExpression struct {
-	Tail       Key        `json:"tail,omitempty"`
-	Head       Key        `json:"head,omitempty"`
-	Weight     Weight     `json:"weight,omitempty"`
-	Expiration Expiration `json:"expiration,omitempty"`
-}
