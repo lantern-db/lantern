@@ -42,12 +42,12 @@ func (l *LanternService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpR
 	expiration := model.Expiration(edge.Expiration.AsTime().Unix())
 
 	if _, ok := l.cache.LoadVertex(tail); !ok {
-		v, _ := adapter.NewProtoVertexOfValue(tail, nil, expiration)
+		v, _ := adapter.NewProtoVertexOf(tail, nil, expiration)
 		l.cache.DumpVertex(v)
 	}
 
 	if _, ok := l.cache.LoadVertex(head); !ok {
-		v, _ := adapter.NewProtoVertexOfValue(head, nil, expiration)
+		v, _ := adapter.NewProtoVertexOf(head, nil, expiration)
 		l.cache.DumpVertex(v)
 	}
 

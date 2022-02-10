@@ -68,7 +68,7 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 }
 
 func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
-	vertex, err := adapter.NewProtoVertexOfValue(model.Key(key), model.Value(value), model.NewExpiration(ttl))
+	vertex, err := adapter.NewProtoVertexOf(model.Key(key), model.Value(value), model.NewExpiration(ttl))
 	if err != nil {
 		return err
 	}
