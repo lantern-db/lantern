@@ -58,6 +58,8 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 	edge2.EXPECT().Tail().Return(Key("tail")).AnyTimes()
 	edge2.EXPECT().Head().Return(Key("head2")).AnyTimes()
 	edge2.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge2.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
 	c := NewEdgeCache()
 
 	t.Run("valid_case", func(t *testing.T) {
