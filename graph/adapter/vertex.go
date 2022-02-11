@@ -4,7 +4,6 @@ import (
 	"errors"
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
-	"go/types"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
@@ -196,7 +195,7 @@ func NewProtoVertexOf(key Key, value Value, expiration Expiration) (Vertex, erro
 	case time.Time:
 		message.Value = &pb.Vertex_Timestamp{Timestamp: timestamppb.New(v)}
 
-	case types.Nil:
+	case nil:
 		message.Value = &pb.Vertex_Nil{Nil: true}
 
 	default:
