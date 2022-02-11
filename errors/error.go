@@ -4,4 +4,4 @@ import (
 	. "errors"
 )
 
-var ValueParseError = New("parse_error")
+var ValueParseError = New("ValueParseError")
