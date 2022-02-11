@@ -38,9 +38,9 @@ func main() {
 	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
 		log.Println(resC.Float64Value())
 	}
-	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
-		log.Println(resD.NilValue())
-	}
+	//if resD, err := c.LoadVertex(ctx, "d"); err == nil {
+		//log.Println(resD.NilValue())
+	//}
 
 	_ = c.DumpEdge(ctx, "a", "b", 1.0, 60*time.Second)
 	_ = c.DumpEdge(ctx, "b", "c", 1.0, 60*time.Second)
