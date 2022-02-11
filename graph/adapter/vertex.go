@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"errors"
+	"github.com/lantern-db/lantern/errors"
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -65,7 +65,7 @@ func (p ProtoVertex) StringValue() (string, error) {
 	case *pb.Vertex_String_:
 		return v.String_, nil
 	default:
-		return "", errors.New("parse error")
+		return "", errors.ValueParseError
 	}
 }
 
@@ -78,7 +78,7 @@ func (p ProtoVertex) IntValue() (int, error) {
 	case *pb.Vertex_Int32:
 		return int(v.Int32), nil
 	default:
-		return 0, errors.New("parse error")
+		return 0, errors.ValueParseError
 	}
 }
 
@@ -93,7 +93,7 @@ func (p ProtoVertex) Int64Value() (int64, error) {
 	case *pb.Vertex_Uint64:
 		return int64(v.Uint64), nil
 	default:
-		return 0, errors.New("parse error")
+		return 0, errors.ValueParseError
 	}
 }
 
@@ -102,7 +102,7 @@ func (p ProtoVertex) Float32Value() (float32, error) {
 	case *pb.Vertex_Float32:
 		return v.Float32, nil
 	default:
-		return 0.0, errors.New("parse error")
+		return 0.0, errors.ValueParseError
 	}
 }
 
@@ -111,7 +111,7 @@ func (p ProtoVertex) Float64Value() (float64, error) {
 	case *pb.Vertex_Float64:
 		return v.Float64, nil
 	default:
-		return 0.0, errors.New("parse error")
+		return 0.0, errors.ValueParseError
 	}
 }
 
@@ -120,7 +120,7 @@ func (p ProtoVertex) BoolValue() (bool, error) {
 	case *pb.Vertex_Bool:
 		return v.Bool, nil
 	default:
-		return false, errors.New("parse error")
+		return false, errors.ValueParseError
 	}
 }
 
@@ -129,7 +129,7 @@ func (p ProtoVertex) BytesValue() ([]byte, error) {
 	case *pb.Vertex_Bytes:
 		return v.Bytes, nil
 	default:
-		return nil, errors.New("parse error")
+		return nil, errors.ValueParseError
 	}
 }
 
@@ -138,7 +138,7 @@ func (p ProtoVertex) TimeValue() (time.Time, error) {
 	case *pb.Vertex_Timestamp:
 		return v.Timestamp.AsTime(), nil
 	default:
-		return time.Unix(0, 0), errors.New("parse error")
+		return time.Unix(0, 0), errors.ValueParseError
 	}
 }
 
@@ -199,7 +199,7 @@ func NewProtoVertexOf(key Key, value Value, ttl time.Duration) (Vertex, error) {
 		message.Value = &pb.Vertex_Nil{Nil: true}
 
 	default:
-		return ProtoVertex{}, errors.New("parse error")
+		return ProtoVertex{}, errors.ValueParseError
 
 	}
 
