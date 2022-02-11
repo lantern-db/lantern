@@ -27,3 +27,7 @@ build: ./Dockerfile ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/vert
 	docker tag lantern piroyoung/lantern-server:latest
 	docker tag lantern piroyoung/lantern-server:0.0.4
 .PHONY: build
+
+test: ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/vertex.go ./graph/model/mock/edge.go
+	go build ./...
+	go test ./...

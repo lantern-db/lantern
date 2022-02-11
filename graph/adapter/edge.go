@@ -3,6 +3,7 @@ package adapter
 import (
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
+	"time"
 )
 
 type ProtoEdge struct {
@@ -31,4 +32,15 @@ func (p ProtoEdge) AsProto() *pb.Edge {
 
 func NewProtoEdge(message *pb.Edge) Edge {
 	return ProtoEdge{message: message}
+}
+
+func NewProtoEdgeOf(tail Key, head Key, weight Weight, ttl time.Duration) Edge {
+	message := &pb.Edge{
+		Tail:       string(tail),
+		Head:       string(head),
+		Weight:     float32(weight),
+		Expiration: NewExpiration(ttl).AsProtoTimestamp(),
+	}
+
+	return NewProtoEdge(message)
 }

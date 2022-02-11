@@ -7,6 +7,7 @@ import (
 	"github.com/lantern-db/lantern/client"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -24,9 +25,9 @@ func main() {
 
 	ctx := context.Background()
 
-	_ = c.DumpVertex(ctx, "a", "test", 60)
-	_ = c.DumpVertex(ctx, "b", 42, 60)
-	_ = c.DumpVertex(ctx, "c", 3.14, 60)
+	_ = c.DumpVertex(ctx, "a", "test", 60*time.Second)
+	_ = c.DumpVertex(ctx, "b", 42, 60*time.Second)
+	_ = c.DumpVertex(ctx, "c", 3.14, 60*time.Second)
 
 	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
 		log.Println(resA.StringValue())
@@ -41,10 +42,10 @@ func main() {
 		log.Println(resD.NilValue())
 	}
 
-	_ = c.DumpEdge(ctx, "a", "b", 1.0, 60)
-	_ = c.DumpEdge(ctx, "b", "c", 1.0, 60)
-	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60)
-	_ = c.DumpEdge(ctx, "d", "e", 1.0, 60)
+	_ = c.DumpEdge(ctx, "a", "b", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "b", "c", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "d", "e", 1.0, 60*time.Second)
 
 	result, err := c.Illuminate(ctx, "a", 3)
 	if err != nil {
