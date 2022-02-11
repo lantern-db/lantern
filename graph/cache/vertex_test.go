@@ -2,6 +2,7 @@ package cache
 
 import (
 	"github.com/golang/mock/gomock"
+	. "github.com/lantern-db/lantern/graph/model"
 	mock_model "github.com/lantern-db/lantern/graph/model/mock"
 	"testing"
 	"time"
@@ -12,9 +13,9 @@ func TestVertexCache_Delete(t *testing.T) {
 	defer ctrl.Finish()
 
 	v := mock_model.NewMockVertex(ctrl)
-	v.EXPECT().Key().Return("key").AnyTimes()
-	v.EXPECT().Value().Return("value").AnyTimes()
-	v.EXPECT().Expiration().Return(3 * time.Second).AnyTimes()
+	v.EXPECT().Key().Return(Key("key")).AnyTimes()
+	v.EXPECT().Value().Return(Key("value")).AnyTimes()
+	v.EXPECT().Expiration().Return(NewExpiration(3 * time.Second)).AnyTimes()
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
@@ -32,9 +33,9 @@ func TestVertexCache_Get(t *testing.T) {
 	defer ctrl.Finish()
 
 	v := mock_model.NewMockVertex(ctrl)
-	v.EXPECT().Key().Return("key").AnyTimes()
-	v.EXPECT().Value().Return("value").AnyTimes()
-	v.EXPECT().Expiration().Return(3 * time.Second).AnyTimes()
+	v.EXPECT().Key().Return(Key("key")).AnyTimes()
+	v.EXPECT().Value().Return(Key("value")).AnyTimes()
+	v.EXPECT().Expiration().Return(NewExpiration(3 * time.Second)).AnyTimes()
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
@@ -59,9 +60,9 @@ func TestVertexCache_Set(t *testing.T) {
 	defer ctrl.Finish()
 
 	v := mock_model.NewMockVertex(ctrl)
-	v.EXPECT().Key().Return("key").AnyTimes()
-	v.EXPECT().Value().Return("value").AnyTimes()
-	v.EXPECT().Expiration().Return(3 * time.Second).AnyTimes()
+	v.EXPECT().Key().Return(Key("key")).AnyTimes()
+	v.EXPECT().Value().Return(Key("value")).AnyTimes()
+	v.EXPECT().Expiration().Return(NewExpiration(3 * time.Second)).AnyTimes()
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
