@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"github.com/lantern-db/lantern/graph/adapter"
 	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
 )
@@ -49,6 +50,16 @@ func (c *GraphCache) DumpVertex(vertex Vertex) {
 }
 
 func (c *GraphCache) DumpEdge(edge Edge) {
+	if _, found := c.vertexCache.Get(edge.Tail()); !found {
+		v, _ := adapter.NewProtoVertexOf(edge.Tail(), 0, edge.Expiration())
+		c.vertexCache.Set(v)
+	}
+
+	if _, found := c.vertexCache.Get(edge.Head()); !found {
+		v, _ := adapter.NewProtoVertexOf(edge.Head(), 0, edge.Expiration())
+		c.vertexCache.Set(v)
+	}
+
 	c.edgeCache.Set(edge)
 }
 

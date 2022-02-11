@@ -18,7 +18,43 @@ func (p ProtoVertex) Key() Key {
 }
 
 func (p ProtoVertex) Value() Value {
-	return p.message
+	switch v := p.message.Value.(type) {
+	case *pb.Vertex_Int32:
+		return v.Int32
+
+	case *pb.Vertex_Uint32:
+		return v.Uint32
+
+	case *pb.Vertex_Int64:
+		return v.Int64
+
+	case *pb.Vertex_Uint64:
+		return v.Uint64
+
+	case *pb.Vertex_Float32:
+		return v.Float32
+
+	case *pb.Vertex_Float64:
+		return v.Float64
+
+	case *pb.Vertex_String_:
+		return v.String_
+
+	case *pb.Vertex_Bool:
+		return v.Bool
+
+	case *pb.Vertex_Timestamp:
+		return v.Timestamp.AsTime()
+
+	case *pb.Vertex_Bytes:
+		return v.Bytes
+
+	case *pb.Vertex_Nil:
+		return nil
+
+	default:
+		return v
+	}
 }
 
 func (p ProtoVertex) AsProto() *pb.Vertex {

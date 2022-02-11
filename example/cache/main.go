@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
 	"github.com/lantern-db/lantern/graph/model"
+	"log"
 	"time"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	q := model.NeighborQuery("a", 3)
 
 	res := repo.Load(q)
-	fmt.Println(res.Vertices())
-	fmt.Println(res.Edges())
+	jsonBytes, _ := json.Marshal(res.Render())
+	log.Println(string(jsonBytes))
 
 }
