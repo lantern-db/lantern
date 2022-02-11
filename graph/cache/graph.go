@@ -31,7 +31,7 @@ func (c *GraphCache) Load(query LoadQuery) Graph {
 		return g
 	}
 
-	seen := map[Key]Vertex{}
+	seen := make(map[Key]bool)
 
 	for i := uint32(0); i < query.Step; i++ {
 		g, seen = c.expand(query, g, seen)
@@ -81,11 +81,11 @@ func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Gra
 	return
 }
 
-func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (Graph, map[Key]Vertex) {
+func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]bool) (Graph, map[Key]bool) {
 	var wg sync.WaitGroup
 	ch := make(chan Graph)
 
-	nextSeen := make(map[Key]Vertex)
+	nextSeen := make(map[Key]bool)
 	for k, v := range seen {
 		nextSeen[k] = v
 	}
@@ -101,7 +101,7 @@ func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (
 		if ok {
 			continue
 		}
-		nextSeen[vertex.Key()] = vertex
+		nextSeen[vertex.Key()] = true
 		wg.Add(1)
 		go c.calculateAdjacent(query, vertex, ch, &wg)
 	}
