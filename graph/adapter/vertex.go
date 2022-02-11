@@ -150,10 +150,10 @@ func NewProtoVertex(message *pb.Vertex) Vertex {
 	return ProtoVertex{message: message}
 }
 
-func NewProtoVertexOf(key Key, value Value, expiration Expiration) (Vertex, error) {
+func NewProtoVertexOf(key Key, value Value, ttl time.Duration) (Vertex, error) {
 	message := &pb.Vertex{}
 	message.Key = string(key)
-	message.Expiration = expiration.AsProtoTimestamp()
+	message.Expiration = NewExpiration(ttl).AsProtoTimestamp()
 
 	switch v := value.(type) {
 	case int:

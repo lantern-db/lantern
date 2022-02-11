@@ -22,6 +22,8 @@ func main() {
 	repo.DumpEdge(cd)
 	repo.DumpEdge(de)
 	repo.DumpEdge(ce)
+	v, _ := adapter.NewProtoVertexOf("a", 0, 60*time.Second)
+	repo.DumpVertex(v)
 
 	q := model.NeighborQuery("a", 3)
 
