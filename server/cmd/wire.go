@@ -19,7 +19,7 @@ func newEdgeCache() *cache.EdgeCache {
 	return cache.NewEdgeCache()
 }
 
-func newGraphCache(config *model.LanternServerConfig, v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
+func newGraphCache(v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
 	return cache.NewGraphCache(v, e)
 }
 

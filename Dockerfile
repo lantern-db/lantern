@@ -7,7 +7,6 @@ RUN cd /src && go build -o /src/bin/lantern-server -v /src/server/cmd/
 FROM alpine
 ENV LANTERN_FLUSH_INTERVAL=60
 ENV LANTERN_PORT=6380
-ENV LANTERN_TTL=180
 
 WORKDIR /app
 COPY --from=builder /src/bin/lantern-server /tmp/lantern-server

@@ -26,7 +26,7 @@ func initializeLanternServer() (*service.LanternServer, error) {
 	}
 	vertexCache := newVertexCache()
 	edgeCache := newEdgeCache()
-	graphCache := newGraphCache(lanternServerConfig, vertexCache, edgeCache)
+	graphCache := newGraphCache(vertexCache, edgeCache)
 	lanternService := service.NewLanternService(graphCache)
 	v := newGrpcServerOptions()
 	server := grpc.NewServer(v...)
@@ -44,7 +44,7 @@ func newEdgeCache() *cache.EdgeCache {
 	return cache.NewEdgeCache()
 }
 
-func newGraphCache(config *model.LanternServerConfig, v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
+func newGraphCache(v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
 	return cache.NewGraphCache(v, e)
 }
 

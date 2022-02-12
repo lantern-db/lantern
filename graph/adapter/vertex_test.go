@@ -1,14 +1,13 @@
 package adapter
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
 
 func TestNewProtoVertexOf(t *testing.T) {
 	t.Run("int_case", func(t *testing.T) {
-		vertex, err := NewProtoVertexOf("key", 1, model.NewExpiration(1*time.Second))
+		vertex, err := NewProtoVertexOf("key", 1, 1*time.Second)
 		expected := 1
 		if err != nil {
 			t.Error(err)
@@ -23,7 +22,7 @@ func TestNewProtoVertexOf(t *testing.T) {
 	})
 
 	t.Run("int32_case", func(t *testing.T) {
-		vertex, err := NewProtoVertexOf("key", int32(1), model.NewExpiration(1*time.Second))
+		vertex, err := NewProtoVertexOf("key", int32(1), 1*time.Second)
 		expected := 1
 		if err != nil {
 			t.Error(err)
@@ -38,7 +37,7 @@ func TestNewProtoVertexOf(t *testing.T) {
 	})
 
 	t.Run("nil_case", func(t *testing.T) {
-		vertex, err := NewProtoVertexOf("key", nil, model.NewExpiration(1*time.Second))
+		vertex, err := NewProtoVertexOf("key", nil, 1*time.Second)
 		if err != nil {
 			t.Error(err)
 		}
