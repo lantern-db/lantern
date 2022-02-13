@@ -33,13 +33,13 @@ $ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e piroyoung/lantern-server:a
 
 ## Setting vertices
 
-We can use `DumpVertex(ctx, key, value)` method to register vertices like below.
+We can use `DumpVertex(ctx, key, value, ttl)` method to register vertices like below.
 
 ```golang
-_ := c.DumpVertex(ctx, "a", "value of a")
-_ := c.DumpVertex(ctx, "b", "value of b")
-_ := c.DumpVertex(ctx, "c", "value of c")
-_ := c.DumpVertex(ctx, "d", "value of d")
+_ := c.DumpVertex(ctx, "a", "value of a", 60*time.Second)
+_ := c.DumpVertex(ctx, "b", "value of b", 60*time.Second)
+_ := c.DumpVertex(ctx, "c", "value of c", 60*time.Second)
+_ := c.DumpVertex(ctx, "d", "value of d", 60*time.Second)
 ```
 
 ## Loading a single vertex with Key
@@ -61,13 +61,13 @@ i, err := resA.IntValue() // => invalid case, returns error
 
 ## Setting edges
 
-Edges can also be created with `Dump(ctx, keyOfTail, keyOfHead, weight)`.
+Edges can also be created with `Dump(ctx, keyOfTail, keyOfHead, weight, ttl)`.
 
 ```golang
-_ = c.DumpEdge(ctx, "a", "b", 1.0)
-_ = c.DumpEdge(ctx, "b", "c", 1.0)
-_ = c.DumpEdge(ctx, "c", "d", 1.0)
-_ = c.DumpEdge(ctx, "d", "e", 1.0)
+_ = c.DumpEdge(ctx, "a", "b", 1.0, 60*time.Second)
+_ = c.DumpEdge(ctx, "b", "c", 1.0, 60*time.Second)
+_ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
+_ = c.DumpEdge(ctx, "d", "e", 1.0, 60*time.Second)
 ```
 
 If the vertex which has key `a` is missing in a graph, then empty valued vertices will be created with same expirations.
