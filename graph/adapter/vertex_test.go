@@ -1,8 +1,6 @@
 package adapter
 
 import (
-	"fmt"
-	"github.com/lantern-db/lantern/graph/model"
 	"testing"
 	"time"
 )
@@ -51,20 +49,5 @@ func TestNewProtoVertexOf(t *testing.T) {
 			t.Errorf("Get() got = %t, want true", value)
 
 		}
-	})
-
-	t.Run("nil_as_proto", func(t *testing.T) {
-		vertex, _ := NewProtoVertexOf("key", nil, 1*time.Second)
-		pv := vertex.AsProto()
-		fmt.Println(pv)
-		fmt.Println(NewProtoVertex(pv))
-		fmt.Println(NewProtoVertex(pv).IsNil())
-
-		v2 := model.NewEmptyVertexOf("key", 0)
-		fmt.Println(v2)
-		fmt.Println(v2.AsProto())
-		fmt.Println(v2.IsNil())
-		fmt.Println(NewProtoVertex(v2.AsProto()).IsNil())
-
 	})
 }
