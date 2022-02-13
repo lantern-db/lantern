@@ -81,6 +81,7 @@ For example, `client.Illuminate(ctx, "a", 2)` returns all vertices within 2-step
 value is an instance of `model.Graph` and it can be rendered to json-parsable struct with a method `Render()`.
 
 ```json{
+{
   "vertices": {
     "a": "test",
     "b": 42,
