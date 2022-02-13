@@ -78,43 +78,26 @@ All vertices can be loaded with a graph structure linking with edges, And we cal
 client has method `Illuminate(ctx, key, step)`.
 
 For example, `client.Illuminate(ctx, "a", 2)` returns all vertices within 2-steps from a vertex "a". type of returning
-value is an instance of `model.Graph` and it's json-parsable struct.
+value is an instance of `model.Graph` and it can be rendered to json-parsable struct with a method `Render()`.
 
-```json
-{
-  "vertexMap": {
+```json{
+  "vertices": {
+    "a": "test",
+    "b": 42,
+    "c": 3.14,
+    "d": null,
+    "e": null
+  },
+  "edges": {
     "a": {
-      "key": "a",
-      "value": "value of a",
-      "expiration": 1643642189
+      "b": 1
     },
     "b": {
-      "key": "b",
-      "value": "value of b",
-      "expiration": 1643642189
+      "c": 1,
+      "e": 1
     },
     "c": {
-      "key": "c",
-      "value": "value of c",
-      "expiration": 1643642189
-    }
-  },
-  "edgeMap": {
-    "a": {
-      "b": {
-        "tail": "a",
-        "head": "b",
-        "weight": 1,
-        "expiration": 1643642189
-      }
-    },
-    "b": {
-      "c": {
-        "tail": "b",
-        "head": "c",
-        "weight": 1,
-        "expiration": 1643642189
-      }
+      "d": 1
     }
   }
 }
