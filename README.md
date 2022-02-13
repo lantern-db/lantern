@@ -23,11 +23,11 @@ LanternDB just illuminates the moment, just focuses on neighbors, not global str
 # lantern-server
 
 ```
-$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e LANTERN_TTL=300 piroyoung/lantern-server
+$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e piroyoung/lantern-server:alpha
 ```
 
 * `LANTERN_PORT`: Port number for Lantern-server
-* `LANTERN_TTL`: time-to-live for each elements (seconds).
+* `LANTERN_FLUSH_INTERVAL`: flush interval for expired values
 
 # lantern-client (Golang)
 
