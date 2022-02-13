@@ -88,8 +88,13 @@ func (c *LanternClient) LoadVertex(ctx context.Context, key string) (model.Verte
 	if err != nil {
 		return nil, err
 	}
-	r := lanternGraph.VertexMap[model.Key(key)]
-	return r, nil
+
+	r, ok := lanternGraph.VertexMap[model.Key(key)]
+	if ok {
+		return r, nil
+	} else {
+		return nil, errors.New("missing values")
+	}
 }
 
 func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*model.Graph, error) {

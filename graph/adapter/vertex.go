@@ -142,8 +142,14 @@ func (p ProtoVertex) TimeValue() (time.Time, error) {
 	}
 }
 
-func (p ProtoVertex) NilValue() (interface{}, error) {
-	return nil, nil
+func (p ProtoVertex) IsNil() (bool, error) {
+	switch p.message.Value.(type) {
+	case *pb.Vertex_Nil:
+		return true, nil
+
+	default:
+		return false, nil
+	}
 }
 
 func NewProtoVertex(message *pb.Vertex) Vertex {

@@ -154,6 +154,21 @@ func (mr *MockVertexMockRecorder) IntValue() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IntValue", reflect.TypeOf((*MockVertex)(nil).IntValue))
 }
 
+// IsNil mocks base method.
+func (m *MockVertex) IsNil() (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsNil")
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsNil indicates an expected call of IsNil.
+func (mr *MockVertexMockRecorder) IsNil() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsNil", reflect.TypeOf((*MockVertex)(nil).IsNil))
+}
+
 // Key mocks base method.
 func (m *MockVertex) Key() model.Key {
 	m.ctrl.T.Helper()
@@ -166,21 +181,6 @@ func (m *MockVertex) Key() model.Key {
 func (mr *MockVertexMockRecorder) Key() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Key", reflect.TypeOf((*MockVertex)(nil).Key))
-}
-
-// NilValue mocks base method.
-func (m *MockVertex) NilValue() (interface{}, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "NilValue")
-	ret0, _ := ret[0].(interface{})
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// NilValue indicates an expected call of NilValue.
-func (mr *MockVertexMockRecorder) NilValue() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NilValue", reflect.TypeOf((*MockVertex)(nil).NilValue))
 }
 
 // StringValue mocks base method.

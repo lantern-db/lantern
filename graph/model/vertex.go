@@ -20,7 +20,7 @@ type Vertex interface {
 	BoolValue() (bool, error)
 	BytesValue() ([]byte, error)
 	TimeValue() (time.Time, error)
-	NilValue() (interface{}, error)
+	IsNil() (bool, error)
 }
 
 type EmptyVertex struct {
@@ -80,8 +80,8 @@ func (e EmptyVertex) TimeValue() (time.Time, error) {
 	return time.Now(), errors.ValueParseError
 }
 
-func (e EmptyVertex) NilValue() (interface{}, error) {
-	return nil, nil
+func (e EmptyVertex) IsNil() (bool, error) {
+	return e.Value() == nil, nil
 }
 
 func NewEmptyVertexOf(key Key, expiration Expiration) Vertex {
