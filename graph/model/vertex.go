@@ -1,121 +1,89 @@
 package model
 
 import (
-	"errors"
-	"reflect"
+	"github.com/lantern-db/lantern/errors"
+	"github.com/lantern-db/lantern/pb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
-type Vertex struct {
-	Key        Key        `json:"key,omitempty"`
-	Value      Value      `json:"value,omitempty"`
-	Expiration Expiration `json:"expiration,omitempty""`
+type Vertex interface {
+	Key() Key
+	Value() Value
+	Expiration() Expiration
+	AsProto() *pb.Vertex
+	StringValue() (string, error)
+	IntValue() (int, error)
+	Int64Value() (int64, error)
+	Float32Value() (float32, error)
+	Float64Value() (float64, error)
+	BoolValue() (bool, error)
+	BytesValue() ([]byte, error)
+	TimeValue() (time.Time, error)
+	IsNil() (bool, error)
 }
 
-func (v *Vertex) IntValue() (int, error) {
-	switch v := v.Value.(type) {
-	case int:
-		return v, nil
-
-	case int32:
-		return int(v), nil
-
-	case uint32:
-		return int(v), nil
-
-	default:
-		return 0, errors.New("parse error")
-	}
-}
-func (v *Vertex) Int64Value() (int64, error) {
-	switch v := v.Value.(type) {
-	case int:
-		return int64(v), nil
-
-	case int32:
-		return int64(v), nil
-
-	case uint32:
-		return int64(v), nil
-
-	case int64:
-		return v, nil
-
-	case uint64:
-		return int64(v), nil
-
-	default:
-		return 0, errors.New("parse error")
-	}
+type EmptyVertex struct {
+	key        Key
+	expiration Expiration
 }
 
-func (v *Vertex) Float32Value() (float32, error) {
-	switch v := v.Value.(type) {
-	case float32:
-		return v, nil
+func (e EmptyVertex) Key() Key {
+	return e.key
+}
 
-	default:
-		return 0.0, errors.New("parse error")
+func (e EmptyVertex) Value() Value {
+	return nil
+}
+
+func (e EmptyVertex) Expiration() Expiration {
+	return e.expiration
+}
+
+func (e EmptyVertex) AsProto() *pb.Vertex {
+	return &pb.Vertex{
+		Key:        string(e.key),
+		Expiration: timestamppb.New(e.expiration.AsTime()),
+		Value:      &pb.Vertex_Nil{Nil: true},
 	}
 }
 
-func (v *Vertex) Float64Value() (float64, error) {
-	switch v := v.Value.(type) {
-	case float32:
-		return float64(v), nil
-
-	case float64:
-		return v, nil
-
-	default:
-		return 0.0, errors.New("parse error")
-	}
+func (e EmptyVertex) StringValue() (string, error) {
+	return "", errors.ValueParseError
 }
 
-func (v *Vertex) BoolValue() (bool, error) {
-	switch v := v.Value.(type) {
-	case bool:
-		return v, nil
-
-	default:
-		return false, errors.New("parse error")
-	}
+func (e EmptyVertex) IntValue() (int, error) {
+	return 0, errors.ValueParseError
 }
 
-func (v *Vertex) StringValue() (string, error) {
-	switch v := v.Value.(type) {
-	case string:
-		return v, nil
-
-	default:
-		return "", errors.New("parse error")
-	}
+func (e EmptyVertex) Int64Value() (int64, error) {
+	return 0, errors.ValueParseError
 }
 
-func (v *Vertex) BytesValue() ([]byte, error) {
-	switch v := v.Value.(type) {
-	case []byte:
-		return v, nil
-
-	default:
-		return nil, errors.New("parse error")
-	}
+func (e EmptyVertex) Float32Value() (float32, error) {
+	return 0.0, errors.ValueParseError
 }
 
-func (v *Vertex) TimeValue() (time.Time, error) {
-	switch v := v.Value.(type) {
-	case time.Time:
-		return v, nil
-
-	default:
-		return time.Now(), errors.New("parse error")
-	}
+func (e EmptyVertex) Float64Value() (float64, error) {
+	return 0.0, errors.ValueParseError
 }
 
-func (v *Vertex) NilValue() (interface{}, error) {
-	if v.Value == nil || reflect.ValueOf(v.Value).IsNil() {
-		return nil, nil
-	} else {
-		return nil, errors.New("parse error")
-	}
+func (e EmptyVertex) BoolValue() (bool, error) {
+	return false, errors.ValueParseError
+}
+
+func (e EmptyVertex) BytesValue() ([]byte, error) {
+	return nil, errors.ValueParseError
+}
+
+func (e EmptyVertex) TimeValue() (time.Time, error) {
+	return time.Now(), errors.ValueParseError
+}
+
+func (e EmptyVertex) IsNil() (bool, error) {
+	return e.Value() == nil, nil
+}
+
+func NewEmptyVertexOf(key Key, expiration Expiration) Vertex {
+	return EmptyVertex{key: key, expiration: expiration}
 }

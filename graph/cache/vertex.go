@@ -19,7 +19,7 @@ func NewVertexCache() *VertexCache {
 func (c *VertexCache) Set(vertex Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache[vertex.Key] = vertex
+	c.cache[vertex.Key()] = vertex
 }
 
 func (c *VertexCache) Delete(key Key) {
@@ -38,11 +38,11 @@ func (c *VertexCache) Get(key Key) (Vertex, bool) {
 	c.mu.RUnlock()
 
 	if !ok {
-		return Vertex{}, false
+		return nil, false
 	}
-	if item.Expiration.Dead() {
+	if item.Expiration().Dead() {
 		defer c.Delete(key)
-		return Vertex{}, false
+		return nil, false
 	}
 	return item, true
 }
@@ -50,7 +50,7 @@ func (c *VertexCache) Get(key Key) (Vertex, bool) {
 func (c *VertexCache) Flush() {
 	c.mu.RLock()
 	for key, vertex := range c.cache {
-		if vertex.Expiration.Dead() {
+		if vertex.Expiration().Dead() {
 			c.Delete(key)
 		}
 	}

@@ -3,25 +3,22 @@ package cache
 import (
 	. "github.com/lantern-db/lantern/graph/model"
 	"sync"
-	"time"
 )
 
 type GraphCache struct {
-	defaultTtl  time.Duration
 	vertexCache *VertexCache
 	edgeCache   *EdgeCache
 }
 
-func NewGraphCache(defaultTtl time.Duration, vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
+func NewGraphCache(vertexCache *VertexCache, edgeCache *EdgeCache) *GraphCache {
 	return &GraphCache{
-		defaultTtl:  defaultTtl,
 		vertexCache: vertexCache,
 		edgeCache:   edgeCache,
 	}
 }
 
-func NewEmptyGraphCache(defaultTtl time.Duration) *GraphCache {
-	return NewGraphCache(defaultTtl, NewVertexCache(), NewEdgeCache())
+func NewEmptyGraphCache() *GraphCache {
+	return NewGraphCache(NewVertexCache(), NewEdgeCache())
 }
 
 func (c *GraphCache) Load(query LoadQuery) Graph {
@@ -31,12 +28,10 @@ func (c *GraphCache) Load(query LoadQuery) Graph {
 		g.VertexMap[query.Seed] = loadedSeed
 
 	} else {
-		g.VertexMap[query.Seed] = Vertex{
-			Key: query.Seed,
-		}
+		return g
 	}
 
-	seen := map[Key]Vertex{}
+	seen := make(map[Key]bool)
 
 	for i := uint32(0); i < query.Step; i++ {
 		g, seen = c.expand(query, g, seen)
@@ -50,31 +45,18 @@ func (c *GraphCache) LoadVertex(key Key) (Vertex, bool) {
 }
 
 func (c *GraphCache) DumpVertex(vertex Vertex) {
-	if vertex.Expiration == 0 {
-		vertex.Expiration = NewExpiration(c.defaultTtl)
-	}
 	c.vertexCache.Set(vertex)
 }
 
 func (c *GraphCache) DumpEdge(edge Edge) {
-	expiration := NewExpiration(c.defaultTtl)
-	if edge.Expiration == 0 {
-		edge.Expiration = expiration
-	}
-	if _, found := c.vertexCache.Get(edge.Tail); !found {
-		c.vertexCache.Set(Vertex{
-			Key:        edge.Tail,
-			Value:      nil,
-			Expiration: expiration,
-		})
+	if _, found := c.vertexCache.Get(edge.Tail()); !found {
+		v := NewEmptyVertexOf(edge.Tail(), edge.Expiration())
+		c.vertexCache.Set(v)
 	}
 
-	if _, found := c.vertexCache.Get(edge.Head); !found {
-		c.vertexCache.Set(Vertex{
-			Key:        edge.Head,
-			Value:      nil,
-			Expiration: expiration,
-		})
+	if _, found := c.vertexCache.Get(edge.Head()); !found {
+		v := NewEmptyVertexOf(edge.Head(), edge.Expiration())
+		c.vertexCache.Set(v)
 	}
 
 	c.edgeCache.Set(edge)
@@ -84,23 +66,23 @@ func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Gra
 	defer wg.Done()
 
 	result := NewGraph()
-	result.VertexMap[tail.Key] = tail
-	heads, found := c.edgeCache.GetAdjacent(tail.Key)
+	result.VertexMap[tail.Key()] = tail
+	heads, found := c.edgeCache.GetAdjacent(tail.Key())
 	if !found {
 		ch <- result
 		return
 	}
 	for headDigest, edge := range heads {
-		weight := float32(edge.Weight)
+		weight := float32(edge.Weight())
 		if query.MinWeight <= weight && weight <= query.MaxWeight {
 			head, found := c.vertexCache.Get(headDigest)
 			if found {
-				_, ok := result.EdgeMap[tail.Key]
+				_, ok := result.EdgeMap[tail.Key()]
 				if !ok {
-					result.EdgeMap[tail.Key] = make(map[Key]Edge)
+					result.EdgeMap[tail.Key()] = make(map[Key]Edge)
 				}
-				result.VertexMap[head.Key] = head
-				result.EdgeMap[tail.Key][head.Key] = edge
+				result.VertexMap[head.Key()] = head
+				result.EdgeMap[tail.Key()][head.Key()] = edge
 			}
 		}
 	}
@@ -109,11 +91,11 @@ func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Gra
 	return
 }
 
-func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (Graph, map[Key]Vertex) {
+func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]bool) (Graph, map[Key]bool) {
 	var wg sync.WaitGroup
 	ch := make(chan Graph)
 
-	nextSeen := make(map[Key]Vertex)
+	nextSeen := make(map[Key]bool)
 	for k, v := range seen {
 		nextSeen[k] = v
 	}
@@ -129,7 +111,7 @@ func (c *GraphCache) expand(query LoadQuery, graph Graph, seen map[Key]Vertex) (
 		if ok {
 			continue
 		}
-		nextSeen[vertex.Key] = vertex
+		nextSeen[vertex.Key()] = true
 		wg.Add(1)
 		go c.calculateAdjacent(query, vertex, ch, &wg)
 	}

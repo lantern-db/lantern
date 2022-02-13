@@ -8,8 +8,8 @@ type VertexMap map[Key]Vertex
 type EdgeMap map[Key]map[Key]Edge
 
 type Graph struct {
-	VertexMap VertexMap `json:"vertexMap,omitempty"`
-	EdgeMap   EdgeMap   `json:"edgeMap,omitempty"`
+	VertexMap VertexMap
+	EdgeMap   EdgeMap
 }
 
 func NewGraph() Graph {
@@ -37,4 +37,8 @@ func (g *Graph) Vertices() []Vertex {
 	}
 
 	return vertices
+}
+
+func (g Graph) Render() RenderedGraph {
+	return NewRenderedGraphOf(g)
 }
