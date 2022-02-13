@@ -28,6 +28,11 @@ test: ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/vertex.go ./graph/
 build: ./Dockerfile test
 	docker build -t lantern .
 	docker tag lantern piroyoung/lantern-server:local
+	docker tag lantern piroyoung/lantern-server:latest-alpha
+
+.PHONY: push
+push: build
+	docker push piroyoung/lantern-server:latest-alpha
 
 .PHONY: run
 run: build
