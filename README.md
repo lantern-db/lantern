@@ -80,7 +80,7 @@ client has method `Illuminate(ctx, key, step)`.
 For example, `client.Illuminate(ctx, "a", 2)` returns all vertices within 2-steps from a vertex "a". type of returning
 value is an instance of `model.Graph` and it can be rendered to json-parsable struct with a method `Render()`.
 
-```json{
+```json
 {
   "vertices": {
     "a": "test",
