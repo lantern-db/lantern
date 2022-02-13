@@ -8,7 +8,6 @@ import (
 
 type LanternServerConfig struct {
 	Port          string
-	Ttl           time.Duration
 	FlushInterval time.Duration
 }
 
@@ -19,14 +18,9 @@ func LoadServerConfig() (*LanternServerConfig, error) {
 	}
 
 	lanternPort := os.Getenv("LANTERN_PORT")
-	ttl, err := strconv.Atoi(os.Getenv("LANTERN_TTL"))
-	if err != nil {
-		return nil, err
-	}
 
 	return &LanternServerConfig{
 		Port:          lanternPort,
-		Ttl:           time.Duration(ttl) * time.Second,
 		FlushInterval: time.Duration(flushInterval) * time.Second,
 	}, nil
 }

@@ -1,30 +1,34 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
 	"github.com/lantern-db/lantern/graph/model"
+	"log"
 	"time"
 )
 
 func main() {
-	ab := model.Edge{Tail: "a", Head: "b", Weight: 1.0}
-	bc := model.Edge{Tail: "b", Head: "c", Weight: 1.0}
-	cd := model.Edge{Tail: "c", Head: "d", Weight: 1.0}
-	de := model.Edge{Tail: "d", Head: "e", Weight: 1.0}
-	ce := model.Edge{Tail: "c", Head: "e", Weight: 1.0}
+	ab := adapter.NewProtoEdgeOf("a", "b", 1.0, 60*time.Second)
+	bc := adapter.NewProtoEdgeOf("b", "c", 1.0, 60*time.Second)
+	cd := adapter.NewProtoEdgeOf("c", "d", 1.0, 60*time.Second)
+	de := adapter.NewProtoEdgeOf("d", "e", 1.0, 60*time.Second)
+	ce := adapter.NewProtoEdgeOf("c", "e", 1.0, 60*time.Second)
 
-	repo := cache.NewEmptyGraphCache(1 * time.Minute)
+	repo := cache.NewEmptyGraphCache()
 	repo.DumpEdge(ab)
 	repo.DumpEdge(bc)
 	repo.DumpEdge(cd)
 	repo.DumpEdge(de)
 	repo.DumpEdge(ce)
+	v, _ := adapter.NewProtoVertexOf("a", 0, 60*time.Second)
+	repo.DumpVertex(v)
 
 	q := model.NeighborQuery("a", 3)
 
 	res := repo.Load(q)
-	fmt.Println(res.Vertices())
-	fmt.Println(res.Edges())
+	jsonBytes, _ := json.Marshal(res.Render())
+	log.Println(string(jsonBytes))
 
 }

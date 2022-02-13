@@ -23,11 +23,11 @@ LanternDB just illuminates the moment, just focuses on neighbors, not global str
 # lantern-server
 
 ```
-$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e LANTERN_TTL=300 piroyoung/lantern-server
+$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e piroyoung/lantern-server:alpha
 ```
 
 * `LANTERN_PORT`: Port number for Lantern-server
-* `LANTERN_TTL`: time-to-live for each elements (seconds).
+* `LANTERN_FLUSH_INTERVAL`: flush interval for expired values
 
 # lantern-client (Golang)
 
@@ -127,6 +127,7 @@ Example usage of `Lantern-client` for Golang.
 `example/client/simple/simple.go`
 
 ```golang
+
 package main
 
 import (
@@ -136,6 +137,7 @@ import (
 	"github.com/lantern-db/lantern/client"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -153,9 +155,9 @@ func main() {
 
 	ctx := context.Background()
 
-	_ = c.DumpVertex(ctx, "a", "test")
-	_ = c.DumpVertex(ctx, "b", 42)
-	_ = c.DumpVertex(ctx, "c", 3.14)
+	_ = c.DumpVertex(ctx, "a", "test", 60*time.Second)
+	_ = c.DumpVertex(ctx, "b", 42, 60*time.Second)
+	_ = c.DumpVertex(ctx, "c", 3.14, 60*time.Second)
 
 	if resA, err := c.LoadVertex(ctx, "a"); err == nil {
 		log.Println(resA.StringValue())
@@ -166,73 +168,45 @@ func main() {
 	if resC, err := c.LoadVertex(ctx, "c"); err == nil {
 		log.Println(resC.Float64Value())
 	}
-	if resD, err := c.LoadVertex(ctx, "d"); err == nil {
-		log.Println(resD.NilValue())
+	if _, err := c.LoadVertex(ctx, "d"); err == nil {
+		log.Println(err)
 	}
 
-	_ = c.DumpEdge(ctx, "a", "b", 1.0)
-	_ = c.DumpEdge(ctx, "b", "c", 1.0)
-	_ = c.DumpEdge(ctx, "c", "d", 1.0)
-	_ = c.DumpEdge(ctx, "d", "e", 1.0)
+	_ = c.DumpEdge(ctx, "a", "b", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "b", "c", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
+	_ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 
 	result, err := c.Illuminate(ctx, "a", 3)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
-	jsonBytes, _ := json.Marshal(result)
+	jsonBytes, _ := json.Marshal(result.Render())
 	log.Println(string(jsonBytes))
 }
 ```
 
-Then we got
+Then we will get
 
 ```json
 {
-  "vertexMap": {
-    "a": {
-      "key": "a",
-      "value": "test",
-      "expiration": 1643642189
-    },
-    "b": {
-      "key": "b",
-      "value": 42,
-      "expiration": 1643642189
-    },
-    "c": {
-      "key": "c",
-      "value": 3.14,
-      "expiration": 1643642189
-    },
-    "d": {
-      "key": "d",
-      "expiration": 1643642040
-    }
+  "vertices": {
+    "a": "test",
+    "b": 42,
+    "c": 3.14,
+    "d": null,
+    "e": null
   },
-  "edgeMap": {
+  "edges": {
     "a": {
-      "b": {
-        "tail": "a",
-        "head": "b",
-        "weight": 1,
-        "expiration": 1643642189
-      }
+      "b": 1
     },
     "b": {
-      "c": {
-        "tail": "b",
-        "head": "c",
-        "weight": 1,
-        "expiration": 1643642189
-      }
+      "c": 1,
+      "e": 1
     },
     "c": {
-      "d": {
-        "tail": "c",
-        "head": "d",
-        "weight": 1,
-        "expiration": 1643642189
-      }
+      "d": 1
     }
   }
 }

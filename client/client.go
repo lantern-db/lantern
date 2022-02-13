@@ -51,11 +51,12 @@ func (c *LanternClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32) error {
+func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, weight float32, ttl time.Duration) error {
 	edge := &pb.Edge{
-		Tail:   tail,
-		Head:   head,
-		Weight: weight,
+		Tail:       tail,
+		Head:       head,
+		Weight:     weight,
+		Expiration: model.NewExpiration(ttl).AsProtoTimestamp(),
 	}
 	response, err := c.client.DumpEdge(ctx, edge)
 	if err != nil {
@@ -67,9 +68,12 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 	return nil
 }
 
-func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}) error {
-	vertex := adapter.ProtoVertex(model.Vertex{Key: model.Key(key), Value: value})
-	response, err := c.client.DumpVertex(ctx, vertex)
+func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
+	vertex, err := adapter.NewProtoVertexOf(model.Key(key), model.Value(value), ttl)
+	if err != nil {
+		return err
+	}
+	response, err := c.client.DumpVertex(ctx, vertex.AsProto())
 	if err != nil {
 		return err
 	}
@@ -79,13 +83,18 @@ func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interf
 	return nil
 }
 
-func (c *LanternClient) LoadVertex(ctx context.Context, key string) (*model.Vertex, error) {
+func (c *LanternClient) LoadVertex(ctx context.Context, key string) (model.Vertex, error) {
 	lanternGraph, err := c.Illuminate(ctx, key, 0)
 	if err != nil {
 		return nil, err
 	}
-	r := lanternGraph.VertexMap[model.Key(key)]
-	return &r, nil
+
+	r, ok := lanternGraph.VertexMap[model.Key(key)]
+	if ok {
+		return r, nil
+	} else {
+		return nil, errors.New("missing values")
+	}
 }
 
 func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*model.Graph, error) {

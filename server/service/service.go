@@ -31,12 +31,12 @@ func (l *LanternService) Illuminate(ctx context.Context, request *pb.IlluminateR
 }
 
 func (l *LanternService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb.DumpResponse, error) {
-	l.cache.DumpVertex(adapter.LanternVertex(vertex))
+	l.cache.DumpVertex(adapter.NewProtoVertex(vertex))
 	return &pb.DumpResponse{}, nil
 }
 
 func (l *LanternService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
-	l.cache.DumpEdge(adapter.LanternEdge(edge))
+	l.cache.DumpEdge(adapter.NewProtoEdge(edge))
 	return &pb.DumpResponse{}, nil
 }
 

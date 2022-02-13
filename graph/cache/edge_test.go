@@ -1,16 +1,31 @@
 package cache
 
 import (
+	"github.com/golang/mock/gomock"
 	. "github.com/lantern-db/lantern/graph/model"
+	mock_model "github.com/lantern-db/lantern/graph/model/mock"
 	"testing"
 	"time"
 )
 
 func TestEdgeCache_Delete(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	edge1 := mock_model.NewMockEdge(ctrl)
+	edge1.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge1.EXPECT().Head().Return(Key("head1")).AnyTimes()
+	edge1.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge1.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
+	edge2 := mock_model.NewMockEdge(ctrl)
+	edge2.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge2.EXPECT().Head().Return(Key("head2")).AnyTimes()
+	edge2.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge2.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
 	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
-		edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 		c.Set(edge1)
 		c.Set(edge2)
 		if len(c.cache["tail"]) != 2 {
@@ -30,9 +45,23 @@ func TestEdgeCache_Delete(t *testing.T) {
 }
 
 func TestEdgeCache_GetAdjacent(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	edge1 := mock_model.NewMockEdge(ctrl)
+	edge1.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge1.EXPECT().Head().Return(Key("head1")).AnyTimes()
+	edge1.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge1.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
+	edge2 := mock_model.NewMockEdge(ctrl)
+	edge2.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge2.EXPECT().Head().Return(Key("head2")).AnyTimes()
+	edge2.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge2.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
 	c := NewEdgeCache()
-	edge1 := Edge{Tail: "tail", Head: "head1", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
-	edge2 := Edge{Tail: "tail", Head: "head2", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge1)
 		c.Set(edge2)
@@ -47,15 +76,23 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 }
 
 func TestEdgeCache_Get(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	edge := mock_model.NewMockEdge(ctrl)
+	edge.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge.EXPECT().Head().Return(Key("head")).AnyTimes()
+	edge.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
 	c := NewEdgeCache()
-	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge)
 		got, found := c.Get("tail", "head")
 		if !found {
 			t.Errorf("not found")
 		}
-		if got.Weight != 1.0 {
+		if got.Weight() != 1.0 {
 			t.Errorf("GetWeight() got = %v, want %v", got, 1.0)
 		}
 	})
@@ -63,9 +100,16 @@ func TestEdgeCache_Get(t *testing.T) {
 }
 
 func TestEdgeCache_Set(t *testing.T) {
-	c := NewEdgeCache()
-	edge := Edge{Tail: "tail", Head: "head", Weight: 1.0, Expiration: NewExpiration(5 * time.Second)}
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
+	edge := mock_model.NewMockEdge(ctrl)
+	edge.EXPECT().Tail().Return(Key("tail")).AnyTimes()
+	edge.EXPECT().Head().Return(Key("head")).AnyTimes()
+	edge.EXPECT().Weight().Return(Weight(1.0)).AnyTimes()
+	edge.EXPECT().Expiration().Return(NewExpiration(5 * time.Second)).AnyTimes()
+
+	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
 		c.Set(edge)
 	})
