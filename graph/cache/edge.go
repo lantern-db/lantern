@@ -27,9 +27,7 @@ func (c *EdgeCache) Set(edge Edge) {
 	c.cache[edge.Tail()][edge.Head()] = edge
 }
 
-func (c *EdgeCache) Delete(tail Key, head Key) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+func (c *EdgeCache) delete(tail Key, head Key) {
 	if _, ok := c.cache[tail]; ok {
 		if _, ok := c.cache[tail][head]; ok {
 			delete(c.cache[tail], head)
@@ -40,74 +38,65 @@ func (c *EdgeCache) Delete(tail Key, head Key) {
 	}
 }
 
+func (c *EdgeCache) Delete(tail Key, head Key) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.delete(tail, head)
+}
+
 func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
-	c.mu.RLock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	if _, ok := c.cache[tail]; !ok {
-		c.mu.RUnlock()
 		return nil, false
 	}
 
-	edge, ok := c.cache[tail][head]
-	c.mu.RUnlock()
-
-	if !ok {
+	if edge, ok := c.cache[tail][head]; !ok {
 		return nil, false
-	}
 
-	if edge.Expiration().Dead() {
-		c.Delete(tail, head)
+	} else if edge.Expiration().Dead() {
+		go c.delete(tail, head)
 		return nil, false
+
+	} else {
+		return edge, true
+
 	}
-	return edge, true
 }
 
 func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
-	result := make(map[Key]Edge)
-	var expired []Key
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-	c.mu.RLock()
 	headMap, ok := c.cache[tail]
 	if !ok {
 		return nil, false
 	}
+
+	result := make(map[Key]Edge)
 	for head, edge := range headMap {
 		if edge.Expiration().Dead() {
-			expired = append(expired, head)
+			go c.delete(tail, head)
+
 		} else {
 			result[head] = edge
+
 		}
 	}
-	c.mu.RUnlock()
-
-	go func() {
-		for _, head := range expired {
-			c.Delete(tail, head)
-		}
-	}()
 
 	return result, len(result) != 0
 }
 
 func (c *EdgeCache) Flush() {
-	type key struct {
-		Head Key
-		Tail Key
-	}
-	var keys []key
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-	c.mu.RLock()
 	for tail, headMap := range c.cache {
 		for head, edge := range headMap {
 			if edge.Expiration().Dead() {
-				keys = append(keys, key{Tail: tail, Head: head})
+				c.delete(tail, head)
 			}
 		}
 	}
-	c.mu.RUnlock()
-	go func() {
-		for _, key := range keys {
-			c.Delete(key.Tail, key.Head)
-		}
-	}()
 }
