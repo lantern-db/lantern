@@ -67,10 +67,31 @@ Edges can also be created with `Dump(ctx, keyOfTail, keyOfHead, weight, ttl)`.
 _ = c.DumpEdge(ctx, "a", "b", 1.0, 60*time.Second)
 _ = c.DumpEdge(ctx, "b", "c", 1.0, 60*time.Second)
 _ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
-_ = c.DumpEdge(ctx, "d", "e", 1.0, 60*time.Second)
+_ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 ```
 
 If the vertex which has key `a` is missing in a graph, then empty valued vertices will be created with same expirations.
+
+## Incremental weight
+Once you set multiple duplicate edges, this weight of edge will be incremented.
+
+```golang
+_ = c.DumpEDge(ctx, "a", "b", 1.0, 3*time.Second) // weight of e(a, b) -> 1.0
+_ = c.DumpEDge(ctx, "a", "b", 1.0, 3*time.Second) // weight of e(a, b) -> 2.0
+
+```
+
+But each TTLs of transactions will be expired independently.
+
+### example
+```golang
+_ = c.DumpEDge(ctx, "a", "b", 1.0, 2*time.Second) // weight of e(a, b) -> 1.0
+time.Sleep(1*time.Second)                         // weight of e(a, b) -> 1.0
+_ = c.DumpEDge(ctx, "a", "b", 1.0, 2*time.Second) // weight of e(a, b) -> 2.0
+time.Sleep(1*time.Second)                         // weight of e(a, b) -> 1.0, first transaction is expired
+time.Sleep(1*time.Second)                         // weight of e(a, b) -> 0.0, second transaction is expired
+```
+
 
 ## Loading vertices and its neighbors with key and n_step
 

@@ -9,18 +9,36 @@ type EdgeTable struct {
 	edges []Edge
 }
 
-func NewEdgeTableOf(edges []Edge) EdgeTable {
+func NewEdgeTableOf(edges []Edge) *EdgeTable {
 	t := EdgeTable{edges: edges}
 	t.sort()
-	return t
+	return &t
 }
 
-func NewEmptyEdgeTable() EdgeTable {
+func NewEmptyEdgeTable() *EdgeTable {
 	return NewEdgeTableOf([]Edge{})
 }
 
 func (t *EdgeTable) sort() {
 	sort.Slice(t.edges, func(i int, j int) bool { return t.edges[i].Expiration() > t.edges[j].Expiration() })
+}
+
+func (t *EdgeTable) flush() {
+	j := 0
+	found := false
+
+	for i, edge := range t.edges {
+		if edge.Expiration().Dead() {
+			if !found {
+				j = i
+				found = true
+			}
+			t.edges[i] = nil
+		}
+	}
+	if found {
+		t.edges = t.edges[:j]
+	}
 }
 
 func (t *EdgeTable) Append(edge Edge) {
@@ -38,15 +56,15 @@ func (t *EdgeTable) Weight() Weight {
 	return w
 }
 
-func (t *EdgeTable) flush() {
-	for i, edge := range t.edges {
-		if edge.Expiration().Dead() {
-			t.edges = t.edges[:i]
-		}
-	}
+func (t *EdgeTable) Expiration() Expiration {
+	return t.edges[len(t.edges)-1].Expiration()
 }
 
 func (t *EdgeTable) Len() int {
 	t.flush()
 	return len(t.edges)
+}
+
+func (t *EdgeTable) IsEmpty() bool {
+	return t.Len() == 0
 }

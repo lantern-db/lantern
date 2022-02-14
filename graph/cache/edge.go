@@ -2,17 +2,18 @@ package cache
 
 import (
 	. "github.com/lantern-db/lantern/graph/model"
+	"github.com/lantern-db/lantern/graph/table"
 	"sync"
 )
 
 type EdgeCache struct {
-	cache map[Key]map[Key]Edge
+	cache map[Key]map[Key]*table.EdgeTable
 	mu    sync.RWMutex
 }
 
 func NewEdgeCache() *EdgeCache {
 	return &EdgeCache{
-		cache: make(map[Key]map[Key]Edge),
+		cache: make(map[Key]map[Key]*table.EdgeTable),
 	}
 }
 
@@ -20,11 +21,15 @@ func (c *EdgeCache) Set(edge Edge) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	_, ok := c.cache[edge.Tail()]
-	if !ok {
-		c.cache[edge.Tail()] = make(map[Key]Edge)
+	if _, ok := c.cache[edge.Tail()]; !ok {
+		c.cache[edge.Tail()] = make(map[Key]*table.EdgeTable)
 	}
-	c.cache[edge.Tail()][edge.Head()] = edge
+
+	if _, ok := c.cache[edge.Tail()][edge.Head()]; !ok {
+		c.cache[edge.Tail()][edge.Head()] = table.NewEmptyEdgeTable()
+	}
+
+	c.cache[edge.Tail()][edge.Head()].Append(edge)
 }
 
 func (c *EdgeCache) delete(tail Key, head Key) {
@@ -52,16 +57,16 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 		return nil, false
 	}
 
-	if edge, ok := c.cache[tail][head]; !ok {
+	if edgeTable, ok := c.cache[tail][head]; !ok {
 		return nil, false
 
-	} else if edge.Expiration().Dead() {
+	} else if edgeTable.IsEmpty() {
 		go c.delete(tail, head)
 		return nil, false
 
 	} else {
+		edge := NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
 		return edge, true
-
 	}
 }
 
@@ -75,12 +80,12 @@ func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
 	}
 
 	result := make(map[Key]Edge)
-	for head, edge := range headMap {
-		if edge.Expiration().Dead() {
+	for head, edgeTable := range headMap {
+		if edgeTable.IsEmpty() {
 			go c.delete(tail, head)
 
 		} else {
-			result[head] = edge
+			result[head] = NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
 
 		}
 	}
@@ -93,8 +98,8 @@ func (c *EdgeCache) Flush() {
 	defer c.mu.Unlock()
 
 	for tail, headMap := range c.cache {
-		for head, edge := range headMap {
-			if edge.Expiration().Dead() {
+		for head, edgeTable := range headMap {
+			if edgeTable.IsEmpty() {
 				c.delete(tail, head)
 			}
 		}
