@@ -19,40 +19,47 @@ func NewVertexCache() *VertexCache {
 func (c *VertexCache) Set(vertex Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
 	c.cache[vertex.Key()] = vertex
+}
+
+func (c *VertexCache) delete(key Key) {
+	if _, ok := c.cache[key]; ok {
+		delete(c.cache, key)
+	}
 }
 
 func (c *VertexCache) Delete(key Key) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	_, ok := c.cache[key]
-	if ok {
-		delete(c.cache, key)
-	}
+
+	c.delete(key)
 }
 
 func (c *VertexCache) Get(key Key) (Vertex, bool) {
-	c.mu.RLock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-	item, ok := c.cache[key]
-	c.mu.RUnlock()
+	if item, ok := c.cache[key]; !ok {
+		return nil, false
 
-	if !ok {
+	} else if item.Expiration().Dead() {
+		go c.delete(key)
 		return nil, false
+
+	} else {
+		return item, true
+
 	}
-	if item.Expiration().Dead() {
-		defer c.Delete(key)
-		return nil, false
-	}
-	return item, true
 }
 
 func (c *VertexCache) Flush() {
-	c.mu.RLock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	for key, vertex := range c.cache {
 		if vertex.Expiration().Dead() {
-			c.Delete(key)
+			c.delete(key)
 		}
 	}
-	c.mu.RUnlock()
 }
