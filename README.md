@@ -73,7 +73,7 @@ _ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 If the vertex which has key `a` is missing in a graph, then empty valued vertices will be created with same expirations.
 
 ## Incremental weight
-Once you set multiple duplicate edges, this weight of edge will be incremented.
+Once you set multiple duplicate edges, this weight of the edge will be incremented.
 
 ```golang
 _ = c.DumpEDge(ctx, "a", "b", 1.0, 3*time.Second) // weight of e(a, b) -> 1.0
