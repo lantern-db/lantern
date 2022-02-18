@@ -6,6 +6,7 @@ import (
 	"github.com/lantern-db/lantern/client"
 	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 )
@@ -42,4 +43,22 @@ func main() {
 	}
 	jsonBytes, _ := json.Marshal(result.Render())
 	log.Println(string(jsonBytes))
+	if err := writeBytes("./large.json", string(jsonBytes)); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeBytes(filename string, content string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	b := []byte(content)
+	_, err = file.Write(b)
+	if err != nil {
+		return err
+	}
+	return nil
 }
