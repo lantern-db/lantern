@@ -73,6 +73,7 @@ _ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 If the vertex which has key `a` is missing in a graph, then empty valued vertices will be created with same expirations.
 
 ## Incremental weight
+
 Once you set multiple duplicate edges, this weight of the edge will be incremented.
 
 ```golang
@@ -84,14 +85,14 @@ _ = c.DumpEdge(ctx, "a", "b", 1.0, 3*time.Second) // weight of e(a, b) -> 2.0
 But each TTLs of transactions will be expired independently.
 
 ### example
+
 ```golang
 _ = c.DumpEdge(ctx, "a", "b", 1.0, 2*time.Second) // weight of e(a, b) -> 1.0
 time.Sleep(1*time.Second)                         // weight of e(a, b) -> 1.0
 _ = c.DumpEdge(ctx, "a", "b", 1.0, 2*time.Second) // weight of e(a, b) -> 2.0
-time.Sleep(1*time.Second)                         // weight of e(a, b) -> 1.0, first transaction is expired
-time.Sleep(1*time.Second)                         // weight of e(a, b) -> 0.0, second transaction is expired
+time.Sleep(1*time.Second) // weight of e(a, b) -> 1.0, first transaction is expired
+time.Sleep(1*time.Second) // weight of e(a, b) -> 0.0, second transaction is expired
 ```
-
 
 ## Loading vertices and its neighbors with key and n_step
 
@@ -120,7 +121,17 @@ value is an instance of `model.Graph` and it can be rendered to json-parsable st
     },
     "c": {
       "d": 1
+    },
+    "d": {
+      "e": 1
     }
+  },
+  "df": {
+    "a": 0,
+    "b": 1,
+    "c": 1,
+    "d": 1,
+    "e": 2
   }
 }
 ```
@@ -199,20 +210,24 @@ Then we will get
     "a": "test",
     "b": 42,
     "c": 3.14,
-    "d": null,
-    "e": null
+    "d": null
   },
   "edges": {
     "a": {
       "b": 1
     },
     "b": {
-      "c": 1,
-      "e": 1
+      "c": 1
     },
     "c": {
       "d": 1
     }
+  },
+  "df": {
+    "a": 0,
+    "b": 1,
+    "c": 1,
+    "d": 1
   }
 }
 ```

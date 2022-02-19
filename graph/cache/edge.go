@@ -8,12 +8,14 @@ import (
 
 type EdgeCache struct {
 	cache map[Key]map[Key]*table.EdgeTable
+	df    DocumentFrequency
 	mu    sync.RWMutex
 }
 
 func NewEdgeCache() *EdgeCache {
 	return &EdgeCache{
 		cache: make(map[Key]map[Key]*table.EdgeTable),
+		df:    NewDocumentFrequency(),
 	}
 }
 
@@ -27,6 +29,7 @@ func (c *EdgeCache) Set(edge Edge) {
 
 	if _, ok := c.cache[edge.Tail()][edge.Head()]; !ok {
 		c.cache[edge.Tail()][edge.Head()] = table.NewEmptyEdgeTable()
+		c.df.Increment(edge.Head())
 	}
 
 	c.cache[edge.Tail()][edge.Head()].Append(edge)
@@ -36,6 +39,7 @@ func (c *EdgeCache) delete(tail Key, head Key) {
 	if _, ok := c.cache[tail]; ok {
 		if _, ok := c.cache[tail][head]; ok {
 			delete(c.cache[tail], head)
+			c.df.Decrement(head)
 			if len(c.cache[tail]) == 0 {
 				delete(c.cache, tail)
 			}
@@ -68,6 +72,11 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 		edge := NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
 		return edge, true
 	}
+}
+
+func (c *EdgeCache) GetDf(key Key) (uint32, bool) {
+	df, ok := c.df[key]
+	return df, ok
 }
 
 func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {

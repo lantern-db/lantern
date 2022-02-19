@@ -3,14 +3,17 @@ package model
 type RenderedGraph struct {
 	Vertices map[Key]Value          `json:"vertices,omitempty"`
 	Edges    map[Key]map[Key]Weight `json:"edges,omitempty"`
+	Df       DocumentFrequency      `json:"df,omitempty"`
 }
 
 func NewRenderedGraphOf(graph Graph) RenderedGraph {
 	vertices := make(map[Key]Value)
 	edges := make(map[Key]map[Key]Weight)
+	df := NewDocumentFrequency()
 
 	for key, vertex := range graph.VertexMap {
 		vertices[key] = vertex.Value()
+		df[key] = graph.Df[key]
 	}
 
 	for tail, heads := range graph.EdgeMap {
@@ -21,6 +24,6 @@ func NewRenderedGraphOf(graph Graph) RenderedGraph {
 		}
 	}
 
-	return RenderedGraph{Vertices: vertices, Edges: edges}
+	return RenderedGraph{Vertices: vertices, Edges: edges, Df: df}
 
 }

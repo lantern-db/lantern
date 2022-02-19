@@ -36,6 +36,9 @@ func (c *GraphCache) Load(query LoadQuery) Graph {
 	for i := uint32(0); i < query.Step; i++ {
 		g, seen = c.expand(query, g, seen)
 	}
+	for key, _ := range g.VertexMap {
+		g.Df[key] = c.edgeCache.df[key]
+	}
 
 	return g
 }
