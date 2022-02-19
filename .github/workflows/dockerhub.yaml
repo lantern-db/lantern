@@ -15,16 +15,22 @@ jobs:
         uses: actions-hub/docker/login@master
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_token }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN}}
           DOCKER_REGISTRY_URL: docker.io
 
       - name: Build
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           docker build -t lantern .
-          docker tag lantern piroyoung/lantern-server:${{ github.sha }}
-          docker tag lantern piroyoung/lantern-server:latest-alpha
+          docker tag lantern ${{ DOCKER_USERNAME }}/lantern-server:${{ github.sha }}
+          docker tag lantern ${{ DOCKER_USERNAME }}/lantern-server:latest-alpha
 
       - name: Push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          docker push piroyoung/lantern-server:${{ github.sha }}
-          docker push piroyoung/lantern-server:latest-alpha
+          docker push ${{ DOCKER_USERNAME }}/lantern-server:${{ github.sha }}
+          docker push ${{ DOCKER_USERNAME }}/lantern-server:latest-alpha
