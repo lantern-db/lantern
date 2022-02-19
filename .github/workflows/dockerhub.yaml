@@ -8,6 +8,9 @@ on:
 jobs:
   push:
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: piroyoung
+      DOCKERHUB_IMAGENAME: lantern-server
     steps:
       - uses: actions/checkout@v2
 
@@ -19,18 +22,12 @@ jobs:
           DOCKER_REGISTRY_URL: docker.io
 
       - name: Build
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           docker build -t lantern .
-          docker tag lantern ${{ DOCKER_USERNAME }}/lantern-server:${{ github.sha }}
-          docker tag lantern ${{ DOCKER_USERNAME }}/lantern-server:latest-alpha
+          docker tag lantern ${{ DOCKERHUB_USERNAME }}/${{ DOCKERHUB_IMAGENAME }}:${{ github.sha }}
+          docker tag lantern ${{ DOCKERHUB_USERNAME }}/${{ DOCKERHUB_IMAGENAME }}:latest-alpha
 
       - name: Push
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          docker push ${{ DOCKER_USERNAME }}/lantern-server:${{ github.sha }}
-          docker push ${{ DOCKER_USERNAME }}/lantern-server:latest-alpha
+          docker push ${{ DOCKERHUB_USERNAME }}/${{ DOCKERHUB_IMAGENAME }}:${{ github.sha }}
+          docker push ${{ DOCKERHUB_USERNAME }}/${{ DOCKERHUB_IMAGENAME }}:latest-alpha
