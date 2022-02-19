@@ -1,8 +1,10 @@
-package cache
+package model
 
-import . "github.com/lantern-db/lantern/graph/model"
+type DocumentFrequency map[Key]uint32
 
-type DocumentFrequency map[Key]int
+func NewDocumentFrequency() DocumentFrequency {
+	return make(map[Key]uint32)
+}
 
 func (d DocumentFrequency) Increment(key Key) {
 	if _, ok := d[key]; ok {
@@ -19,9 +21,4 @@ func (d DocumentFrequency) Decrement(key Key) {
 			delete(d, key)
 		}
 	}
-}
-
-func (d DocumentFrequency) Get(key Key) (int, bool) {
-	v, ok := d[key]
-	return v, ok
 }

@@ -8,9 +8,11 @@ import (
 func LanternGraph(protoGraph *pb.Graph) model.Graph {
 	vertexMap := make(model.VertexMap)
 	edgeMap := make(model.EdgeMap)
+	dfMap := make(model.DocumentFrequency)
 
 	for key, protoVertex := range protoGraph.VertexMap {
 		vertexMap[model.Key(key)] = ProtoVertex{protoVertex}
+		dfMap[model.Key(key)] = protoGraph.DfMap[key]
 	}
 
 	for tail, neighbor := range protoGraph.NeighborMap {
@@ -22,14 +24,17 @@ func LanternGraph(protoGraph *pb.Graph) model.Graph {
 	return model.Graph{
 		VertexMap: vertexMap,
 		EdgeMap:   edgeMap,
+		Df:        dfMap,
 	}
 }
 
 func ProtoGraph(graph model.Graph) *pb.Graph {
 	g := pb.Graph{}
 	g.VertexMap = make(map[string]*pb.Vertex)
-	for _, vertex := range graph.VertexMap {
-		g.VertexMap[string(vertex.Key())] = vertex.AsProto()
+	g.DfMap = make(map[string]uint32)
+	for key, vertex := range graph.VertexMap {
+		g.VertexMap[string(key)] = vertex.AsProto()
+		g.DfMap[string(key)] = graph.Df[key]
 	}
 
 	g.NeighborMap = make(map[string]*pb.Neighbor)
@@ -41,5 +46,6 @@ func ProtoGraph(graph model.Graph) *pb.Graph {
 		}
 		g.NeighborMap[string(tailKey)] = &neighbor
 	}
+
 	return &g
 }

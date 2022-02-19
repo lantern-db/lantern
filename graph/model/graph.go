@@ -10,12 +10,14 @@ type EdgeMap map[Key]map[Key]Edge
 type Graph struct {
 	VertexMap VertexMap
 	EdgeMap   EdgeMap
+	Df        DocumentFrequency
 }
 
 func NewGraph() Graph {
 	return Graph{
 		VertexMap: make(VertexMap),
 		EdgeMap:   make(EdgeMap),
+		Df:        NewDocumentFrequency(),
 	}
 }
 

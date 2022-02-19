@@ -25,7 +25,7 @@ func main() {
 	v, _ := adapter.NewProtoVertexOf("a", 0, 60*time.Second)
 	repo.DumpVertex(v)
 
-	q := model.NeighborQuery("a", 3)
+	q := model.NeighborQuery("a", 4)
 
 	res := repo.Load(q)
 	jsonBytes, _ := json.Marshal(res.Render())
