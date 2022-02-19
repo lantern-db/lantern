@@ -20,7 +20,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN}}
           DOCKER_REGISTRY_URL: docker.io
-      - name: Prepair:
+      - name: Prepair
         run: docker login
 
       - name: Build
