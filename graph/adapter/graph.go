@@ -8,13 +8,22 @@ import (
 func LanternGraph(protoGraph *pb.Graph) m.Graph {
 	vertexMap := make(m.VertexMap)
 	edgeMap := make(m.EdgeMap)
-	dfMap := make(m.DocumentFrequency)
+	vertexStats := make(map[m.Key]m.VertexStats)
 
 	for _, v := range protoGraph.Vertices {
 		key := m.Key(v.Key)
 
 		vertexMap[key] = ProtoVertex{v}
-		dfMap[key] = v.InDegree
+	}
+
+	for _, vStat := range protoGraph.Stats.VertexDegrees {
+		key := m.Key(vStat.Key)
+		vertexStats[key] = m.VertexStats{
+			Degree: m.Degree{
+				In:  vStat.In,
+				Out: vStat.Out,
+			},
+		}
 	}
 
 	for _, e := range protoGraph.Edges {
@@ -30,7 +39,9 @@ func LanternGraph(protoGraph *pb.Graph) m.Graph {
 	return m.Graph{
 		VertexMap: vertexMap,
 		EdgeMap:   edgeMap,
-		Df:        dfMap,
+		Stats: m.GraphStats{
+			VertexStats: vertexStats,
+		},
 	}
 }
 
@@ -38,11 +49,18 @@ func ProtoGraph(graph m.Graph) *pb.Graph {
 	g := &pb.Graph{
 		Vertices: []*pb.Vertex{},
 		Edges:    []*pb.Edge{},
+		Stats: &pb.GraphStats{
+			VertexDegrees: []*pb.GraphStats_VertexDegree{},
+		},
 	}
 
 	for key, vertex := range graph.VertexMap {
 		v := vertex.AsProto()
-		v.InDegree = graph.Df[key]
+		g.Stats.VertexDegrees = append(g.Stats.VertexDegrees, &pb.GraphStats_VertexDegree{
+			Key: string(key),
+			In:  graph.Stats.VertexStats[key].Degree.In,
+			Out: graph.Stats.VertexStats[key].Degree.Out,
+		})
 		g.Vertices = append(g.Vertices, v)
 	}
 

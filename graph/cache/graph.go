@@ -37,7 +37,12 @@ func (c *GraphCache) Load(query LoadQuery) Graph {
 		g, seen = c.expand(query, g, seen)
 	}
 	for key, _ := range g.VertexMap {
-		g.Df[key] = c.edgeCache.df[key]
+		g.Stats.VertexStats[key] = VertexStats{
+			Degree: Degree{
+				In:  c.edgeCache.incomingDegree[key],
+				Out: c.edgeCache.outgoingDegree[key],
+			},
+		}
 	}
 
 	return g
