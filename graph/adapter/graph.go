@@ -1,51 +1,56 @@
 package adapter
 
 import (
-	"github.com/lantern-db/lantern/graph/model"
+	m "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
 )
 
-func LanternGraph(protoGraph *pb.Graph) model.Graph {
-	vertexMap := make(model.VertexMap)
-	edgeMap := make(model.EdgeMap)
-	dfMap := make(model.DocumentFrequency)
+func LanternGraph(protoGraph *pb.Graph) m.Graph {
+	vertexMap := make(m.VertexMap)
+	edgeMap := make(m.EdgeMap)
+	dfMap := make(m.DocumentFrequency)
 
-	for key, protoVertex := range protoGraph.VertexMap {
-		vertexMap[model.Key(key)] = ProtoVertex{protoVertex}
-		dfMap[model.Key(key)] = protoGraph.DfMap[key]
+	for _, v := range protoGraph.Vertices {
+		key := m.Key(v.Key)
+
+		vertexMap[key] = ProtoVertex{v}
+		dfMap[key] = v.InDegree
 	}
 
-	for tail, neighbor := range protoGraph.NeighborMap {
-		edgeMap[model.Key(tail)] = make(map[model.Key]model.Edge)
-		for head, protoEdge := range neighbor.EdgeMap {
-			edgeMap[model.Key(tail)][model.Key(head)] = ProtoEdge{protoEdge}
+	for _, e := range protoGraph.Edges {
+		tail := m.Key(e.Tail)
+		head := m.Key(e.Head)
+
+		if _, ok := edgeMap[tail]; !ok {
+			edgeMap[tail] = make(map[m.Key]m.Edge)
 		}
+
+		edgeMap[tail][head] = ProtoEdge{e}
 	}
-	return model.Graph{
+	return m.Graph{
 		VertexMap: vertexMap,
 		EdgeMap:   edgeMap,
 		Df:        dfMap,
 	}
 }
 
-func ProtoGraph(graph model.Graph) *pb.Graph {
-	g := pb.Graph{}
-	g.VertexMap = make(map[string]*pb.Vertex)
-	g.DfMap = make(map[string]uint32)
+func ProtoGraph(graph m.Graph) *pb.Graph {
+	g := &pb.Graph{
+		Vertices: []*pb.Vertex{},
+		Edges:    []*pb.Edge{},
+	}
+
 	for key, vertex := range graph.VertexMap {
-		g.VertexMap[string(key)] = vertex.AsProto()
-		g.DfMap[string(key)] = graph.Df[key]
+		v := vertex.AsProto()
+		v.InDegree = graph.Df[key]
+		g.Vertices = append(g.Vertices, v)
 	}
 
-	g.NeighborMap = make(map[string]*pb.Neighbor)
-	for tailKey, heads := range graph.EdgeMap {
-		neighbor := pb.Neighbor{}
-		neighbor.EdgeMap = make(map[string]*pb.Edge)
-		for headKey, edge := range heads {
-			neighbor.EdgeMap[string(headKey)] = edge.AsProto()
+	for _, heads := range graph.EdgeMap {
+		for _, edge := range heads {
+			g.Edges = append(g.Edges, edge.AsProto())
 		}
-		g.NeighborMap[string(tailKey)] = &neighbor
 	}
 
-	return &g
+	return g
 }
