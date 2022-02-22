@@ -7,17 +7,32 @@ type Weight float32
 type VertexMap map[Key]Vertex
 type EdgeMap map[Key]map[Key]Edge
 
+type Degree struct {
+	In  uint32 `json:"in,omitempty"`
+	Out uint32 `json:"out,omitempty"`
+}
+
+type VertexStats struct {
+	Degree Degree `json:"degree,omitempty"`
+}
+
+type GraphStats struct {
+	VertexStats map[Key]VertexStats `json:"vertex_stats,omitempty"`
+}
+
 type Graph struct {
 	VertexMap VertexMap
 	EdgeMap   EdgeMap
-	Df        DocumentFrequency
+	Stats     GraphStats
 }
 
 func NewGraph() Graph {
 	return Graph{
 		VertexMap: make(VertexMap),
 		EdgeMap:   make(EdgeMap),
-		Df:        NewDocumentFrequency(),
+		Stats: GraphStats{
+			VertexStats: make(map[Key]VertexStats),
+		},
 	}
 }
 

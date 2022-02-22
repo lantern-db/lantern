@@ -7,15 +7,17 @@ import (
 )
 
 type EdgeCache struct {
-	cache map[Key]map[Key]*table.EdgeTable
-	df    DocumentFrequency
-	mu    sync.RWMutex
+	cache          map[Key]map[Key]*table.EdgeTable
+	incomingDegree IncrementalStatMap
+	outgoingDegree IncrementalStatMap
+	mu             sync.RWMutex
 }
 
 func NewEdgeCache() *EdgeCache {
 	return &EdgeCache{
-		cache: make(map[Key]map[Key]*table.EdgeTable),
-		df:    NewDocumentFrequency(),
+		cache:          make(map[Key]map[Key]*table.EdgeTable),
+		incomingDegree: make(IncrementalStatMap),
+		outgoingDegree: make(IncrementalStatMap),
 	}
 }
 
@@ -29,7 +31,8 @@ func (c *EdgeCache) Set(edge Edge) {
 
 	if _, ok := c.cache[edge.Tail()][edge.Head()]; !ok {
 		c.cache[edge.Tail()][edge.Head()] = table.NewEmptyEdgeTable()
-		c.df.Increment(edge.Head())
+		c.incomingDegree.Increment(edge.Head())
+		c.outgoingDegree.Increment(edge.Tail())
 	}
 
 	c.cache[edge.Tail()][edge.Head()].Append(edge)
@@ -39,9 +42,10 @@ func (c *EdgeCache) delete(tail Key, head Key) {
 	if _, ok := c.cache[tail]; ok {
 		if _, ok := c.cache[tail][head]; ok {
 			delete(c.cache[tail], head)
-			c.df.Decrement(head)
+			c.outgoingDegree.Decrement(tail)
 			if len(c.cache[tail]) == 0 {
 				delete(c.cache, tail)
+				c.incomingDegree.Decrement(head)
 			}
 		}
 	}
@@ -75,7 +79,7 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 }
 
 func (c *EdgeCache) GetDf(key Key) (uint32, bool) {
-	df, ok := c.df[key]
+	df, ok := c.incomingDegree[key]
 	return df, ok
 }
 
