@@ -58,7 +58,7 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 		Weight:     weight,
 		Expiration: model.NewExpiration(ttl).AsProtoTimestamp(),
 	}
-	response, err := c.client.DumpEdge(ctx, edge)
+	response, err := c.client.PutEdge(ctx, &pb.Graph{Edges: []*pb.Edge{edge}})
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interf
 	if err != nil {
 		return err
 	}
-	response, err := c.client.DumpVertex(ctx, vertex.AsProto())
+	response, err := c.client.PutVertex(ctx, &pb.Graph{Vertices: []*pb.Vertex{vertex.AsProto()}})
 	if err != nil {
 		return err
 	}

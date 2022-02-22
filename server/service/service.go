@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
+	m "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/pb"
 	"google.golang.org/grpc"
 	"log"
@@ -30,14 +31,38 @@ func (l *LanternService) Illuminate(ctx context.Context, request *pb.IlluminateR
 	return &response, nil
 }
 
-func (l *LanternService) DumpVertex(ctx context.Context, vertex *pb.Vertex) (*pb.DumpResponse, error) {
-	l.cache.DumpVertex(adapter.NewProtoVertex(vertex))
-	return &pb.DumpResponse{}, nil
+func (l *LanternService) GetVertex(ctx context.Context, keys *pb.Keys) (*pb.Graph, error) {
+	var vertices []*pb.Vertex
+	for _, key := range keys.Keys {
+		if vertex, ok := l.cache.LoadVertex(m.Key(key)); ok {
+			vertices = append(vertices, vertex.AsProto())
+		}
+	}
+	return &pb.Graph{Vertices: vertices}, nil
 }
 
-func (l *LanternService) DumpEdge(ctx context.Context, edge *pb.Edge) (*pb.DumpResponse, error) {
-	l.cache.DumpEdge(adapter.NewProtoEdge(edge))
-	return &pb.DumpResponse{}, nil
+func (l *LanternService) PutVertex(ctx context.Context, graph *pb.Graph) (*pb.PutResponse, error) {
+	for _, vertex := range graph.Vertices {
+		l.cache.DumpVertex(adapter.NewProtoVertex(vertex))
+	}
+	return &pb.PutResponse{}, nil
+}
+
+func (l *LanternService) PutEdge(ctx context.Context, graph *pb.Graph) (*pb.PutResponse, error) {
+	for _, edge := range graph.Edges {
+		l.cache.DumpEdge(adapter.NewProtoEdge(edge))
+	}
+	return &pb.PutResponse{}, nil
+}
+
+func (l *LanternService) Put(ctx context.Context, graph *pb.Graph) (*pb.PutResponse, error) {
+	for _, vertex := range graph.Vertices {
+		l.cache.DumpVertex(adapter.NewProtoVertex(vertex))
+	}
+	for _, edge := range graph.Edges {
+		l.cache.DumpEdge(adapter.NewProtoEdge(edge))
+	}
+	return &pb.PutResponse{}, nil
 }
 
 type LanternServer struct {

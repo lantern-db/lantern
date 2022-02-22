@@ -60,20 +60,29 @@ message IlluminateRequest {
     float max_weight = 4;
 }
 
+message Keys {
+    repeated string keys = 1;
+}
+
 message IlluminateResponse {
     Graph graph = 1;
     Status status = 2;
 }
 
-message DumpResponse {
+message PutResponse {
     Status status = 1;
 }
 
 service Lantern {
     rpc Illuminate (IlluminateRequest) returns (IlluminateResponse) {
     }
-    rpc DumpVertex (Vertex) returns (DumpResponse) {
+    rpc GetVertex (Keys) returns (Graph) {
     }
-    rpc DumpEdge (Edge) returns (DumpResponse) {
+
+    rpc Put (Graph) returns (PutResponse) {
+    }
+    rpc PutVertex (Graph) returns (PutResponse) {
+    }
+    rpc PutEdge (Graph) returns (PutResponse) {
     }
 }
