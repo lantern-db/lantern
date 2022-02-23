@@ -1,0 +1,22 @@
+version: '3'
+services:
+  server:
+    image: piroyoung/lantern-server:latest-alpha
+    container_name: lantern-server
+    hostname: lantern-server
+    ports:
+      - "6380:6380"
+    environment:
+      - LANTERN_PORT=6380
+      - LANTERN_FLUSH_INTERVAL=60
+  gateway:
+    image: piroyoung/lantern-gateway:latest-alpha
+    container_name: lantern-gateway
+    depends_on:
+      - server
+    ports:
+      - "8080:8080"
+    environment:
+      - LANTERN_HOST=lantern-server
+      - LANTERN_PORT=6380
+      - GATEWAY_PORT=8080

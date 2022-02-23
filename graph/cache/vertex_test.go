@@ -19,7 +19,7 @@ func TestVertexCache_Delete(t *testing.T) {
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(v)
+		c.Put(v)
 		c.Delete(v.Key())
 		got, found := c.Get(v.Key())
 		if found {
@@ -39,7 +39,7 @@ func TestVertexCache_Get(t *testing.T) {
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(v)
+		c.Put(v)
 		got, found := c.Get(v.Key())
 		if !found {
 			t.Errorf("Get() got = %c, want %c", got.Value(), v.Value())
@@ -66,7 +66,7 @@ func TestVertexCache_Set(t *testing.T) {
 
 	c := NewVertexCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(v)
+		c.Put(v)
 		got, found := c.Get("key")
 		if !found {
 			t.Errorf("Get() got = %c, want %c", got.Value(), v.Value())

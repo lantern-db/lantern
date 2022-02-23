@@ -3,9 +3,9 @@ package client
 import (
 	"context"
 	"errors"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/model"
-	pb "github.com/lantern-db/lantern/pb"
 	"google.golang.org/grpc"
 	"math"
 	"strconv"
@@ -14,7 +14,7 @@ import (
 
 type LanternClient struct {
 	conn   *grpc.ClientConn
-	client pb.LanternClient
+	client pb.LanternServiceClient
 }
 
 func NewLanternClient(hostname string, port int) (*LanternClient, error) {
@@ -42,7 +42,7 @@ func NewLanternClient(hostname string, port int) (*LanternClient, error) {
 	case conn := <-chConn:
 		return &LanternClient{
 			conn:   conn,
-			client: pb.NewLanternClient(conn),
+			client: pb.NewLanternServiceClient(conn),
 		}, nil
 	}
 }
@@ -58,11 +58,11 @@ func (c *LanternClient) DumpEdge(ctx context.Context, tail string, head string, 
 		Weight:     weight,
 		Expiration: model.NewExpiration(ttl).AsProtoTimestamp(),
 	}
-	response, err := c.client.PutEdge(ctx, &pb.Graph{Edges: []*pb.Edge{edge}})
+	response, err := c.client.PutEdge(ctx, &pb.PutEdgeRequest{Edges: []*pb.Edge{edge}})
 	if err != nil {
 		return err
 	}
-	if response.Status != pb.Status_OK {
+	if response.Status != pb.Status_STATUS_OK {
 		return errors.New("dump edge error")
 	}
 	return nil
@@ -73,12 +73,12 @@ func (c *LanternClient) DumpVertex(ctx context.Context, key string, value interf
 	if err != nil {
 		return err
 	}
-	response, err := c.client.PutVertex(ctx, &pb.Graph{Vertices: []*pb.Vertex{vertex.AsProto()}})
+	response, err := c.client.PutVertex(ctx, &pb.PutVertexRequest{Vertices: []*pb.Vertex{vertex.AsProto()}})
 	if err != nil {
 		return err
 	}
-	if response.Status != pb.Status_OK {
-		return errors.New("dump vertex error. status: " + pb.Status_OK.String())
+	if response.Status != pb.Status_STATUS_OK {
+		return errors.New("dump vertex error. status: " + pb.Status_STATUS_OK.String())
 	}
 	return nil
 }
@@ -108,7 +108,7 @@ func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32
 	if err != nil {
 		return nil, err
 	}
-	if response.Status != pb.Status_OK {
+	if response.Status != pb.Status_STATUS_OK {
 		return nil, errors.New("illuminate error. status: " + response.Status.String())
 	}
 	lanternGraph := adapter.LanternGraph(response.Graph)

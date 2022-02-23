@@ -1,6 +1,7 @@
 .idea
 
-*.json
+large.json
+simple.json
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Go template

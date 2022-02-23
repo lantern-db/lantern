@@ -2,9 +2,9 @@ package table
 
 import (
 	"github.com/golang/mock/gomock"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	. "github.com/lantern-db/lantern/graph/model"
 	mock_model "github.com/lantern-db/lantern/graph/model/mock"
-	"github.com/lantern-db/lantern/pb"
 	"testing"
 	"time"
 )

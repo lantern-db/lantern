@@ -1,13 +1,11 @@
+.PHONY: init_buf
+init_buf:
+	cd ./proto && buf mod init
 
-./pb/data.pb.go ./pb/data_grpc.pb.go: ./proto/data.proto
-	protoc data.proto \
-		--proto_path=./proto \
-		--go_out=./pb \
-		--go-grpc_out=./pb \
-		--go_opt=paths=source_relative \
-		--go-grpc_opt=paths=source_relative
+./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go: ./proto/lantern/v1/lantern.proto ./buf.gen.yaml
+	buf generate proto
 
-all: ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/edge.go ./graph/model/mock/vertex.go
+all: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go ./graph/model/mock/edge.go ./graph/model/mock/vertex.go
 .PHONY: all
 
 ./graph/model/mock/vertex.go: ./graph/model/vertex.go
@@ -19,24 +17,31 @@ all: ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/edge.go ./graph/mod
 ./server/cmd/wire_gen.go: ./server/cmd/wire.go
 	wire ./server/cmd/
 
+./gateway/cmd/wire_gen.go: ./gateway/cmd/wire.go
+	wire ./gateway/cmd/
+
 .PHONY: test
-test: ./pb/data.pb.go ./pb/data_grpc.pb.go ./graph/model/mock/vertex.go ./graph/model/mock/edge.go ./server/cmd/wire_gen.go
+test: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go ./graph/model/mock/vertex.go ./graph/model/mock/edge.go ./server/cmd/wire_gen.go ./gateway/cmd/wire_gen.go
 	go build ./...
 	go test ./...
 
 .PHONY: build
-build: ./Dockerfile test
-	docker build -t lantern .
-	docker tag lantern piroyoung/lantern-server:local
-	docker tag lantern piroyoung/lantern-server:latest-alpha
+build: server.Dockerfile test
+	docker build -t lantern-server -f server.Dockerfile .
+	docker tag lantern-server piroyoung/lantern-server:local
+	docker tag lantern-server piroyoung/lantern-server:latest-alpha
+	docker build -t lantern-gateway -f gateway.Dockerfile .
+	docker tag lantern-gateway piroyoung/lantern-gateway:local
+	docker tag lantern-gateway piroyoung/lantern-gateway:latest-alpha
 
 .PHONY: push
 push: build
 	docker push piroyoung/lantern-server:latest-alpha
+	docker push piroyoung/lantern-gateway:latest-alpha
 
 .PHONY: run
 run: build
-	docker run -it -p 6380:6380 piroyoung/lantern-server:local
+	docker-compose up
 
 
 clean:
