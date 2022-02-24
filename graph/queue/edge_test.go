@@ -5,6 +5,7 @@ import (
 	"github.com/lantern-db/lantern/graph/model"
 	mock_model "github.com/lantern-db/lantern/graph/model/mock"
 	"math/rand"
+	"strconv"
 	"testing"
 )
 
@@ -22,18 +23,17 @@ func TestEdgeHeap(t *testing.T) {
 
 	isFirst := true
 	var previous model.Edge
-	for _, edge := range q.Top(20) {
+	for i, edge := range q.Top(20) {
 		if isFirst {
 			isFirst = false
 			previous = edge
 			continue
 		}
-		t.Run("valid_case", func(t *testing.T) {
+		t.Run("valid_case_"+strconv.Itoa(i), func(t *testing.T) {
 			if previous.Weight() < edge.Weight() {
 				t.Errorf("not sorted")
 			}
 			previous = edge
-
 		})
 	}
 }
