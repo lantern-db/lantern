@@ -21,7 +21,7 @@ func NewEdgeCache() *EdgeCache {
 	}
 }
 
-func (c *EdgeCache) Set(edge Edge) {
+func (c *EdgeCache) Put(edge Edge) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -76,11 +76,6 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 		edge := NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
 		return edge, true
 	}
-}
-
-func (c *EdgeCache) GetDf(key Key) (uint32, bool) {
-	df, ok := c.incomingDegree[key]
-	return df, ok
 }
 
 func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {

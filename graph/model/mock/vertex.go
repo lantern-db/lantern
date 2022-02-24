@@ -9,8 +9,8 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	model "github.com/lantern-db/lantern/graph/model"
-	pb "github.com/lantern-db/lantern/pb"
 )
 
 // MockVertex is a mock of Vertex interface.

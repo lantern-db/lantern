@@ -16,7 +16,7 @@ func NewVertexCache() *VertexCache {
 	}
 }
 
-func (c *VertexCache) Set(vertex Vertex) {
+func (c *VertexCache) Put(vertex Vertex) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

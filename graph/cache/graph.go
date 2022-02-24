@@ -48,26 +48,26 @@ func (c *GraphCache) Load(query LoadQuery) Graph {
 	return g
 }
 
-func (c *GraphCache) LoadVertex(key Key) (Vertex, bool) {
+func (c *GraphCache) GetVertex(key Key) (Vertex, bool) {
 	return c.vertexCache.Get(key)
 }
 
-func (c *GraphCache) DumpVertex(vertex Vertex) {
-	c.vertexCache.Set(vertex)
+func (c *GraphCache) PutVertex(vertex Vertex) {
+	c.vertexCache.Put(vertex)
 }
 
-func (c *GraphCache) DumpEdge(edge Edge) {
+func (c *GraphCache) PutEdge(edge Edge) {
 	if _, found := c.vertexCache.Get(edge.Tail()); !found {
 		v := NewEmptyVertexOf(edge.Tail(), edge.Expiration())
-		c.vertexCache.Set(v)
+		c.vertexCache.Put(v)
 	}
 
 	if _, found := c.vertexCache.Get(edge.Head()); !found {
 		v := NewEmptyVertexOf(edge.Head(), edge.Expiration())
-		c.vertexCache.Set(v)
+		c.vertexCache.Put(v)
 	}
 
-	c.edgeCache.Set(edge)
+	c.edgeCache.Put(edge)
 }
 
 func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Graph, wg *sync.WaitGroup) {

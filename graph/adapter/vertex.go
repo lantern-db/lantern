@@ -2,8 +2,8 @@ package adapter
 
 import (
 	"github.com/lantern-db/lantern/errors"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	. "github.com/lantern-db/lantern/graph/model"
-	"github.com/lantern-db/lantern/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )

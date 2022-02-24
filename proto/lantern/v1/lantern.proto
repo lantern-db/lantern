@@ -1,6 +1,9 @@
 syntax = "proto3";
 
+package lantern.v1;
+
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 option go_package = "github.com/lantern-db/lantern/pb";
 
@@ -48,9 +51,10 @@ message Graph {
 }
 
 enum Status {
-    OK = 0;
-    INTERNAL_SERVER_ERROR = 1;
-    INVALID_REQUEST = 2;
+    STATUS_UNSPECIFIED = 0;
+    STATUS_OK = 1;
+    STATUS_INTERNAL_SERVER_ERROR = 2;
+    STATUS_INVALID_REQUEST = 3;
 }
 
 message IlluminateRequest {
@@ -65,15 +69,62 @@ message IlluminateResponse {
     Status status = 2;
 }
 
-message DumpResponse {
+message GetVertexRequest {
+    string key = 1;
+}
+
+message GetVertexResponse {
+    Vertex vertex = 1;
+}
+
+message PutRequest {
+    Graph graph = 1;
+}
+
+message PutResponse {
     Status status = 1;
 }
 
-service Lantern {
+message PutVertexRequest {
+    repeated Vertex vertices = 1;
+}
+
+message PutVertexResponse {
+    Status status = 1;
+}
+
+message PutEdgeRequest {
+    repeated Edge edges = 1;
+}
+
+message PutEdgeResponse {
+    Status status = 1;
+}
+
+
+service LanternService {
     rpc Illuminate (IlluminateRequest) returns (IlluminateResponse) {
+        option (google.api.http) = {
+            get: "/v1/illuminate/{seed}"
+        };
     }
-    rpc DumpVertex (Vertex) returns (DumpResponse) {
+    rpc GetVertex (GetVertexRequest) returns (GetVertexResponse) {
+        option (google.api.http) = {
+            get: "/v1/vertices/{key}"
+        };
     }
-    rpc DumpEdge (Edge) returns (DumpResponse) {
+    rpc Put (PutRequest) returns (PutResponse) {
+    }
+    rpc PutVertex (PutVertexRequest) returns (PutVertexResponse) {
+        option (google.api.http) = {
+            put: "/v1/vertices"
+            body: "*"
+        };
+    }
+    rpc PutEdge (PutEdgeRequest) returns (PutEdgeResponse) {
+        option (google.api.http) = {
+            put: "/v1/edges"
+            body: "*"
+        };
     }
 }

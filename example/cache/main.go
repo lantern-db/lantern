@@ -17,13 +17,13 @@ func main() {
 	ce := adapter.NewProtoEdgeOf("c", "e", 1.0, 60*time.Second)
 
 	repo := cache.NewEmptyGraphCache()
-	repo.DumpEdge(ab)
-	repo.DumpEdge(bc)
-	repo.DumpEdge(cd)
-	repo.DumpEdge(de)
-	repo.DumpEdge(ce)
+	repo.PutEdge(ab)
+	repo.PutEdge(bc)
+	repo.PutEdge(cd)
+	repo.PutEdge(de)
+	repo.PutEdge(ce)
 	v, _ := adapter.NewProtoVertexOf("a", 0, 60*time.Second)
-	repo.DumpVertex(v)
+	repo.PutVertex(v)
 
 	q := model.NeighborQuery("a", 4)
 

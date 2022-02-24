@@ -26,8 +26,8 @@ func TestEdgeCache_Delete(t *testing.T) {
 
 	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(edge1)
-		c.Set(edge2)
+		c.Put(edge1)
+		c.Put(edge2)
 		if len(c.cache["tail"]) != 2 {
 			t.Errorf("mismatch length")
 		}
@@ -63,8 +63,8 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 	c := NewEdgeCache()
 
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(edge1)
-		c.Set(edge2)
+		c.Put(edge1)
+		c.Put(edge2)
 		if got, found := c.GetAdjacent("tail"); !found {
 			t.Errorf("not found")
 		} else {
@@ -87,7 +87,7 @@ func TestEdgeCache_Get(t *testing.T) {
 
 	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(edge)
+		c.Put(edge)
 		got, found := c.Get("tail", "head")
 		if !found {
 			t.Errorf("not found")
@@ -111,7 +111,7 @@ func TestEdgeCache_Set(t *testing.T) {
 
 	c := NewEdgeCache()
 	t.Run("valid_case", func(t *testing.T) {
-		c.Set(edge)
+		c.Put(edge)
 	})
 
 	t.Run("not_expired", func(t *testing.T) {

@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/lantern-db/lantern/errors"
-	"github.com/lantern-db/lantern/pb"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )

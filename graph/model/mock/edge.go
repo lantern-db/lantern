@@ -8,8 +8,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	model "github.com/lantern-db/lantern/graph/model"
-	pb "github.com/lantern-db/lantern/pb"
 )
 
 // MockEdge is a mock of Edge interface.
