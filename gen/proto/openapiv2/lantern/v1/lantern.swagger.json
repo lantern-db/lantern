@@ -80,18 +80,11 @@
             "format": "int64"
           },
           {
-            "name": "minWeight",
+            "name": "topK",
             "in": "query",
             "required": false,
-            "type": "number",
-            "format": "float"
-          },
-          {
-            "name": "maxWeight",
-            "in": "query",
-            "required": false,
-            "type": "number",
-            "format": "float"
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [

@@ -53,9 +53,9 @@ func (q EdgePriorityQueue) Pop() (m.Edge, error) {
 	return nil, errors.PriorityQueueEmptyError
 }
 
-func (q EdgePriorityQueue) Top(k int) []m.Edge {
+func (q EdgePriorityQueue) Top(k uint32) []m.Edge {
 	var edges []m.Edge
-	for i := 0; i < k; i++ {
+	for i := uint32(0); i < k; i++ {
 		edge, err := q.Pop()
 		if err != nil {
 			break

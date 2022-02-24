@@ -60,8 +60,7 @@ enum Status {
 message IlluminateRequest {
     string seed = 1;
     uint32 step = 2;
-    float min_weight = 3;
-    float max_weight = 4;
+    uint32 top_k = 3;
 }
 
 message IlluminateResponse {

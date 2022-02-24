@@ -4,6 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/lantern-db/lantern/graph/model"
 	mock_model "github.com/lantern-db/lantern/graph/model/mock"
+	"math"
 	"testing"
 	"time"
 )
@@ -65,7 +66,7 @@ func TestEdgeCache_GetAdjacent(t *testing.T) {
 	t.Run("valid_case", func(t *testing.T) {
 		c.Put(edge1)
 		c.Put(edge2)
-		if got, found := c.GetAdjacent("tail"); !found {
+		if got, found := c.GetAdjacent("tail", math.MaxUint32); !found {
 			t.Errorf("not found")
 		} else {
 			if len(got) != 2 {
