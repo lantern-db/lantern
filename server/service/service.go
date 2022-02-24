@@ -24,12 +24,8 @@ func NewLanternService(graphCache *cache.GraphCache) *LanternService {
 }
 
 func (l *LanternService) Illuminate(ctx context.Context, request *pb.IlluminateRequest) (*pb.IlluminateResponse, error) {
-	if request.MinWeight == 0 {
-		request.MinWeight = -1
-	}
-
-	if request.MaxWeight == 0 {
-		request.MaxWeight = math.MaxInt32
+	if request.TopK == 0 {
+		request.TopK = math.MaxInt32
 	}
 
 	q := adapter.LanternQuery(request)

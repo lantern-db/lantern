@@ -5,3 +5,4 @@ import (
 )
 
 var ValueParseError = New("ValueParseError")
+var PriorityQueueEmptyError = New("PriorityQueueEmptyError")

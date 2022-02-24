@@ -75,23 +75,20 @@ func (c *GraphCache) calculateAdjacent(query LoadQuery, tail Vertex, ch chan Gra
 
 	result := NewGraph()
 	result.VertexMap[tail.Key()] = tail
-	heads, found := c.edgeCache.GetAdjacent(tail.Key())
+	edges, found := c.edgeCache.GetAdjacent(tail.Key(), query.TopK)
 	if !found {
 		ch <- result
 		return
 	}
-	for headDigest, edge := range heads {
-		weight := float32(edge.Weight())
-		if query.MinWeight <= weight && weight <= query.MaxWeight {
-			head, found := c.vertexCache.Get(headDigest)
-			if found {
-				_, ok := result.EdgeMap[tail.Key()]
-				if !ok {
-					result.EdgeMap[tail.Key()] = make(map[Key]Edge)
-				}
-				result.VertexMap[head.Key()] = head
-				result.EdgeMap[tail.Key()][head.Key()] = edge
+	for _, edge := range edges {
+		head, found := c.vertexCache.Get(edge.Head())
+		if found {
+			_, ok := result.EdgeMap[tail.Key()]
+			if !ok {
+				result.EdgeMap[tail.Key()] = make(map[Key]Edge)
 			}
+			result.VertexMap[head.Key()] = head
+			result.EdgeMap[tail.Key()][head.Key()] = edge
 		}
 	}
 

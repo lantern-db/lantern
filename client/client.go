@@ -7,7 +7,6 @@ import (
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/model"
 	"google.golang.org/grpc"
-	"math"
 	"strconv"
 	"time"
 )
@@ -99,10 +98,8 @@ func (c *LanternClient) LoadVertex(ctx context.Context, key string) (model.Verte
 
 func (c *LanternClient) Illuminate(ctx context.Context, seed string, step uint32) (*model.Graph, error) {
 	request := &pb.IlluminateRequest{
-		Seed:      seed,
-		Step:      step,
-		MinWeight: -math.MaxFloat32,
-		MaxWeight: math.MaxFloat32,
+		Seed: seed,
+		Step: step,
 	}
 	response, err := c.client.Illuminate(ctx, request)
 	if err != nil {

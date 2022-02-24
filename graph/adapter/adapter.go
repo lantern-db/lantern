@@ -7,9 +7,8 @@ import (
 
 func LanternQuery(request *pb.IlluminateRequest) LoadQuery {
 	return LoadQuery{
-		Seed:      Key(request.Seed),
-		Step:      request.Step,
-		MinWeight: request.MinWeight,
-		MaxWeight: request.MaxWeight,
+		Seed: Key(request.Seed),
+		Step: request.Step,
+		TopK: request.TopK,
 	}
 }

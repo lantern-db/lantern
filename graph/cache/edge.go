@@ -2,6 +2,7 @@ package cache
 
 import (
 	. "github.com/lantern-db/lantern/graph/model"
+	"github.com/lantern-db/lantern/graph/queue"
 	"github.com/lantern-db/lantern/graph/table"
 	"sync"
 )
@@ -78,25 +79,26 @@ func (c *EdgeCache) Get(tail Key, head Key) (Edge, bool) {
 	}
 }
 
-func (c *EdgeCache) GetAdjacent(tail Key) (map[Key]Edge, bool) {
+func (c *EdgeCache) GetAdjacent(tail Key, k uint32) ([]Edge, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	pq := queue.NewEmptyPriorityQueue()
 
 	headMap, ok := c.cache[tail]
 	if !ok {
 		return nil, false
 	}
-
-	result := make(map[Key]Edge)
 	for head, edgeTable := range headMap {
 		if edgeTable.IsEmpty() {
 			go c.delete(tail, head)
 
 		} else {
-			result[head] = NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
-
+			edge := NewStaticEdge(tail, head, edgeTable.Weight(), edgeTable.Expiration())
+			pq.Push(edge)
 		}
 	}
+	result := pq.Top(k)
 
 	return result, len(result) != 0
 }
