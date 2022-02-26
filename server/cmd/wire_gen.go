@@ -7,6 +7,8 @@ package main
 
 import (
 	"github.com/lantern-db/lantern/graph/cache"
+	config2 "github.com/lantern-db/lantern/monitor/config"
+	service2 "github.com/lantern-db/lantern/monitor/service"
 	"github.com/lantern-db/lantern/server/config"
 	"github.com/lantern-db/lantern/server/service"
 	"google.golang.org/grpc"
@@ -34,6 +36,15 @@ func initializeLanternServer() (*service.LanternServer, error) {
 	return lanternServer, nil
 }
 
+func initializePrometheusService() (*service2.PrometheusService, error) {
+	prometheusConfig, err := config2.LoadPrometheusConfig()
+	if err != nil {
+		return nil, err
+	}
+	prometheusService := service2.NewPrometheusService(prometheusConfig)
+	return prometheusService, nil
+}
+
 // wire.go:
 
 func newVertexCache() *cache.VertexCache {
@@ -48,14 +59,14 @@ func newGraphCache(v *cache.VertexCache, e *cache.EdgeCache) *cache.GraphCache {
 	return cache.NewGraphCache(v, e)
 }
 
-func newListener(config *config.LanternServerConfig) (net.Listener, error) {
-	return net.Listen("tcp", ":"+config.Port)
+func newListener(config3 *config.LanternServerConfig) (net.Listener, error) {
+	return net.Listen("tcp", ":"+config3.Port)
 }
 
 func newGrpcServerOptions() []grpc.ServerOption {
 	return []grpc.ServerOption{}
 }
 
-func newLanternServer(config *config.LanternServerConfig, listener net.Listener, svc *service.LanternService, server *grpc.Server) *service.LanternServer {
-	return service.NewLanternServer(config.FlushInterval, listener, svc, server)
+func newLanternServer(config3 *config.LanternServerConfig, listener net.Listener, svc *service.LanternService, server *grpc.Server) *service.LanternServer {
+	return service.NewLanternServer(config3.FlushInterval, listener, svc, server)
 }

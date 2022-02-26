@@ -7,11 +7,20 @@ import (
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/cache"
 	m "github.com/lantern-db/lantern/graph/model"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"google.golang.org/grpc"
 	"log"
 	"math"
 	"net"
 	"time"
+)
+
+var (
+	optProceed = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "grpc_request_total",
+		Help: "How many grpc request proceeded",
+	}, []string{"method", "result"})
 )
 
 type LanternService struct {
@@ -34,7 +43,7 @@ func (l *LanternService) Illuminate(ctx context.Context, request *pb.IlluminateR
 		Graph:  adapter.ProtoGraph(graph),
 		Status: pb.Status_STATUS_OK,
 	}
-
+	optProceed.WithLabelValues("illuminate", "success").Inc()
 	return &response, nil
 }
 
@@ -50,6 +59,7 @@ func (l *LanternService) PutVertex(ctx context.Context, request *pb.PutVertexReq
 	for _, vertex := range request.Vertices {
 		l.cache.PutVertex(adapter.NewProtoVertex(vertex))
 	}
+	optProceed.WithLabelValues("put_vertex", "success").Inc()
 	return &pb.PutVertexResponse{Status: pb.Status_STATUS_OK}, nil
 }
 
@@ -57,6 +67,7 @@ func (l *LanternService) PutEdge(ctx context.Context, request *pb.PutEdgeRequest
 	for _, edge := range request.Edges {
 		l.cache.PutEdge(adapter.NewProtoEdge(edge))
 	}
+	optProceed.WithLabelValues("put_edge", "success").Inc()
 	return &pb.PutEdgeResponse{Status: pb.Status_STATUS_OK}, nil
 }
 
@@ -67,6 +78,8 @@ func (l *LanternService) Put(ctx context.Context, request *pb.PutRequest) (*pb.P
 	for _, edge := range request.Graph.Edges {
 		l.cache.PutEdge(adapter.NewProtoEdge(edge))
 	}
+
+	optProceed.WithLabelValues("put", "success").Inc()
 	return &pb.PutResponse{Status: pb.Status_STATUS_OK}, nil
 }
 

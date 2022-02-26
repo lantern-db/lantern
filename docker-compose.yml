@@ -6,17 +6,35 @@ services:
     hostname: lantern-server
     ports:
       - "6380:6380"
+      - "2112:2112"
     environment:
       - LANTERN_PORT=6380
       - LANTERN_FLUSH_INTERVAL=60
+      - PROMETHEUS_PORT=2112
   gateway:
     image: piroyoung/lantern-gateway:latest-alpha
     container_name: lantern-gateway
+    hostname: lantern-gateway
     depends_on:
       - server
     ports:
       - "8080:8080"
+      - "2113:2112"
     environment:
       - LANTERN_HOST=lantern-server
       - LANTERN_PORT=6380
       - GATEWAY_PORT=8080
+      - PROMETHEUS_PORT=2112
+
+  prometheus:
+    image: bitnami/prometheus
+    container_name: prometheus-server
+    depends_on:
+      - gateway
+      - server
+    ports:
+      - "9090:9090"
+    volumes:
+      - type: bind
+        source: ./prometheus.yml
+        target: /etc/prometheus/prometheus.yml

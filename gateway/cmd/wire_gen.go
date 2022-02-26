@@ -10,6 +10,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/lantern-db/lantern/gateway/config"
 	"github.com/lantern-db/lantern/gateway/service"
+	config2 "github.com/lantern-db/lantern/monitor/config"
+	service2 "github.com/lantern-db/lantern/monitor/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -28,10 +30,19 @@ func initializeGrpcGatewayServer() (*service.GrpcGatewayServer, error) {
 	return grpcGatewayServer, nil
 }
 
+func initializePrometheusService() (*service2.PrometheusService, error) {
+	prometheusConfig, err := config2.LoadPrometheusConfig()
+	if err != nil {
+		return nil, err
+	}
+	prometheusService := service2.NewPrometheusService(prometheusConfig)
+	return prometheusService, nil
+}
+
 // wire.go:
 
-func newGrpcServerEndpoint(config2 *config.GatewayConfig) service.EndpointString {
-	return flag.String("grpc-server-endpoint", config2.LanternHost+":"+config2.LanternPort, "gRPC server endpoint")
+func newGrpcServerEndpoint(config3 *config.GatewayConfig) service.EndpointString {
+	return flag.String("grpc-server-endpoint", config3.LanternHost+":"+config3.LanternPort, "gRPC server endpoint")
 }
 
 func newServeMux() *runtime.ServeMux {

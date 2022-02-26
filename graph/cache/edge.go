@@ -4,7 +4,20 @@ import (
 	. "github.com/lantern-db/lantern/graph/model"
 	"github.com/lantern-db/lantern/graph/queue"
 	"github.com/lantern-db/lantern/graph/table"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"sync"
+)
+
+var (
+	opsEdgeCreate = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "edge_create_total",
+		Help: "Number of operations of create for edge",
+	})
+	opsEdgeDelete = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "edge_delete_total",
+		Help: "Number of operations of delete for edge",
+	})
 )
 
 type EdgeCache struct {
@@ -31,6 +44,7 @@ func (c *EdgeCache) Put(edge Edge) {
 	}
 
 	if _, ok := c.cache[edge.Tail()][edge.Head()]; !ok {
+		opsEdgeCreate.Inc()
 		c.cache[edge.Tail()][edge.Head()] = table.NewEmptyEdgeTable()
 		c.incomingDegree.Increment(edge.Head())
 		c.outgoingDegree.Increment(edge.Tail())
@@ -42,6 +56,7 @@ func (c *EdgeCache) Put(edge Edge) {
 func (c *EdgeCache) delete(tail Key, head Key) {
 	if _, ok := c.cache[tail]; ok {
 		if _, ok := c.cache[tail][head]; ok {
+			opsEdgeDelete.Inc()
 			delete(c.cache[tail], head)
 			c.outgoingDegree.Decrement(tail)
 			if len(c.cache[tail]) == 0 {
