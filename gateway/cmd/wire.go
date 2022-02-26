@@ -40,12 +40,12 @@ func initializeGrpcGatewayServer() (*service.GrpcGatewayServer, error) {
 	return &service.GrpcGatewayServer{}, nil
 }
 
-func initializePrometheusServer() (*promServer.PrometheusServer, error) {
+func initializePrometheusService() (*promServer.PrometheusService, error) {
 	wire.Build(
 		promConfig.LoadPrometheusConfig,
-		promServer.NewPrometheusServer,
+		promServer.NewPrometheusService,
 	)
 
-	return &promServer.PrometheusServer{}, nil
+	return &promServer.PrometheusService{}, nil
 
 }

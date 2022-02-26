@@ -30,13 +30,13 @@ func initializeGrpcGatewayServer() (*service.GrpcGatewayServer, error) {
 	return grpcGatewayServer, nil
 }
 
-func initializePrometheusServer() (*service2.PrometheusServer, error) {
+func initializePrometheusService() (*service2.PrometheusService, error) {
 	prometheusConfig, err := config2.LoadPrometheusConfig()
 	if err != nil {
 		return nil, err
 	}
-	prometheusServer := service2.NewPrometheusServer(prometheusConfig)
-	return prometheusServer, nil
+	prometheusService := service2.NewPrometheusService(prometheusConfig)
+	return prometheusService, nil
 }
 
 // wire.go:

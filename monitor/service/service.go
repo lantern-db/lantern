@@ -10,19 +10,19 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-type PrometheusServer struct {
+type PrometheusService struct {
 	port string
 }
 
-func NewPrometheusServer(config *config.PrometheusConfig) *PrometheusServer {
-	return &PrometheusServer{config.Port}
+func NewPrometheusService(config *config.PrometheusConfig) *PrometheusService {
+	return &PrometheusService{config.Port}
 }
 
-func (s *PrometheusServer) Port() string {
+func (s *PrometheusService) Port() string {
 	return ":" + s.port
 }
 
-func (s *PrometheusServer) Run(ctx context.Context) {
+func (s *PrometheusService) Run(ctx context.Context) {
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 

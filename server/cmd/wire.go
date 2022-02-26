@@ -53,12 +53,12 @@ func initializeLanternServer() (*service.LanternServer, error) {
 	return &service.LanternServer{}, nil
 }
 
-func initializePrometheusServer() (*promServer.PrometheusServer, error) {
+func initializePrometheusService() (*promServer.PrometheusService, error) {
 	wire.Build(
 		promConfig.LoadPrometheusConfig,
-		promServer.NewPrometheusServer,
+		promServer.NewPrometheusService,
 	)
 
-	return &promServer.PrometheusServer{}, nil
+	return &promServer.PrometheusService{}, nil
 
 }

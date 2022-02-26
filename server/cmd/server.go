@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if prom, err := initializePrometheusServer(); err != nil {
+	if prom, err := initializePrometheusService(); err != nil {
 		log.Fatal(err)
 	} else {
 		prom.Run(ctx)
