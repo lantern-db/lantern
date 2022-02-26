@@ -19,6 +19,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if prom, err := initializePrometheusServer(); err != nil {
+		log.Fatal(err)
+	} else {
+		prom.Run(ctx)
+	}
+
 	signalCh := make(chan os.Signal)
 	defer close(signalCh)
 	signal.Notify(signalCh, syscall.SIGTERM, syscall.SIGINT, os.Interrupt)

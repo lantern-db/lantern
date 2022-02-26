@@ -22,6 +22,7 @@ all: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_g
 
 .PHONY: test
 test: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go ./graph/model/mock/vertex.go ./graph/model/mock/edge.go ./server/cmd/wire_gen.go ./gateway/cmd/wire_gen.go
+	go mod tidy
 	go build ./...
 	go test ./...
 

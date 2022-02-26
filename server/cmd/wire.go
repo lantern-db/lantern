@@ -5,6 +5,8 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/lantern-db/lantern/graph/cache"
+	promConfig "github.com/lantern-db/lantern/monitor/config"
+	promServer "github.com/lantern-db/lantern/monitor/service"
 	"github.com/lantern-db/lantern/server/config"
 	"github.com/lantern-db/lantern/server/service"
 	"google.golang.org/grpc"
@@ -49,4 +51,14 @@ func initializeLanternServer() (*service.LanternServer, error) {
 	)
 
 	return &service.LanternServer{}, nil
+}
+
+func initializePrometheusServer() (*promServer.PrometheusServer, error) {
+	wire.Build(
+		promConfig.LoadPrometheusConfig,
+		promServer.NewPrometheusServer,
+	)
+
+	return &promServer.PrometheusServer{}, nil
+
 }
