@@ -6,7 +6,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/lantern-db/lantern/gateway/config"
 	"github.com/lantern-db/lantern/gateway/service"
@@ -42,7 +41,8 @@ func initializePrometheusService() (*service2.PrometheusService, error) {
 // wire.go:
 
 func newGrpcServerEndpoint(config3 *config.GatewayConfig) service.EndpointString {
-	return flag.String("grpc-server-endpoint", config3.LanternHost+":"+config3.LanternPort, "gRPC server endpoint")
+	endpointString := config3.LanternHost + ":" + config3.LanternPort
+	return service.EndpointString(&endpointString)
 }
 
 func newServeMux() *runtime.ServeMux {
