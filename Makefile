@@ -34,11 +34,15 @@ build: server.Dockerfile test
 	docker build -t lantern-gateway -f gateway.Dockerfile .
 	docker tag lantern-gateway piroyoung/lantern-gateway:local
 	docker tag lantern-gateway piroyoung/lantern-gateway:latest-alpha
+	docker build -t lantern-viewer -f viewer.Dockerfile .
+	docker tag lantern-viewer piroyoung/lantern-viewer:local
+	docker tag lantern-viewer piroyoung/lantern-viewer:latest-alpha
 
 .PHONY: push
 push: build
 	docker push piroyoung/lantern-server:latest-alpha
 	docker push piroyoung/lantern-gateway:latest-alpha
+	docker push piroyoung/lantern-viewer:latest-alpha
 
 .PHONY: run
 run: build

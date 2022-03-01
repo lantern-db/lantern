@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/v1/css/main.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script type="module">
+        import * as d3 from "https://cdn.skypack.dev/d3@7";
+        import {Graph, transform} from "/v1/js/graph.js";
+
+        let getParams = new URL(window.location.href).searchParams;
+
+        let seed = getParams.get("seed");
+        if (seed !== null) {
+            document.getElementById("query-key").value = seed;
+            document.getElementById("vertex-key").value = seed;
+            d3.json("/config").then(response => {
+                let url = `${response.endpoint}/v1/vertices/${seed}`;
+                d3.json(url).then(response => {
+                    document.getElementById("vertex-value").value = response.vertex.string === undefined ? seed : response.vertex.string;
+                });
+            });
+        }
+
+        let step = getParams.get("step");
+        step = step === null ? 3 : step;
+        document.getElementById("query-step").value = step;
+
+
+        let k = getParams.get("k");
+        k = k === null ? 3 : k;
+        document.getElementById("query-k").value = k;
+
+        if (seed !== null) {
+            let param = {
+                width: 900,
+                height: 900,
+                r: 3,
+                seed: seed,
+                step: step,
+                k: k
+            };
+
+            d3.json("/config").then(response => {
+                let url = `${response.endpoint}/v1/illuminate/${param.seed}?step=${param.step}&top_k=${param.k}`;
+                d3.json(url).then(response => {
+                    const data = transform(response.graph);
+                    const forceGraphSimulation = new Graph(data, param);
+                    forceGraphSimulation.start();
+                })
+            });
+        }
+
+
+        document.getElementById("query-button").onclick = () => {
+            let seed = document.getElementById("query-key").value;
+            let step = document.getElementById("query-step").value;
+            let k = document.getElementById("query-k").value;
+            window.location.href = `/v1/?seed=${seed}&step=${step}&k=${k}`;
+        };
+
+        document.getElementById("vertex-button").onclick = () => {
+            let ttl = document.getElementById("vertex-ttl").value;
+            let body = JSON.stringify({
+                vertices: [
+                    {
+                        key: document.getElementById("vertex-key").value,
+                        expiration: new Date(Date.now() + 1000 * parseInt(ttl, 10)).toISOString(),
+                        string: document.getElementById("vertex-value").value
+                    }
+                ]
+            });
+
+            d3.json("/config").then(response => {
+                let url = `${response.endpoint}/v1/vertices`;
+                fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: body
+                }).then(response => {
+                    window.location.href = `/v1/?seed=${seed}&step=${step}&k=${k}`;
+                });
+            });
+        };
+
+        document.getElementById("edge-button").onclick = () => {
+            let ttl = document.getElementById("edge-ttl").value
+            let body = JSON.stringify({
+                edges: [
+                    {
+                        tail: seed,
+                        head: document.getElementById("edge-key").value,
+                        weight: parseInt(document.getElementById("edge-weight").value, 10),
+                        expiration: new Date(Date.now() + 1000 * parseInt(ttl, 10)).toISOString(),
+                    }
+                ]
+            });
+            d3.json("/config").then(response => {
+                let url = `${response.endpoint}/v1/edges`;
+                fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: body
+                });
+            }).then(response => {
+                window.location.href = `/v1/?seed=${seed}&step=${step}&k=${k}`;
+            })
+        };
+    </script>
+
+
+    <title>Lantern Viewer</title>
+</head>
+<body>
+<div class="container-fluid p-0 h-100 w-100">
+    <div class="row mx-auto justify-content-center h-100 w-100">
+        <div class="mx-auto col-2">
+            <div class="row">
+                <div class="card col-12 p-0 m-3">
+                    <div class="card-header">
+                        <h4>Query</h4>
+                    </div>
+                    <div class="card-body p-1">
+                        <form id="query">
+                            <div class="form-group">
+                                <label for="query-key">Key</label>
+                                <input class="form-control" id="query-key" placeholder="Enter KEY of vertex"
+                                       type="text">
+                                <label for="query-step">Step</label>
+                                <input class="form-control" id="query-step" max="30" min="1" type="number" value="3">
+                                <label for="query-k">k: Max number of edge for each vertices</label>
+                                <input class="form-control" id="query-k" max="30" min="1" type="number" value="3">
+                            </div>
+                            <button class="btn btn-primary mx-auto my-2 d-block" id="query-button" type="button">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card col-12 p-0 m-3">
+                    <div class="card-header">
+                        <h4>Vertex</h4>
+                    </div>
+                    <div class="card-body p-1">
+                        <form id="vertex">
+                            <div class="form-group">
+                                <label for="vertex-key">Key</label>
+                                <input class="form-control" id="vertex-key" placeholder="Enter KEY of vertex"
+                                       type="text">
+                                <label for="vertex-value">Value</label>
+                                <input class="form-control" id="vertex-value" placeholder="Enter VALUE of vertex"
+                                       type="text">
+                                <label for="vertex-ttl">TTL(seconds)</label>
+                                <input class="form-control" id="vertex-ttl" max="86400" min="1" type="number"
+                                       value="3600">
+                            </div>
+                            <button class="btn btn-primary mx-auto my-2 d-block" id="vertex-button" type="button">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card col-12 p-0 m-3">
+                    <div class="card-header p-1">
+                        <h4>Edge</h4>
+                    </div>
+                    <div class="card-body p-1">
+                        <form id="edge">
+                            <div class="form-group">
+                                <label for="edge-key">Key(Head)</label>
+                                <input class="form-control" id="edge-key" placeholder="Enter Key of head"
+                                       type="text">
+                                <label for="edge-weight">Weight</label>
+                                <input class="form-control" id="edge-weight" min="1" type="number" value="1.0">
+                                <label for="edge-ttl">TTL(seconds)</label>
+                                <input class="form-control" id="edge-ttl" max="86400" min="1" type="number"
+                                       value="3600">
+                            </div>
+                            <button class="btn btn-primary mx-auto my-2 d-block" id="edge-button" type="button">Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto col-10 h-100 text-center" id="canvas"></div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
