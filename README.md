@@ -21,13 +21,12 @@ LanternDB is a streaming database. All vertices or edges will be expired as time
 LanternDB just illuminates the moment, just focuses on neighbors, not global structures.
 
 # lantern-server
-
+## TL;DR
+```shell
+git clone https://github.com/lantern-db/lantern.git
+cd lantern
+docker-compose up
 ```
-$ docker run -it -p 6380:6380 -e LANTERN_PORT=6380 -e piroyoung/lantern-server:alpha
-```
-
-* `LANTERN_PORT`: Port number for Lantern-server
-* `LANTERN_FLUSH_INTERVAL`: flush interval for expired values
 
 # lantern-client (Golang)
 
@@ -107,33 +106,39 @@ value is an instance of `model.Graph` and it can be rendered to json-parsable st
   "vertices": {
     "a": "test",
     "b": 42,
-    "c": 3.14,
-    "d": null,
-    "e": null
+    "c": 3.14
   },
   "edges": {
     "a": {
       "b": 1
     },
     "b": {
-      "c": 1,
-      "e": 1
-    },
-    "c": {
-      "d": 1
-    },
-    "d": {
-      "e": 1
+      "c": 1
     }
   },
-  "df": {
-    "a": 0,
-    "b": 1,
-    "c": 1,
-    "d": 1,
-    "e": 2
+  "stats": {
+    "vertex": {
+      "a": {
+        "degree": {
+          "out": 1
+        }
+      },
+      "b": {
+        "degree": {
+          "in": 1,
+          "out": 2
+        }
+      },
+      "c": {
+        "degree": {
+          "in": 1,
+          "out": 1
+        }
+      }
+    }
   }
 }
+
 ```
 
 ## Brief Example
@@ -193,7 +198,7 @@ func main() {
 	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
 	_ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 
-	result, err := c.Illuminate(ctx, "a", 3)
+	result, err := c.Illuminate(ctx, "a", 2)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
@@ -210,24 +215,42 @@ Then we will get
     "a": "test",
     "b": 42,
     "c": 3.14,
-    "d": null
+    "e": null
   },
   "edges": {
     "a": {
       "b": 1
     },
     "b": {
-      "c": 1
-    },
-    "c": {
-      "d": 1
+      "c": 1,
+      "e": 1
     }
   },
-  "df": {
-    "a": 0,
-    "b": 1,
-    "c": 1,
-    "d": 1
+  "stats": {
+    "vertex": {
+      "a": {
+        "degree": {
+          "out": 1
+        }
+      },
+      "b": {
+        "degree": {
+          "in": 1,
+          "out": 2
+        }
+      },
+      "c": {
+        "degree": {
+          "in": 2,
+          "out": 1
+        }
+      },
+      "e": {
+        "degree": {
+          "in": 1
+        }
+      }
+    }
   }
 }
 ```
