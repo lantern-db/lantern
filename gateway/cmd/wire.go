@@ -3,7 +3,6 @@
 package main
 
 import (
-	"flag"
 	"github.com/google/wire"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/lantern-db/lantern/gateway/config"
@@ -15,7 +14,8 @@ import (
 )
 
 func newGrpcServerEndpoint(config *config.GatewayConfig) service.EndpointString {
-	return flag.String("grpc-server-endpoint", config.LanternHost+":"+config.LanternPort, "gRPC server endpoint")
+	endpointString := config.LanternHost + ":" + config.LanternPort
+	return service.EndpointString(&endpointString)
 }
 
 func newServeMux() *runtime.ServeMux {

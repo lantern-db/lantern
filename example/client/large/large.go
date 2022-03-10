@@ -30,7 +30,9 @@ func main() {
 	for range make([]int, 1000) {
 		j = rand.Intn(100)
 		log.Println(i, j)
-		err := c.DumpEdge(ctx, strconv.Itoa(i), strconv.Itoa(j), 1.0, 60*time.Second)
+		err = c.DumpVertex(ctx, strconv.Itoa(i), strconv.Itoa(i), 60*time.Minute)
+		err = c.DumpVertex(ctx, strconv.Itoa(j), strconv.Itoa(j), 60*time.Minute)
+		err = c.DumpEdge(ctx, strconv.Itoa(i), strconv.Itoa(j), 1.0, 60*time.Minute)
 		if err != nil {
 			panic(err)
 		}

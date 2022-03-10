@@ -6,6 +6,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/lantern-db/lantern/gateway/config"
 	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -39,7 +40,11 @@ func (s *GrpcGatewayServer) Run(ctx context.Context) error {
 		return err
 	}
 
-	srv := &http.Server{Addr: s.Port(), Handler: s.mux}
+	handler := cors.New(cors.Options{
+		AllowedOrigins: []string{s.config.AllowedOrigin},
+		AllowedMethods: []string{"GET", "PUT", "DELETE"},
+	}).Handler(s.mux)
+	srv := &http.Server{Addr: s.Port(), Handler: handler}
 
 	go func() {
 		<-ctx.Done()
