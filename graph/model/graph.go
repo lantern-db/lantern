@@ -17,7 +17,7 @@ type VertexStats struct {
 }
 
 type GraphStats struct {
-	VertexStats map[Key]VertexStats `json:"vertex_stats,omitempty"`
+	VertexStats map[Key]VertexStats `json:"vertex,omitempty"`
 }
 
 type Graph struct {

@@ -47,7 +47,7 @@ func main() {
 	_ = c.DumpEdge(ctx, "c", "d", 1.0, 60*time.Second)
 	_ = c.DumpEdge(ctx, "b", "e", 1.0, 60*time.Second)
 
-	result, err := c.Illuminate(ctx, "a", 3)
+	result, err := c.Illuminate(ctx, "a", 2)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
