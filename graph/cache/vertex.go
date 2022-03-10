@@ -8,13 +8,9 @@ import (
 )
 
 var (
-	opsVertexCreate = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "vertex_create_total",
-		Help: "Number of operations of create for vertex",
-	})
-	opsVertexDelete = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "vertex_delete_total",
-		Help: "Number of operations of delete for vertex",
+	vertexTotal = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "vertex_total",
+		Help: "Number of cached vertex",
 	})
 )
 
@@ -34,14 +30,14 @@ func (c *VertexCache) Put(vertex Vertex) {
 	defer c.mu.Unlock()
 
 	if _, ok := c.cache[vertex.Key()]; !ok {
-		opsVertexCreate.Inc()
+		vertexTotal.Inc()
 	}
 	c.cache[vertex.Key()] = vertex
 }
 
 func (c *VertexCache) delete(key Key) {
 	if _, ok := c.cache[key]; ok {
-		opsVertexDelete.Inc()
+		vertexTotal.Dec()
 		delete(c.cache, key)
 	}
 }

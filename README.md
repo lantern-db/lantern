@@ -27,6 +27,15 @@ git clone https://github.com/lantern-db/lantern.git
 cd lantern
 docker-compose up
 ```
+Then you can see followings.
+* grpc-server
+  * localhost:6380
+* grpc-gateway
+  * http://localhost:8081
+* viewer
+  * http://localhost:8080
+* prometheus-server
+  * http://localhost:9090
 
 # lantern-client (Golang)
 
