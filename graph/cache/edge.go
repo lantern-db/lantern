@@ -10,13 +10,9 @@ import (
 )
 
 var (
-	opsEdgeCreate = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "edge_create_total",
-		Help: "Number of operations of create for edge",
-	})
-	opsEdgeDelete = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "edge_delete_total",
-		Help: "Number of operations of delete for edge",
+	edgeTotal = promauto.NewGauge(prometheus.GaugeOpts{
+		Name: "edge_total",
+		Help: "Number of cached edge",
 	})
 )
 
@@ -44,7 +40,7 @@ func (c *EdgeCache) Put(edge Edge) {
 	}
 
 	if _, ok := c.cache[edge.Tail()][edge.Head()]; !ok {
-		opsEdgeCreate.Inc()
+		edgeTotal.Inc()
 		c.cache[edge.Tail()][edge.Head()] = table.NewEmptyEdgeTable()
 		c.incomingDegree.Increment(edge.Head())
 		c.outgoingDegree.Increment(edge.Tail())
@@ -56,7 +52,7 @@ func (c *EdgeCache) Put(edge Edge) {
 func (c *EdgeCache) delete(tail Key, head Key) {
 	if _, ok := c.cache[tail]; ok {
 		if _, ok := c.cache[tail][head]; ok {
-			opsEdgeDelete.Inc()
+			edgeTotal.Dec()
 			delete(c.cache[tail], head)
 			c.outgoingDegree.Decrement(tail)
 			if len(c.cache[tail]) == 0 {
