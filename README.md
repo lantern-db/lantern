@@ -33,7 +33,7 @@ Then you can see followings.
 * grpc-gateway
   * http://localhost:8081
 * viewer
-  * http://localhost:8080
+  * http://localhost:8080/v1/
 * prometheus-server
   * http://localhost:9090
 
