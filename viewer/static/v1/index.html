@@ -18,7 +18,9 @@
             d3.json("/config").then(response => {
                 let url = `${response.endpoint}/v1/vertices/${seed}`;
                 d3.json(url).then(response => {
-                    document.getElementById("vertex-value").value = response.vertex.string === undefined ? seed : response.vertex.string;
+                    if (response.vertex.string !== undefined) {
+                        document.getElementById("vertex-value").value = response.vertex.string;
+                    }
                 });
             });
         }
@@ -61,16 +63,23 @@
         };
 
         document.getElementById("vertex-button").onclick = () => {
+            let key = document.getElementById("vertex-key").value
+            let value = document.getElementById("vertex-value").value
             let ttl = document.getElementById("vertex-ttl").value;
-            let body = JSON.stringify({
+            let expiration = new Date(Date.now() + 1000 * parseInt(ttl, 10)).toISOString();
+            let body = {
                 vertices: [
                     {
-                        key: document.getElementById("vertex-key").value,
-                        expiration: new Date(Date.now() + 1000 * parseInt(ttl, 10)).toISOString(),
-                        string: document.getElementById("vertex-value").value
+                        key: key,
+                        expiration: expiration
                     }
                 ]
-            });
+            };
+            if (value === "") {
+                body["vertices"][0]["nil"] = true;
+            } else {
+                body["vertices"][0]["string"] = value;
+            }
 
             d3.json("/config").then(response => {
                 let url = `${response.endpoint}/v1/vertices`;
@@ -79,9 +88,9 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: body
+                    body: JSON.stringify(body)
                 }).then(response => {
-                    window.location.href = `/v1/?seed=${seed}&step=${step}&k=${k}`;
+                    window.location.href = `/v1/?seed=${key}&step=${step}&k=${k}`;
                 });
             });
         };
