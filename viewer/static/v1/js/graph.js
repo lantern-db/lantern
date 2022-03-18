@@ -104,7 +104,7 @@ export function transform(graph) {
         return {
             index: i,
             key: v.key,
-            value: v["string"] === undefined ? v.key : v.string
+            value: v["string"] === undefined ? `[${v.key}]` : v.string
         }
     });
     return {
