@@ -1,6 +1,7 @@
 # build stage
-FROM golang:1.17.7-alpine3.15 AS builder
+FROM golang:1.18.0-alpine3.15 AS builder
 ADD . /src
+RUN apk add git
 RUN cd /src && go build -o /src/bin/lantern-server -v /src/server/cmd/
 
 # final stage
