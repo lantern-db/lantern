@@ -31,7 +31,7 @@ func (t *Topic[T]) Publish(message T) {
 	}
 }
 
-func (t *Topic[T]) NewSubscription(name string, length int) *Subscription[T] {
+func (t *Topic[T]) NewSubscription(name string, bufferSize int) *Subscription[T] {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
@@ -39,7 +39,7 @@ func (t *Topic[T]) NewSubscription(name string, length int) *Subscription[T] {
 		return &Subscription[T]{
 			Name:  name,
 			Topic: t,
-			ch:    make(chan T, length),
+			ch:    make(chan T, bufferSize),
 		}
 
 	} else {
