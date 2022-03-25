@@ -57,7 +57,6 @@ func TestSubscription_Subscribe(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		subscription2.Subscribe(ctx, func(message string) {
-			time.Sleep(3 * time.Second)
 			log.Printf("this is sub2, %s", message)
 		})
 	}()

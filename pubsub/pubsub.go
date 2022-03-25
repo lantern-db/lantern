@@ -89,7 +89,11 @@ func (s *Subscription[T]) Subscribe(ctx context.Context, consumer func(T)) {
 		select {
 		case m, ok := <-s.ch:
 			if ok {
-				consumeAsync(&wg, m, consumer)
+				wg.Add(1)
+				go func(m T) {
+					defer wg.Done()
+					consumer(m)
+				}(m)
 			}
 
 		case <-ctx.Done():
@@ -99,7 +103,11 @@ func (s *Subscription[T]) Subscribe(ctx context.Context, consumer func(T)) {
 				select {
 				case m, ok := <-s.ch:
 					if ok {
-						consumeAsync(&wg, m, consumer)
+						wg.Add(1)
+						go func(m T) {
+							defer wg.Done()
+							consumer(m)
+						}(m)
 					}
 
 				default:
@@ -109,12 +117,4 @@ func (s *Subscription[T]) Subscribe(ctx context.Context, consumer func(T)) {
 			}
 		}
 	}
-}
-
-func consumeAsync[T any](wg *sync.WaitGroup, m T, consumer func(T)) {
-	wg.Add(1)
-	go func(m T) {
-		defer wg.Done()
-		consumer(m)
-	}(m)
 }
