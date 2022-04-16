@@ -1,12 +1,3 @@
-.PHONY: init_buf
-init_buf:
-	cd ./proto && buf mod init
-
-./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go: ./proto/lantern/v1/lantern.proto ./buf.gen.yaml
-	buf generate proto
-
-all: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go ./graph/model/mock/edge.go ./graph/model/mock/vertex.go
-.PHONY: all
 
 ./graph/model/mock/vertex.go: ./graph/model/vertex.go
 	mockgen -source=./graph/model/vertex.go -destination=./graph/model/mock/vertex.go
@@ -21,7 +12,7 @@ all: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_g
 	wire ./gateway/cmd/
 
 .PHONY: test
-test: ./gen/proto/go/lantern/v1/lantern.pb.go ./gen/proto/go/lantern/v1/lantern_grpc.pb.go ./graph/model/mock/vertex.go ./graph/model/mock/edge.go ./server/cmd/wire_gen.go ./gateway/cmd/wire_gen.go
+test: ./graph/model/mock/vertex.go ./graph/model/mock/edge.go ./server/cmd/wire_gen.go ./gateway/cmd/wire_gen.go
 	go mod tidy
 	go build ./...
 	go test ./...
@@ -50,7 +41,5 @@ run: build
 
 
 clean:
-	rm ./pb/data.pb.go
-	rm ./pb/data_grpc.pb.go
 	rm ./graph/model/mock/*
 .PHONY: clean

@@ -9,7 +9,7 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
+	v1 "github.com/lantern-db/lantern-proto/go/graph/v1"
 	model "github.com/lantern-db/lantern/graph/model"
 )
 
@@ -37,10 +37,10 @@ func (m *MockVertex) EXPECT() *MockVertexMockRecorder {
 }
 
 // AsProto mocks base method.
-func (m *MockVertex) AsProto() *pb.Vertex {
+func (m *MockVertex) AsProto() *v1.Vertex {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AsProto")
-	ret0, _ := ret[0].(*pb.Vertex)
+	ret0, _ := ret[0].(*v1.Vertex)
 	return ret0
 }
 
