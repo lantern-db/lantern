@@ -1,6 +1,6 @@
 package model
 
-import pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
+import pb "github.com/lantern-db/lantern-proto/go/lantern/v1"
 
 type Edge interface {
 	Tail() Key

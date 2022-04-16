@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
+	v1 "github.com/lantern-db/lantern-proto/go/lantern/v1"
 	model "github.com/lantern-db/lantern/graph/model"
 )
 
@@ -36,10 +36,10 @@ func (m *MockEdge) EXPECT() *MockEdgeMockRecorder {
 }
 
 // AsProto mocks base method.
-func (m *MockEdge) AsProto() *pb.Edge {
+func (m *MockEdge) AsProto() *v1.Edge {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AsProto")
-	ret0, _ := ret[0].(*pb.Edge)
+	ret0, _ := ret[0].(*v1.Edge)
 	return ret0
 }
 

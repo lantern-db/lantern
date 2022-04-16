@@ -1,8 +1,8 @@
 package model
 
 import (
+	pb "github.com/lantern-db/lantern-proto/go/lantern/v1"
 	"github.com/lantern-db/lantern/errors"
-	pb "github.com/lantern-db/lantern/gen/proto/go/lantern/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
