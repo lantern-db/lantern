@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	pb "github.com/lantern-db/lantern-proto/go/lantern/v1"
+	pb "github.com/lantern-db/lantern-proto/go/graph/v1"
 	"github.com/lantern-db/lantern/gateway/config"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"

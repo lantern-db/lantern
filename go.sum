@@ -177,8 +177,8 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
-github.com/lantern-db/lantern-proto v0.0.0 h1:R34BVuuLUux+5rU6s1HQBGF0nylTSMkttste9LzdqPY=
-github.com/lantern-db/lantern-proto v0.0.0/go.mod h1:tIYe/zwiXjfxndq6BZdl44lIBX5rH3a0ZuSJGBGV2AE=
+github.com/lantern-db/lantern-proto v0.0.1 h1:c7/lAWKU0UXDBDA46/sjuTJHIVAMBzGCqZHjB/vNf0E=
+github.com/lantern-db/lantern-proto v0.0.1/go.mod h1:tIYe/zwiXjfxndq6BZdl44lIBX5rH3a0ZuSJGBGV2AE=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
 github.com/mattn/go-isatty v0.0.12 h1:wuysRhFDzyxgEmMf5xjvJ2M9dZoWAXNNr5LSBS7uHXY=

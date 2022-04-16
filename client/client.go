@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"errors"
-	pb "github.com/lantern-db/lantern-proto/go/lantern/v1"
+	pb "github.com/lantern-db/lantern-proto/go/graph/v1"
 	"github.com/lantern-db/lantern/graph/adapter"
 	"github.com/lantern-db/lantern/graph/model"
 	"google.golang.org/grpc"

@@ -9,7 +9,7 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	v1 "github.com/lantern-db/lantern-proto/go/lantern/v1"
+	v1 "github.com/lantern-db/lantern-proto/go/graph/v1"
 	model "github.com/lantern-db/lantern/graph/model"
 )
 

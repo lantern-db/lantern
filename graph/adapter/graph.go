@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	pb "github.com/lantern-db/lantern-proto/go/lantern/v1"
+	pb "github.com/lantern-db/lantern-proto/go/graph/v1"
 	m "github.com/lantern-db/lantern/graph/model"
 )
 
